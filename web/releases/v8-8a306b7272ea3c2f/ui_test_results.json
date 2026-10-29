@@ -1,0 +1,31 @@
+{
+  "run_at": "2026-10-29T03:13:49.311Z",
+  "core_algorithm_version": "absolute-earnings-periods-v8",
+  "tests": 23,
+  "checks": [
+    "valid declared example produces a price: ",
+    "valid input clears stale error text",
+    "historical price date is attached",
+    "forecast availability is explicitly unknown",
+    "new context fields survive record validation",
+    "blank EPS clears price",
+    "blank EPS clears valuationDefinition",
+    "blank EPS clears fundCostBasis",
+    "blank EPS clears scenarioBasis",
+    "blank EPS clears scenarioInputPosture",
+    "fresh SMH uses current fee input",
+    "switch to fresh asset clears valuationDefinition",
+    "switch to fresh asset clears fundCostBasis",
+    "switch to fresh asset clears scenarioBasis",
+    "switch to fresh asset clears scenarioInputPosture",
+    "home displays latest reviewed conclusion",
+    "home review timestamp is sourced",
+    "local card shows actual price date",
+    "local card labels unverified local inputs",
+    "unmodified card retains frozen source and date",
+    "expired conclusion explicitly marked historical",
+    "expired status is visible",
+    "no JavaScript runtime errors"
+  ],
+  "scope": "Current src JS served with built HTML. Synthetic numbers only; no production changes or external market-data verification."
+}

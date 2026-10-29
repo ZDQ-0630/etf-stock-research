@@ -1,0 +1,18 @@
+{
+  "passed": 12,
+  "checks": [
+    "absolute outputs blank initially",
+    "absolute calculation works with relative growth fields blank",
+    "independent exit EPS doubles gross value",
+    "absolute inputs and base dates persist",
+    "restored absolute calculation valid",
+    "mismatched price date blocks value",
+    "operating bridge produces an adopted positive EPS",
+    "dilution halves derived EPS",
+    "higher nominal rate reduces steady-state PE",
+    "invalid base clears all absolute numbers",
+    "no JS errors",
+    "no mobile page overflow"
+  ],
+  "scope": "synthetic browser scenarios; not market validation"
+}

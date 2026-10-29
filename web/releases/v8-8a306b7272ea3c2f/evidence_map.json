@@ -1,0 +1,415 @@
+{
+  "schema": "v8.evidence_to_model_map.v1",
+  "status": "reference_only_not_full_fund_forecast",
+  "financial_actuals_unchanged": true,
+  "company_references": [
+    {
+      "symbol": "MSFT",
+      "reported_period": "FY27 Q1",
+      "period_end": "2026-09-30",
+      "unit": "USD billions except EPS",
+      "actual_revenue": 92.279,
+      "operating_margin_same_period": 0.4975671604590427,
+      "guidance": {
+        "status": "call_guidance_not_extracted",
+        "notes": "Press release refers guidance to the conference call; prior quarter guidance not reused as current."
+      },
+      "source_ids": [
+        "MSFT_Q1_ACTUAL_20261028"
+      ],
+      "mapping": "reference_only",
+      "blocking_inputs": [
+        "verified annual revenue per common share or ETF unit",
+        "comparable recurring earnings basis",
+        "interest/tax/common-share and preferred claims",
+        "future annual margins/share counts",
+        "independent exit valuation assumptions"
+      ],
+      "automatic_forecast_update": false
+    },
+    {
+      "symbol": "AMZN",
+      "reported_period": "Q2 2026",
+      "period_end": "2026-06-30",
+      "unit": "USD billions",
+      "actual_revenue": 200.6,
+      "operating_margin_same_period": 0.1370887337986042,
+      "guidance": null,
+      "source_ids": [
+        "AMZN_Q2"
+      ],
+      "mapping": "reference_only",
+      "blocking_inputs": [
+        "verified annual revenue per common share or ETF unit",
+        "comparable recurring earnings basis",
+        "interest/tax/common-share and preferred claims",
+        "future annual margins/share counts",
+        "independent exit valuation assumptions"
+      ],
+      "automatic_forecast_update": false
+    },
+    {
+      "symbol": "GOOGL",
+      "reported_period": "Q2 2026",
+      "period_end": "2026-06-30",
+      "unit": "USD billions",
+      "actual_revenue": 119.796,
+      "operating_margin_same_period": 0.3403285585495342,
+      "guidance": null,
+      "source_ids": [
+        "GOOGL_Q2"
+      ],
+      "mapping": "reference_only",
+      "blocking_inputs": [
+        "verified annual revenue per common share or ETF unit",
+        "comparable recurring earnings basis",
+        "interest/tax/common-share and preferred claims",
+        "future annual margins/share counts",
+        "independent exit valuation assumptions"
+      ],
+      "automatic_forecast_update": false
+    },
+    {
+      "symbol": "META",
+      "reported_period": "Q3 2026",
+      "period_end": "2026-09-30",
+      "unit": "USD billions",
+      "actual_revenue": 64.601,
+      "operating_margin_same_period": 0.2010495193572855,
+      "guidance": {
+        "period": "calendar2026",
+        "capex_including_lease_principal_low": 135,
+        "capex_including_lease_principal_high": 145,
+        "previous_low": 130,
+        "next_quarter_revenue_low": 73,
+        "next_quarter_revenue_high": 76
+      },
+      "source_ids": [
+        "META_Q3",
+        "META_FINANCING_PRICING_20261027",
+        "META_FINANCING_LAUNCH_20261026",
+        "NVDA_META_20261027",
+        "AMD_META_20261027"
+      ],
+      "mapping": "reference_only",
+      "blocking_inputs": [
+        "verified annual revenue per common share or ETF unit",
+        "comparable recurring earnings basis",
+        "interest/tax/common-share and preferred claims",
+        "future annual margins/share counts",
+        "independent exit valuation assumptions"
+      ],
+      "automatic_forecast_update": false
+    },
+    {
+      "symbol": "NVDA",
+      "reported_period": "FY27 Q2",
+      "period_end": "2026-07-26",
+      "unit": "USD billions except EPS",
+      "actual_revenue": 96.221,
+      "operating_margin_same_period": null,
+      "guidance": {
+        "period": "FY27 Q3",
+        "revenue": 108,
+        "tolerance_pct": 2,
+        "gross_margin_pct": 74,
+        "china_data_center_compute_assumed": 0
+      },
+      "source_ids": [
+        "NVDA_Q2",
+        "NVDA_ORACLE_20261027",
+        "NVDA_META_20261027"
+      ],
+      "mapping": "reference_only",
+      "blocking_inputs": [
+        "verified annual revenue per common share or ETF unit",
+        "comparable recurring earnings basis",
+        "interest/tax/common-share and preferred claims",
+        "future annual margins/share counts",
+        "independent exit valuation assumptions"
+      ],
+      "automatic_forecast_update": false
+    },
+    {
+      "symbol": "TSM",
+      "reported_period": "Q3 2026",
+      "period_end": "2026-09-30",
+      "unit": "USD billions",
+      "actual_revenue": 46.72,
+      "operating_margin_same_period": null,
+      "guidance": {
+        "period": "Q4 2026",
+        "revenue_low": 52.3,
+        "revenue_high": 54.3,
+        "gross_margin_low_pct": 65,
+        "gross_margin_high_pct": 67,
+        "calendar2026_capex_low": 60,
+        "calendar2026_capex_high": 64
+      },
+      "source_ids": [
+        "TSM_Q3",
+        "TSM_Q3_CALL"
+      ],
+      "mapping": "reference_only",
+      "blocking_inputs": [
+        "verified annual revenue per common share or ETF unit",
+        "comparable recurring earnings basis",
+        "interest/tax/common-share and preferred claims",
+        "future annual margins/share counts",
+        "independent exit valuation assumptions"
+      ],
+      "automatic_forecast_update": false
+    },
+    {
+      "symbol": "MU",
+      "reported_period": "FY26 Q4",
+      "period_end": "2026-09-03",
+      "unit": "USD billions except EPS",
+      "actual_revenue": 54.229,
+      "operating_margin_same_period": null,
+      "guidance": {
+        "period": "FY27 Q1",
+        "revenue": 61.5,
+        "revenue_tolerance": 1.5,
+        "gaap_gross_margin_pct": 85.95,
+        "non_gaap_gross_margin_pct": 86.25,
+        "gaap_eps": 37.84,
+        "non_gaap_eps": 38.15,
+        "eps_tolerance": 1
+      },
+      "source_ids": [
+        "MU_Q4"
+      ],
+      "mapping": "reference_only",
+      "blocking_inputs": [
+        "verified annual revenue per common share or ETF unit",
+        "comparable recurring earnings basis",
+        "interest/tax/common-share and preferred claims",
+        "future annual margins/share counts",
+        "independent exit valuation assumptions"
+      ],
+      "automatic_forecast_update": false
+    },
+    {
+      "symbol": "000660.KS",
+      "reported_period": "Q3 2026",
+      "period_end": "2026-09-30",
+      "unit": "KRW trillions",
+      "actual_revenue": 104.6155,
+      "operating_margin_same_period": 0.796572209663004,
+      "guidance": {
+        "status": "management_forward_claims_not_verified_outcomes",
+        "investment_next_year": "significant increase planned; scale and timing conditional on demand/profitability",
+        "capacity_LTA_2027_2028": "more than50% according to management",
+        "shortage_through_2030": "management expectation, not fact"
+      },
+      "source_ids": [
+        "SK_Q3_RESULTS"
+      ],
+      "mapping": "reference_only",
+      "blocking_inputs": [
+        "verified annual revenue per common share or ETF unit",
+        "comparable recurring earnings basis",
+        "interest/tax/common-share and preferred claims",
+        "future annual margins/share counts",
+        "independent exit valuation assumptions"
+      ],
+      "automatic_forecast_update": false
+    },
+    {
+      "symbol": "005930.KS",
+      "reported_period": "Q3 preliminary earnings guidance, not full released actuals",
+      "period_end": "2026-09-30",
+      "unit": "KRW trillions",
+      "actual_revenue": null,
+      "operating_margin_same_period": null,
+      "guidance": {
+        "consolidated_revenue": 195,
+        "consolidated_operating_income": 107.4
+      },
+      "source_ids": [
+        "SAMSUNG_GUIDE"
+      ],
+      "mapping": "reference_only",
+      "blocking_inputs": [
+        "verified annual revenue per common share or ETF unit",
+        "comparable recurring earnings basis",
+        "interest/tax/common-share and preferred claims",
+        "future annual margins/share counts",
+        "independent exit valuation assumptions"
+      ],
+      "automatic_forecast_update": false
+    }
+  ],
+  "macro_references": [
+    {
+      "id": "fed_rate",
+      "source_ids": [
+        "FOMC_OCT_ACTUAL_20261028"
+      ],
+      "observation_date": "2026-10-28",
+      "facts": {
+        "target_low_pct": 3.75,
+        "target_high_pct": 4.0,
+        "change_bp": 0,
+        "vote_for": 10,
+        "vote_against": 2
+      },
+      "analysis": "本次维持区间，2位异议者倾向加息25bp。不能把维持利率理解为确定宽松或股市上涨。"
+    },
+    {
+      "id": "cpi",
+      "source_ids": [
+        "CPI_SEP"
+      ],
+      "observation_period": "2026-09",
+      "released": "2026-10-14",
+      "facts": {
+        "headline_yoy_pct": 3.7,
+        "headline_mom_sa_pct": 0.6,
+        "core_yoy_pct": 2.6,
+        "core_mom_sa_pct": 0.3,
+        "energy_yoy_pct": 20.4,
+        "gasoline_mom_pct": 9.1
+      },
+      "analysis": "Headline inflation shock is energy-heavy, while core is milder; Fed cannot be presumed to provide immediate valuation relief."
+    },
+    {
+      "id": "pce",
+      "source_ids": [
+        "PCE_AUG"
+      ],
+      "observation_period": "2026-08",
+      "released": "2026-09-30",
+      "facts": {
+        "headline_yoy_pct": 3.4,
+        "headline_mom_pct": 0.3,
+        "core_yoy_pct": 3,
+        "core_mom_pct": 0.2,
+        "real_consumption_mom_pct": 0.6
+      },
+      "analysis": "Consumption remained strong. September PCE not released yet; scheduled Oct29 08:30EDT."
+    },
+    {
+      "id": "jobs",
+      "source_ids": [
+        "JOBS_SEP"
+      ],
+      "observation_period": "2026-09",
+      "released": "2026-10-02",
+      "facts": {
+        "payroll_change": 29000,
+        "unemployment_pct": 4.2,
+        "prior_12month_mean_payroll_change": 45000,
+        "july_revised_payroll_change": -10000,
+        "august_revised_payroll_change": 133000,
+        "two_month_revision": -60000
+      },
+      "analysis": "Hiring is slow, but headline unemployment alone is not a recession call; GDP remains positive."
+    },
+    {
+      "id": "gdp",
+      "source_ids": [
+        "GDP_Q2",
+        "GDP_CAL"
+      ],
+      "observation_period": "2026Q2_third_estimate",
+      "released": "2026-09-30",
+      "facts": {
+        "real_gdp_qoq_annualized_pct": 2.2,
+        "prior_quarter_revised_pct": 2.5
+      },
+      "analysis": "Q2 positive growth; Q3 advance estimate still upcoming Oct29. Do not cite unreleased Q3 actuals."
+    },
+    {
+      "id": "hy_oas",
+      "source_ids": [
+        "FRED_HY"
+      ],
+      "observation_date": "2026-10-26",
+      "published_update": "2026-10-27T10:13:00-05:00",
+      "facts": {
+        "percent": 3.3,
+        "previous_oct23_percent": 3.38
+      },
+      "analysis": "Latest 1-day narrowing, not proof of systemic all-clear. FRED notes only3years history fromApril2026: old free-full-history assumptions no longer valid."
+    },
+    {
+      "id": "real_yield",
+      "source_ids": [
+        "FRED_REAL"
+      ],
+      "observation_date": "2026-10-23",
+      "published_update": "2026-10-26T15:16:00-05:00",
+      "facts": {
+        "ten_year_real_yield_pct": 2.66
+      },
+      "analysis": "Latest accessible observation lags price cutoff; use explicitly dated. High real discount rate can pressure growth multiples even while earnings rise."
+    },
+    {
+      "id": "industry_sales",
+      "source_ids": [
+        "SIA_AUG"
+      ],
+      "observation_period": "2026-08",
+      "released": "2026-10-05",
+      "facts": {
+        "global_sales_usd_bn": 159.7,
+        "yoy_pct": 144.3,
+        "mom_pct": 8
+      },
+      "basis": "WSTS three-month moving average, nominal sales, not unit volume.",
+      "analysis": "Broad current sales expansion supports industry growth. Mix and pricing mean this is not proof every chip subsegment or end demand is equally healthy."
+    }
+  ],
+  "transmission": {
+    "revenue_guidance": "compare matching period/unit before constructing annual growth path",
+    "capex_depreciation": "affects future margins/cash flow; no mechanical revenue increment",
+    "financing": "interest/preferred claims and share-count dilution; not revenue",
+    "nominal_rates": "Gordon k=nominal risk-free+equity risk premium, chosen scenario only",
+    "credit_spreads": "risk-premium review reference, no one-to-one coefficient",
+    "valuation": "independent terminal EPS times independent terminal PE; not derived from current reference price"
+  },
+  "funds": [
+    {
+      "symbol": "QQQM",
+      "full_fund_forecast_ready": false,
+      "missing": [
+        "verified complete base annual EPS",
+        "complete three-year exit earnings",
+        "independently supported exit PE"
+      ],
+      "available_subset_is_not_full_fund": true
+    },
+    {
+      "symbol": "SMH",
+      "full_fund_forecast_ready": false,
+      "missing": [
+        "verified complete base annual EPS",
+        "complete three-year exit earnings",
+        "independently supported exit PE"
+      ],
+      "available_subset_is_not_full_fund": true
+    },
+    {
+      "symbol": "SOXX",
+      "full_fund_forecast_ready": false,
+      "missing": [
+        "verified complete base annual EPS",
+        "complete three-year exit earnings",
+        "independently supported exit PE"
+      ],
+      "available_subset_is_not_full_fund": true
+    },
+    {
+      "symbol": "DRAM",
+      "full_fund_forecast_ready": false,
+      "missing": [
+        "verified complete base annual EPS",
+        "complete three-year exit earnings",
+        "independently supported exit PE"
+      ],
+      "available_subset_is_not_full_fund": true
+    }
+  ]
+}

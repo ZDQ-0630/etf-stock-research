@@ -1,0 +1,15 @@
+{
+  "model.js": "485b02211349c167d63b3b72d9c0e31c785c41ebe41cf1c428d8633f7e7c2b28",
+  "v6_calc.js": "3513ffe1ead974a5a508ce0b0bdac1c7008493587325844cbb7e245a2d8a1bb0",
+  "app.js": "b2a8dc44716443be34d45954b8ca72fea07db9ad53174a9c1b78cca294c75392",
+  "v8_app.js": "de6c80445ef2837709804b3530f0fa44775d3e83a5a8f2eb6a1bd86aa0d3329e",
+  "reproduce.py": "389f292bbedb6a5699e6cd87f15de35a2c9348a0b8e3c9011787e6a402b28c60",
+  "core_tests.mjs": "b1be1c12c522335e5fa57bae138587e46b23a1a3f0e63fdb7d8ebd1222534ac2",
+  "ui_tests.mjs": "fd33d751c60084dd42027b12108a105781dcdee4c040680acda626cf6b688092",
+  "integration_tests.mjs": "a2223fd13bcbc3b85ebb53966acc45d43d43633f82dc0ea3a8a062bb9f898371",
+  "core_test_results.json": "f9ddcd4f5f9d6173a92c1634e4f2e0ce2d110fb9128b9c67252aa97f1923a9ec",
+  "ui_test_results.json": "3c07cafd5343ab11a38651ee24222950018bbb049d18fbf7dc4bfca2b29230b8",
+  "integration_test_results.json": "eeb45423a506f02042f3648e444a0f891d9c1be791af21011c27ffb642f3a2f2",
+  "evidence_map.json": "3ad76a786e6d8752ee193ea79f02eeee6bf32a5dd719adbf93b7bada55cf1e1e",
+  "core_notes.md": "9080400cc35ed2baf827eafedafcfcc098b336b5598845ed0197ade2a77cd0c1"
+}
