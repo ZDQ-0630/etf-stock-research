@@ -39,7 +39,7 @@
     ]
   },
   "ui_test_results.json": {
-    "run_at": "2026-10-28T16:53:29.611Z",
+    "run_at": "2026-10-29T03:13:49.311Z",
     "core_algorithm_version": "absolute-earnings-periods-v8",
     "tests": 23,
     "checks": [

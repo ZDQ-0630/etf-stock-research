@@ -1,0 +1,2 @@
+# Preserve snapshot bytes so SHA256 also works after Git clone.
+* -text
