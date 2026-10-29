@@ -1,0 +1,154 @@
+"""Pure, import-safe numerical functions. No network or file writes on import."""
+from __future__ import annotations
+import json
+from pathlib import Path
+import numpy as np
+import pandas as pd
+
+
+def load_chart(path, cutoff, allow_nonpositive=False):
+    d=json.loads(Path(path).read_text(encoding='utf-8'))['chart']['result'][0]
+    q=d['indicators']['quote'][0]
+    f=pd.DataFrame({k:q[k]for k in ['open','high','low','close','volume']},index=pd.to_datetime(d['timestamp'],unit='s',utc=True).tz_convert(None).normalize())
+    f['adj']=d['indicators'].get('adjclose',[{}])[0].get('adjclose',q['close'])
+    f=f.loc[:pd.Timestamp(cutoff)].sort_index()
+    if f.index.has_duplicates:raise ValueError('Duplicate dates')
+    f=f.dropna(subset=['open','close','adj'])
+    if not allow_nonpositive and (f[['open','close','adj']]<=0).any().any():raise ValueError('Nonpositive prices')
+    f['aopen']=f.open if allow_nonpositive else f.open*f.adj/f.close
+    return f
+
+
+def state_frame(f):
+    x=f.copy()
+    x['peak']=x.close.cummax()
+    x['dd']=x.close/x.peak-1
+    x['dd252']=x.close/x.close.rolling(252,min_periods=252).max()-1
+    x['vol20']=x.adj.pct_change(fill_method=None).rolling(20).std()*np.sqrt(252)
+    x['ma200']=x.close.rolling(200).mean()
+    x['bin']=pd.cut((-x.dd).round(12),bins=[-1e-12,.05,.10,.15,.20,1.01],labels=['0–5%','5–10%','10–15%','15–20%','20%+'],right=False).astype(str)
+    return x
+
+
+def calendar_endpoint(index,start,years=3,months=0):
+    target=index[start]+pd.DateOffset(years=years,months=months)
+    k=int(index.searchsorted(target,side='left'))
+    return k if k<len(index)else None
+
+
+def monthly_entries(index,start,n=6):
+    base=index[start+1]if start+1<len(index)else None
+    if base is None:return None
+    out=[]
+    for month in range(n):
+        k=int(index.searchsorted(base+pd.DateOffset(months=month)))
+        if k>=len(index):return None
+        out.append(k)
+    return out
+
+
+def nonoverlap(candidates,endpoints):
+    selected=[];last=-1
+    for start in candidates:
+        end=endpoints[start]if isinstance(endpoints,dict)else endpoints[start]
+        if end is not None and start>last:selected.append(int(start));last=int(end)
+    return selected
+
+
+def cash_growth(index,rates,start,end):
+    if end<start:raise ValueError('End before start')
+    if end==start:return 1.
+    r=np.asarray(rates,dtype=float)[start:end]
+    if not np.isfinite(r).all():return None
+    days=np.diff(index[start:end+1].values).astype('timedelta64[D]').astype(float)
+    factors=1+r*days/365.
+    if (factors<=0).any():raise ValueError('Invalid cash rate')
+    return float(np.prod(factors))
+
+
+def wealth(f,start,end,buy_indices,rates,cost_bps=5,fixed_fee=0,capital=3000):
+    """Equal principal sleeves, interest retained in each sleeve until its buy.
+
+    Buy cash outlay=units*P*(1+c)+fixed_fee. Sell proceeds=units*P*(1-c)-fixed_fee.
+    Capital unit is USD; output factor can be scaled to SGD only under an explicit FX assumption.
+    """
+    if not 0<=start<=end<len(f):return None
+    if any(b<=start or b>end for b in buy_indices):return None
+    c=cost_bps/10000.
+    if not 0<=c<1 or capital<=0 or fixed_fee<0:raise ValueError('Invalid budget/cost')
+    idx=f.index;path=np.zeros(end-start+1);units=[]
+    last_cash=max(buy_indices)if buy_indices else end
+    rr=np.asarray(rates,dtype=float)[start:last_cash]
+    if not np.isfinite(rr).all():return None
+    days=np.diff(idx[start:last_cash+1].values).astype('timedelta64[D]').astype(float)
+    increments=1+rr*days/365
+    if (increments<=0).any():raise ValueError('Invalid cash rate')
+    cash=np.r_[1.,np.cumprod(increments)]
+    if not buy_indices:
+        path=capital*cash
+    else:
+        allocation=capital/len(buy_indices)
+        for b in buy_indices:
+            g=float(cash[b-start])
+            if allocation*g<=fixed_fee:return None
+            u=(allocation*g-fixed_fee)/(float(f.aopen.iloc[b])*(1+c));units.append(u)
+            path[:b-start]+=allocation*cash[:b-start]
+            path[b-start:]+=u*f.adj.iloc[b:end+1].to_numpy()
+        path[-1]=path[-1]*(1-c)-fixed_fee
+    peak=np.maximum.accumulate(np.r_[capital,path]);dd=np.r_[capital,path]/peak-1
+    return {'wealth':float(path[-1]/capital),'terminal_money':float(path[-1]),'buy_units':units,'cash_left':float(path[-1])if not buy_indices else 0.,'max_drawdown':float(dd.min()),'path':path}
+
+
+def forward_labels(f,horizon):
+    """Close-only further downside from today's level; no price forecast."""
+    n=len(f);close=f.close.to_numpy();adj=f.adj.to_numpy();out=[]
+    for i in range(n):
+        end=i+horizon
+        if end>=n:break
+        future=close[i+1:end+1];upper=np.flatnonzero(future>=close[i]*1.05);lower=np.flatnonzero(future<=close[i]*.95)
+        first='upper_first'if len(upper)and(not len(lower)or upper[0]<lower[0])else('lower_first'if len(lower)else'neither')
+        out.append({'i':i,'end':end,'further_low':float(min(0,future.min()/close[i]-1)),'close_return':float(close[end]/close[i]-1),'adjusted_return':float(adj[end]/adj[i]-1),'barrier':first})
+    return out
+
+
+def distribution(values):
+    a=np.asarray([x for x in values if x is not None],dtype=float);a=a[np.isfinite(a)]
+    if not len(a):return None
+    q=np.quantile(a,[.1,.25,.5,.75,.9])
+    return {'n':len(a),'mean':float(a.mean()),'p10':float(q[0]),'p25':float(q[1]),'median':float(q[2]),'p75':float(q[3]),'p90':float(q[4])}
+
+
+def scenario_return(current_pe,growth,terminal_pe,years=3):
+    if current_pe<=0 or terminal_pe<=0 or years<=0 or growth<=-1:return None
+    factor=(1+growth)**years*terminal_pe/current_pe
+    return {'capital_factor':factor,'annualized_capital_return':factor**(1/years)-1,'scope':'Only the supplied, comparable earnings basket. Excludes dividends, fees, FX, taxes, future reconstitution.'}
+
+
+def lagged_source(series,calendar,lag_sessions=1,max_age_days=7):
+    """As-of merge, explicit source dates and age. Never backfill from future."""
+    series=series.dropna().sort_index()
+    expanded=series.index.union(calendar).sort_values()
+    values=series.reindex(expanded).ffill().reindex(calendar).shift(lag_sessions)
+    dates=pd.Series(series.index,index=series.index).reindex(expanded).ffill().reindex(calendar).shift(lag_sessions)
+    age=pd.Series((calendar-dates).dt.days.to_numpy(),index=calendar)
+    values=values.where(age<=max_age_days)
+    return pd.DataFrame({'value':values,'source_date':dates,'age_days':age},index=calendar)
+
+
+def first_condition_entry(f,start,condition,wait=63):
+    """Condition is an as-of series. Missing later data cannot invalidate an earlier fill."""
+    if not np.isfinite(condition.iloc[start]):return None
+    for j in range(start,min(start+wait,len(f)-1)+1):
+        v=condition.iloc[j]
+        if pd.notna(v)and bool(v):return j+1
+    return None
+
+
+def condition_entry_status(f,start,condition,wait=63):
+    """Earliest entry is unknown if a signal observation before it is missing."""
+    for j in range(start,min(start+wait,len(f)-2)+1):
+        value=condition.iloc[j]
+        if pd.isna(value):return {'status':'unobservable','entry':None}
+        if bool(value):return {'status':'triggered','entry':j+1}
+    if start+wait+1>=len(f):return {'status':'unmatured','entry':None}
+    return {'status':'not_triggered','entry':None}

@@ -1,0 +1,21 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>V7固定版本审阅入口</title><style>body{max-width:1000px;margin:40px auto;padding:20px;font:16px/1.8 sans-serif}li,pre{overflow-wrap:anywhere;white-space:pre-wrap}a{color:#206f5d}</style><h1>V7固定版本审阅入口</h1><p>算法 declared-earnings-periods-v7 · 快照 v7-c87c0745092b7c30</p><p><a href="../../review-response.html">V7回应页</a> · <a href="V7_READ_FIRST.md">V7起读说明</a> · <a href="V7_REVIEW_ALL.md">单文件源码审阅文本</a> · <a href="manifest.json">完整SHA256清单</a></p><pre># ETF V7 审阅起点
+
+当前算法：declared-earnings-periods-v7。
+v6_calc.js 保留兼容文件名，包含V7新增约束与事件编号；不是旧V6算法。
+当前 v6_calc.js 原始字节 SHA256：b3a085a05abacd581ac4d09391a1b51e0826974f368945087f2d8124efa4840a
+固定审阅快照：v7-c87c0745092b7c30。文件哈希核对原始下载字节，不要先转换换行或编码。
+
+请先审阅 v6_calc.js、app.js、model.js、v7_episodes.py、v7_calendar_tilt.py。
+两份 *_tests.py 可检查Python事件及EPS形状规格。reproduce.py 是纯标准库价格图复现。
+data/ 包含本次冻结的事件计数、形状诊断和测试记录。
+Python诊断脚本还依赖V6/V3模块及原始行情，完整离线重跑仍需要此前完整复现包；单文件文本不是完整运行环境。
+
+图表复现：python reproduce.py --input data.json --symbol QQQM --horizon 3y
+根网站data.json是冻结2026-10-26收盘的图表数据。不是当前报价，不含完整历史策略重跑输入。
+V5/V6报告和原v6_calc_archived.js.txt是历史对照，不要当作当前实现。
+
+当前修改：增长、倍数、目标年化、EPS默认留空；必须声明盈利分母和对应期间；浅回撤从峰值锚点编号并区分恢复状态；年度EPS保持年度总额的期内形状敏感性；主审阅表不突出条件均值差。
+限制：标签与日期检查不能核实手填盈利的真实性。完整基金EPS、三年退出盈利、真实季度季节性、外部独立验证仍缺失。测试通过不代表投资有效。所有前瞻输出均为条件假设，不是底部信号。
+
+请分别报告实际读过、运行过、外部核实过和未完成的部分。每个错误给出文件/函数、反例、影响和修复建议。不要把相同规格的交叉复算叫作外部独立审计。
+</pre><ul><li><a href="model.js.txt">model.js</a> · 485b02211349c167d63b3b72d9c0e31c785c41ebe41cf1c428d8633f7e7c2b28</li><li><a href="v6_calc.js.txt">v6_calc.js</a> · b3a085a05abacd581ac4d09391a1b51e0826974f368945087f2d8124efa4840a</li><li><a href="app.js.txt">app.js</a> · b625896b94d9d68d9061e368e7b90d415f9c585c2a74f9906e7e5aeb25d76a7d</li><li><a href="reproduce.py.txt">reproduce.py</a> · 389f292bbedb6a5699e6cd87f15de35a2c9348a0b8e3c9011787e6a402b28c60</li><li><a href="v7_episodes.py.txt">v7_episodes.py</a> · 6028f62e15cb3f9834aaaa97206b65e91835bbef7368da409bee344a52fdb467</li><li><a href="v7_episodes_tests.py.txt">v7_episodes_tests.py</a> · 403741c2a4514820e5891066ab7698ffecebec7e68acaef4cdc15efbf42a5062</li><li><a href="v7_calendar_tilt.py.txt">v7_calendar_tilt.py</a> · 4f36ca73ddd702e39f256effd8368a9e7646176e3104ab1f913d4788893b6278</li><li><a href="v7_calendar_tilt_tests.py.txt">v7_calendar_tilt_tests.py</a> · d1c7f27053cdc7baa4572e38e945671fec275308a7103025a5779e60996ffb0a</li><li><a href="data/episodes_summary.json">data/episodes_summary.json</a> · 3f4790ca4ebd6fc400708b9cc0aa0cf44fca5bfa4f55178206586401dce283e0</li><li><a href="data/calendar_tilt.json">data/calendar_tilt.json</a> · 39ff8af68f456906d2449d6f5e506f74b26ef0c9476ad5fa2c6b0dac25baa97c</li><li><a href="data/checks.json">data/checks.json</a> · 7d4dc8123c8d192b00d7c5f3fb243ab14dbb5686ffd92283a07c6885fd2d3792</li><li><a href="V7_READ_FIRST.md">V7_READ_FIRST.md</a> · 0012e85781eb225e572b5bf9fb3ba57e209ca960ed67462b4d3507168c8cdbc4</li><li><a href="manifest.json">manifest.json</a> · 413b17df53d056d2b9affe9677ecda11aa0cc1de934791bcf57904bd6a9ec0fd</li></ul></html>

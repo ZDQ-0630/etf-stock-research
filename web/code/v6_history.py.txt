@@ -1,0 +1,171 @@
+"""Frozen, descriptive current-state diagnostics; no fitted entry signal.
+
+Uses unadjusted closes consistently for labels and outcomes. It does not alter
+the V3 execution backtest or claim that current growth assumptions are validated.
+"""
+from pathlib import Path
+from datetime import datetime,timezone
+import json,hashlib,math,random,argparse
+import numpy as np
+import pandas as pd
+
+ROOT=Path(__file__).resolve().parent
+SYMBOLS=['QQQ','QQQM','SMH','SOXX','SPY','VOO','VUG','DRAM']
+LABELS=['0–5%','5–10%','10–15%','15–20%','20%+']
+SEED=20261028
+PERMUTATIONS=199
+
+def bucket(drawdown):
+    loss=round(-float(drawdown),12)
+    return 0 if loss<.05 else 1 if loss<.10 else 2 if loss<.15 else 3 if loss<.20 else 4
+
+def summary(values):
+    x=np.asarray(values,dtype=float);x=x[np.isfinite(x)]
+    if not len(x):return {'n':0,'mean':None,'p10':None,'median':None,'p90':None,'min':None,'max':None}
+    return {'n':int(len(x)),'mean':float(x.mean()),'p10':float(np.quantile(x,.1)),
+            'median':float(np.quantile(x,.5)),'p90':float(np.quantile(x,.9)),
+            'min':float(x.min()),'max':float(x.max())}
+
+def load_close(symbol,config):
+    relative=config.get('input_chart_paths',{}).get(symbol,('v3/raw/'if symbol in ['VOO','VUG']else'v2/raw/')+f'yahoo_{symbol}.json')
+    path=ROOT/relative;raw=json.loads(path.read_text(encoding='utf8'))['chart']['result'][0]
+    dates=pd.to_datetime(raw['timestamp'],unit='s',utc=True).tz_convert(None).normalize()
+    close=pd.Series(raw['indicators']['quote'][0]['close'],index=dates,dtype=float)
+    if close.index.has_duplicates:raise ValueError(symbol+': duplicate source dates')
+    invalid=int((~np.isfinite(close)|(close<=0)).sum());close=close[np.isfinite(close)&(close>0)].sort_index().loc[:config['asof']]
+    if symbol=='SMH':close=close.loc['2011-12-20':]
+    if close.empty:raise ValueError(symbol+': no close data')
+    return close,{'path':relative,'sha256':hashlib.sha256(path.read_bytes()).hexdigest(),
+                  'start':str(close.index[0].date()),'end':str(close.index[-1].date()),
+                  'rows':len(close),'invalid_close_rows_excluded':invalid,
+                  'basis':'price_only_unadjusted_close_no_distributions',
+                  'history_policy':'SMH restricted to VanEck history from2011-12-20; no predecessor or proxy splice'if symbol=='SMH'else'Own ETF history only; no proxy/index splice'}
+
+def episodes(index,prices,drawdowns):
+    """First >=5% decline from the running high through recovery of that high.
+
+    The trigger-to-recovery interval is one descriptive cluster. A long unrecovered
+    decline can contain several economic shocks; a cluster is not an IID trial.
+    Days before the5%trigger remain outside the cluster, including quiet near-high
+    states. Recovery day belongs to the cluster before it is closed.
+    """
+    assignments=np.full(len(prices),-1,dtype=int);out=[];active=None;peak_i=0
+    for i,p in enumerate(prices):
+        if active is None and drawdowns[i]<=-.05+1e-12:
+            active=len(out);out.append({'id':active,'trigger_date':str(index[i].date()),
+                'trigger_index':i,'preceding_peak_date':str(index[peak_i].date()),
+                'preceding_peak_price':float(prices[peak_i]),'recovery_date':None,
+                'recovery_index':None,'closed_asof_cutoff':False})
+        if active is not None:
+            assignments[i]=active
+            if p>=out[active]['preceding_peak_price']-1e-10:
+                out[active].update(recovery_date=str(index[i].date()),recovery_index=i,closed_asof_cutoff=True);active=None
+        if p>=prices[peak_i]:peak_i=i
+    return assignments,out
+
+def endpoints(index,horizon):
+    n=len(index)
+    if isinstance(horizon,int):return np.arange(n,dtype=int)+horizon
+    return np.array([index.searchsorted(date+pd.DateOffset(years=3),side='left')for date in index],dtype=int)
+
+def greedy_nonoverlap(ids,ends):
+    last=-1;chosen=[]
+    for i in ids:
+        if i>last:chosen.append(int(i));last=int(ends[i])
+    return chosen
+
+def mature_scope(ids,ends,returns,signed_lows,episode_ids,episode_table,index):
+    ids=np.asarray(ids,dtype=int);nonoverlap=greedy_nonoverlap(ids,ends)
+    support=sorted(set(int(x)for x in episode_ids[ids]if x>=0));closed=[i for i in support if episode_table[i]['closed_asof_cutoff']]
+    return {'mature_observations':len(ids),'greedy_nonoverlap_windows':len(nonoverlap),
+      'supporting_defined_episodes':len(support),'supporting_closed_episodes_with_mature_windows':len(closed),
+      'supporting_open_episodes_with_mature_windows':len(support)-len(closed),
+      'mature_windows_outside_defined_episodes':int((episode_ids[ids]<0).sum()),
+      'supporting_episode_ids':support,'first_start':str(index[ids[0]].date())if len(ids)else None,
+      'last_start':str(index[ids[-1]].date())if len(ids)else None,
+      'window_price_return':summary(returns[ids]),'window_minimum_signed_return':summary(signed_lows[ids]),
+      'window_maximum_positive_loss':summary(-signed_lows[ids]),
+      'nonoverlap_window_price_return':summary(returns[nonoverlap]),
+      'nonoverlap_window_maximum_positive_loss':summary(-signed_lows[nonoverlap]),
+      'interval_status':'not_estimated_insufficient_closed_support_episodes'if len(closed)<10 else'not_estimated_block_length_and_cluster_weighting_not_registered',
+      'dependence_note':'Episode support and greedy windows are descriptive; neither count is an IID sample size.'}
+
+def immature_scope(ids,ends,prices,index):
+    ids=np.asarray(ids,dtype=int);zero_future=[int(i)for i in ids if i+1>=len(prices)];usable=[int(i)for i in ids if i+1<len(prices)]
+    lows=[min(0.,float(prices[i+1:].min()/prices[i]-1))for i in usable]
+    return {'not_yet_matured_observations':len(ids),'with_observed_future_prices':len(usable),
+      'without_any_future_observation':len(zero_future),
+      'observed_positive_loss_lower_bound':summary([-x for x in lows]),
+      'observed_signed_minimum_return_upper_bound':summary(lows),
+      'first_start':str(index[usable[0]].date())if usable else None,
+      'last_start_with_observed_future':str(index[usable[-1]].date())if usable else None,
+      'observed_future_sessions':summary([len(prices)-1-i for i in usable]),
+      'semantics':'Final maximum positive loss is >= observed positive loss. Final signed minimum return is <= observed signed minimum; the latter is an upper bound, not a lower bound. No completed terminal return is imputed.'}
+
+def placebo(labels,current_label,mature_ids,returns,losses,shifts):
+    overall_return=float(returns[mature_ids].mean())if len(mature_ids)else None
+    overall_loss=float(losses[mature_ids].mean())if len(mature_ids)else None
+    rdiff=[];ldiff=[];counts=[]
+    for shift in shifts:
+        shifted=np.roll(labels,shift);chosen=mature_ids[shifted[mature_ids]==current_label]
+        if not len(chosen):continue
+        counts.append(len(chosen));rdiff.append(float(returns[chosen].mean())-overall_return);ldiff.append(float(losses[chosen].mean())-overall_loss)
+    return {'method':'Fixed-seed circular shift of all drawdown bucket labels; outcomes and mature dates unchanged',
+      'requested_rotations':len(shifts),'usable_rotations':len(rdiff),'shifted_condition_counts':summary(counts),
+      'conditional_minus_unconditional_mean_price_return':summary(rdiff),
+      'conditional_minus_unconditional_mean_positive_loss':summary(ldiff),
+      'status':'descriptive_placebo_range_not_confidence_interval_no_p_value',
+      'caveat':'Rotation preserves label runs except one wrap boundary. Time trends and nonstationarity remain; this is not a deployable signal or a randomization proof.'}
+
+def diagnose(symbol,config,symbol_order):
+    close,source=load_close(symbol,config);index=close.index;prices=close.to_numpy();n=len(close)
+    peak=np.maximum.accumulate(prices);dd=prices/peak-1;labels=np.array([bucket(x)for x in dd],dtype=int);current=int(labels[-1])
+    episode_ids,episode_table=episodes(index,prices,dd)
+    rng=random.Random(SEED+symbol_order);shifts=rng.sample(range(1,n),min(PERMUTATIONS,n-1))
+    result={'symbol':symbol,'source':source,'current':{'date':str(index[-1].date()),'close':float(prices[-1]),
+      'drawdown':float(dd[-1]),'bin':LABELS[current],'running_peak':float(peak[-1])},
+      'defined_episode_count':len(episode_table),'closed_episode_count':sum(e['closed_asof_cutoff']for e in episode_table),
+      'episodes':episode_table,'permutation_seed':SEED+symbol_order,'permutation_offsets_sessions':shifts,'horizons':[]}
+    all_positions=np.arange(n);date_period=np.array(index>=pd.Timestamp('2020-01-01'))
+    for h in [63,126,252,'3calendar']:
+        end=endpoints(index,h);mature=np.flatnonzero(end<n);ret=np.full(n,np.nan);low=np.full(n,np.nan)
+        for i in mature:
+            ret[i]=prices[end[i]]/prices[i]-1;low[i]=min(0.,float(prices[i+1:end[i]+1].min()/prices[i]-1))
+        cond=mature[labels[mature]==current];all_immature=all_positions[end>=n];cond_immature=all_immature[labels[all_immature]==current]
+        def pair(mids):
+            cids=mids[labels[mids]==current];a=mature_scope(mids,end,ret,low,episode_ids,episode_table,index);c=mature_scope(cids,end,ret,low,episode_ids,episode_table,index)
+            return {'conditional_current_bin':c,'unconditional_same_available_history':a,
+              'conditional_minus_unconditional_mean_price_return':c['window_price_return']['mean']-a['window_price_return']['mean']if len(cids)and len(mids)else None,
+              'conditional_minus_unconditional_mean_positive_loss':c['window_maximum_positive_loss']['mean']-a['window_maximum_positive_loss']['mean']if len(cids)and len(mids)else None}
+        row={'horizon':h,'endpoint_rule':'First available session on or after the third calendar anniversary'if h=='3calendar'else f'{h} subsequent available daily close observations',
+          **pair(mature),'immature_conditional_current_bin':immature_scope(cond_immature,end,prices,index),
+          'immature_unconditional':immature_scope(all_immature,end,prices,index),
+          'by_start_period':{'before2020':pair(mature[~date_period[mature]]),'from2020':pair(mature[date_period[mature]])},
+          'label_rotation_placebo':placebo(labels,current,mature,ret,-low,shifts)}
+        result['horizons'].append(row)
+    return result
+
+def build(config_path=None):
+    config=json.loads(Path(config_path or ROOT/'v3_config.json').read_text(encoding='utf8'));items=[];unavailable=[]
+    for i,symbol in enumerate(SYMBOLS):
+        try:items.append(diagnose(symbol,config,i))
+        except (OSError,ValueError,KeyError)as e:unavailable.append({'symbol':symbol,'reason':str(e)})
+    result={'schema':'v6.history_diagnostics.v1','built_at':datetime.now(timezone.utc).isoformat(),
+      'price_cutoff':config['asof'],'protocol':{
+        'purpose':'Descriptive conditional-vs-unconditional risk information; no fitted entry rule or bottom forecast',
+        'price_basis':'Unadjusted close for BOTH running-peak state and outcomes; no dividends, costs or FX in this diagnostic',
+        'maturity':'Complete endpoints only in final-outcome distributions; incomplete paths reported separately as loss bounds',
+        'episode_definition':'First running-peak decline >=5% until first recovery of that preceding peak, inclusive; quiet pre-trigger days outside episodes',
+        'episode_dependence':'A long episode can include several economic shocks, and outcomes may cross later episodes. No IID crisis count is claimed.',
+        'permutation_seed':SEED,'seed_policy':'Base seed plus zero-based position in fixed symbol order QQQ,QQQM,SMH,SOXX,SPY,VOO,VUG,DRAM; exact offsets saved per symbol','permutation_count':PERMUTATIONS,'permutation_policy':'Uniform sample without replacement of nonzero circular shifts of ALL bucket labels; same offsets used across horizons within each symbol',
+        'ci_policy':'No intervals estimated in this diagnostic. Fewer than10 closed supporting episodes forbids CI;10 is only a necessary screening threshold, not proof of independence or sufficient bootstrap design.',
+        'oos_status':'Retrospective exploratory; no untouched out-of-sample claim',
+        'proxy_policy':'Own ETF histories only, no splicing; sparse/new funds stay sparse. Existing V3 long-index studies remain separate.',
+        'decision_scope':'Does not validate new company growth, valuation, tax, expenses or a3year forward forecast; does not replace the separate V3 executable strategy comparison.'},
+      'series':items,'unavailable':unavailable}
+    out=ROOT/'v6/history_diagnostics.json';out.parent.mkdir(exist_ok=True);out.write_text(json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False),encoding='utf8')
+    print(json.dumps({'series':len(items),'rows':sum(len(x['horizons'])for x in items),'unavailable':unavailable}))
+    return result
+
+if __name__=='__main__':
+    p=argparse.ArgumentParser();p.add_argument('--config');a=p.parse_args();build(a.config)

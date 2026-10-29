@@ -1,0 +1,48 @@
+import assert from 'node:assert/strict';
+import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import {createContext,runInContext} from 'node:vm';
+import {resolve} from 'node:path';
+
+const context=createContext({window:{ResearchMath:{}}});
+const coreSource=readFileSync(resolve('sites/etf-research/src/v6_calc.js'),'utf8');
+runInContext(coreSource,context);
+const M=context.window.ResearchMath,checks=[];
+function test(name,fn){fn();checks.push(name)}
+function near(a,b,tolerance=1e-10){assert.ok(Number.isFinite(a)&&Number.isFinite(b)&&Math.abs(a-b)<=tolerance*Math.max(1,Math.abs(b)),`${a} != ${b}`)}
+function fails(fn){assert.throws(fn)}
+const base={budget:3000,entry:100,reference:100,years:3,fx0:1.28,fx1:1.28,bps:5,fee:1,fx_bps:10,cash_rate:0,shock:-.3,dividend:0,withholding:null,fund_fee:.0035,fee_mode:'deduct',valuation_basis:'ntm',valuation_date:'2026-10-26',price_date:'2026-10-26',context_mode:'historical',evidence_date:null,base_start:'2026-10-26',base_end:'2027-10-26',terminal_start:'2029-10-26',terminal_end:'2030-10-26',base_eps:5,terminal_eps:8,terminal_pe:20,hurdle:.1,source_note:'人工输入的独立退出盈利和估值情景，不构造市场事实'};
+test('Absolute exit price equals independent EPS times PE',()=>{const r=M.scenarioAbsolute(base);near(r.gross_target,160);near(r.target,160*.9965**3);assert.equal(r.valuation_model,'absolute_terminal_eps_pe')});
+test('Changing terminal EPS independently changes target and entry bound',()=>{const a=M.scenarioAbsolute(base),b=M.scenarioAbsolute({...base,terminal_eps:16});near(b.gross_target,2*a.gross_target);near(b.maxEntry,2*a.maxEntry);assert.equal(b.terminal_pe,a.terminal_pe)});
+test('Changing reference price does not rederive exit PE or terminal price',()=>{const a=M.scenarioAbsolute(base),b=M.scenarioAbsolute({...base,reference:200});near(b.gross_target,a.gross_target);near(b.maxEntry,a.maxEntry);near(b.base_pe,2*a.base_pe);assert.equal(b.terminal_pe,20)});
+test('Changing base EPS does not cancel an independent terminal EPS input',()=>{const r=M.scenarioAbsolute({...base,base_eps:10});near(r.gross_target,160);near(r.earnings_factor,.8);near(r.base_pe,10)});
+test('Absolute mode ignores invalid legacy relative-growth inputs',()=>{const r=M.scenarioAbsolute({...base,g1:NaN,growth:NaN,multiple:NaN});near(r.gross_target,160)});
+test('Missing fund fee cannot silently become zero',()=>{const x={...base};delete x.fund_fee;fails(()=>M.scenarioAbsolute(x));fails(()=>M.scenarioV6({...x,g1:.2,growth:.1,multiple:.9}))});
+test('Prototype fund fee is not an explicitly supplied input',()=>{const x=Object.assign(Object.create({fund_fee:.0035}),base);delete x.fund_fee;fails(()=>M.scenarioAbsolute(x))});
+test('Explicit zero fee is allowed as an assumption',()=>{near(M.scenarioAbsolute({...base,fund_fee:0}).target,160)});
+test('Embedded expense mode does not deduct fund fee twice',()=>{near(M.scenarioAbsolute({...base,fee_mode:'embedded'}).target,160)});
+test('Current mode requires same price and valuation date',()=>{fails(()=>M.scenarioAbsolute({...base,context_mode:'current',price_date:'2026-10-25'}));assert.equal(M.scenarioAbsolute({...base,context_mode:'current'}).date_alignment.price_age_days,0)});
+test('Historical mode permits at most seven prior calendar days',()=>{const x={...base,valuation_date:'2026-11-02',base_start:'2026-11-02',base_end:'2027-11-02',terminal_start:'2029-11-02',terminal_end:'2030-11-02'};assert.equal(M.scenarioAbsolute(x).date_alignment.price_age_days,7);fails(()=>M.scenarioAbsolute({...x,price_date:'2026-10-25'}))});
+test('Future or missing price dates are rejected',()=>{fails(()=>M.scenarioAbsolute({...base,price_date:'2026-10-27'}));const x={...base};delete x.price_date;fails(()=>M.scenarioAbsolute(x))});
+test('Missing evidence date stays unverified rather than inferred from price date',()=>{const r=M.scenarioAbsolute(base);assert.equal(r.evidence_date,null);assert.equal(r.evidence_status,'unverified')});
+test('Explicit future evidence date is rejected',()=>{fails(()=>M.scenarioAbsolute({...base,evidence_date:'2026-10-27'}))});
+test('A declared past date is not mislabeled independently verified',()=>{const r=M.scenarioAbsolute({...base,evidence_date:'2026-10-25'});assert.equal(r.evidence_status,'declared_date_not_independently_verified')});
+test('Wrong earnings windows remain blocked',()=>{fails(()=>M.scenarioAbsolute({...base,terminal_end:'2030-10-27'}));fails(()=>M.scenarioAbsolute({...base,base_start:'2026-10-25'}))});
+test('Nonpositive terminal EPS cannot be PE-valued',()=>{for(const terminal_eps of[0,-1])fails(()=>M.scenarioAbsolute({...base,terminal_eps}))});
+test('Derived PE and target overflow cannot leak Infinity',()=>{fails(()=>M.scenarioAbsolute({...base,base_eps:Number.MIN_VALUE}));fails(()=>M.scenarioAbsolute({...base,terminal_eps:Number.MAX_VALUE}));fails(()=>M.scenarioV6({...base,g1:1e308,growth:1e308,multiple:1}))});
+test('Maximum fractional entry solves the same cash-flow hurdle with fees and dividends',()=>{const x={...base,dividend:2,withholding:.3,cash_rate:.02,fx1:1.33};const r=M.scenarioAbsolute(x),q=M.scenarioAbsolute({...x,entry:r.maxEntry});near(q.fractional.annualized,.1)});
+test('Required terminal EPS and PE each solve the hurdle independently',()=>{const x={...base,dividend:2,withholding:.3,cash_rate:.02};const r=M.scenarioAbsolute(x);near(M.scenarioAbsolute({...x,terminal_eps:r.reverse.required_terminal_eps}).fractional.annualized,.1);near(M.scenarioAbsolute({...x,terminal_pe:r.reverse.required_terminal_pe}).fractional.annualized,.1)});
+test('Legacy relative API is retained and explicitly versioned as sensitivity',()=>{const r=M.scenarioV6({...base,g1:.2,growth:.1,multiple:.9});near(r.gross_target,130.68);assert.equal(r.valuation_model,'relative_sensitivity_compatibility');assert.match(r.algorithm_version,/v8/)});
+test('Cash remainder and distributions remain USD and include anniversary timing',()=>{const r=M.executionV6({budget:1000,entry:100,target:100,years:3,fx0:1,fx1:1,bps:0,fee:0,fx_bps:0,cash_rate:.1,shock:-.3,dividend:2,withholding:.25});near(r.terminal_sgd,1049.65);assert.equal(r.cash_currency,'USD')});
+test('Zero stock units charge no stock fees and preserve cash interest',()=>{const r=M.executionV6({budget:1000,entry:100,target:120,years:3,fx0:2,fx1:2,bps:0,fee:501,fx_bps:0,cash_rate:.05,shock:-.3,dividend:0,withholding:null},true);assert.equal(r.units,0);near(r.terminal_sgd,1157.625)});
+
+const operating={R0:100,revenue_growth_path:[.1,.2],operating_margin_path:[.2,.25],interest_per_share:2,tax_rate:.2,other_recurring_per_share:1,share_factor_path:[1.1,1.2]};
+test('Operating bridge derives EPS from revenue margin interest tax and cumulative dilution',()=>{const r=M.operatingBridgeV8(operating);near(r.years[0].eps_usd,16.8/1.1);near(r.terminal_eps,25.6/1.2);near(r.valuation_eps,25.6/1.2);assert.equal(r.eps_type,'conditional_common_eps_proxy')});
+test('Negative and zero EPS remain unavailable for PE without fabricated zero',()=>{const r=M.operatingBridgeV8({...operating,revenue_growth_path:[0],operating_margin_path:[-.1],share_factor_path:[1],interest_per_share:2,other_recurring_per_share:0});near(r.terminal_eps,-12);assert.equal(r.valuation_eps,null);assert.equal(r.pe_valuation_available,false);assert.equal(r.years[0].tax_per_base_share_usd,0)});
+test('Intermediate loss is preserved even if terminal earnings recover',()=>{const r=M.operatingBridgeV8({...operating,revenue_growth_path:[0,0],operating_margin_path:[-.1,.2],share_factor_path:[1,1],interest_per_share:0,other_recurring_per_share:0});near(r.years[0].eps_usd,-10);near(r.terminal_eps,16);assert.equal(r.years[0].pe_valuation_available,false);assert.equal(r.pe_valuation_available,true)});
+test('Operating inputs are explicit and mismatched paths rejected',()=>{const x={...operating};delete x.interest_per_share;fails(()=>M.operatingBridgeV8(x));fails(()=>M.operatingBridgeV8({...operating,share_factor_path:[1]}));fails(()=>M.operatingBridgeV8({...operating,share_factor_path:[0,1]}))});
+test('Operating revenue or EPS overflow cannot produce output',()=>{fails(()=>M.operatingBridgeV8({...operating,R0:Number.MAX_VALUE}));fails(()=>M.operatingBridgeV8({...operating,share_factor_path:[Number.MIN_VALUE,1]}))});
+test('Normalized earnings must be annualized at the valuation date',()=>{fails(()=>M.scenarioAbsolute({...base,valuation_basis:'normalized',base_start:'2050-01-01',base_end:'2051-01-01',terminal_start:'2053-01-01',terminal_end:'2054-01-01'}));const r=M.scenarioAbsolute({...base,valuation_basis:'normalized',base_start:'2025-10-26',base_end:'2026-10-26',terminal_start:'2028-10-26',terminal_end:'2029-10-26'});assert.ok(r.target>0)});
+const report={status:'passed',checks:checks.length,version:M.SCENARIO_VERSION,executed_at:new Date().toISOString(),core_file:'sites/etf-research/src/v6_calc.js',core_sha256:createHash('sha256').update(coreSource).digest('hex'),checks_run:checks};
+mkdirSync('v8',{recursive:true});writeFileSync('v8/core_test_results.json',JSON.stringify(report,null,2));
+console.log(JSON.stringify(report));

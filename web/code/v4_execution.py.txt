@@ -1,0 +1,48 @@
+"""Cash-conserving single-position execution scenarios, not a price forecast."""
+import math
+
+def execute(budget=3000,entry=100,target=120,years=3,fx0=1.28,fx1=1.28,
+            bps=5,fee=1,fx_bps=10,cash_rate=0,integer=True,shock=-.30):
+    vals=[budget,entry,target,years,fx0,fx1,bps,fee,fx_bps,cash_rate,shock]
+    if not all(math.isfinite(v) for v in vals):raise ValueError('Nonfinite inputs')
+    if min(budget,entry,target,years,fx0,fx1)<=0 or years>100 or not 0<=bps<10000 or not 0<=fx_bps<10000 or fee<0 or cash_rate<=-1 or not -1<shock<=0:
+        raise ValueError('Invalid assumptions')
+    spread=fx_bps/10000;c=bps/10000;usd=budget*(1-spread)/fx0
+    affordable=max(0,(usd-fee)/(entry*(1+c)))
+    units=math.floor(affordable) if integer else affordable
+    buy_fee=fee if units>0 else 0
+    cash=usd-units*entry*(1+c)-buy_fee
+    # Construct an explicit stress path, not an inferred maximum drawdown forecast.
+    steps=max(4,math.ceil(years*4));points=[]
+    fractions=sorted(set([k/steps for k in range(steps+1)]+[1/3]))
+    for fraction in fractions:
+        t=years*fraction
+        if fraction<=1/3:price=entry*(1+shock)**(fraction*3)
+        else:price=entry*(1+shock)*(target/(entry*(1+shock)))**((fraction-1/3)*1.5)
+        cash_t=cash*(1+cash_rate)**t
+        fx=fx0*(fx1/fx0)**fraction
+        value=(units*price+cash_t)*fx
+        if fraction==1:value=((units*target*(1-c)-fee if units>0 else 0)+cash_t)*fx1*(1-spread)
+        points.append({'year':t,'price':price,'cash_usd':cash_t,'usdsgd':fx,'wealth_sgd':value})
+    terminal=points[-1]['wealth_sgd'];peak=budget;dd=0
+    for point in points:
+        peak=max(peak,point['wealth_sgd']);dd=min(dd,point['wealth_sgd']/peak-1)
+    return {'units':units,'initial_usd':usd,'cash_usd':cash,'invested_usd':units*entry,
+            'terminal_sgd':terminal,'annualized':(terminal/budget)**(1/years)-1 if terminal>0 else None,
+            'path_max_drawdown':dd,'path':points,'scope':'Sampled manual stress path, explicitly including the assumed asset-price trough; not a continuous-time portfolio drawdown forecast. FX interpolates geometrically. No dividends/taxes; no trading fees when zero shares. Cash annual effective rate is assumed.'}
+
+if __name__=='__main__':
+    import json
+    from pathlib import Path
+    cases=[]
+    for integer in [True,False]:
+        for fee in [0,1,5]:
+            for fx1 in [1.1,1.28,1.5]:
+                for fx_bps in [0,10]:
+                    inputs={'integer':integer,'fee':fee,'fx1':fx1,'fx_bps':fx_bps};cases.append({'inputs':inputs,'result':execute(**inputs)})
+    for integer in [True,False]:
+        for years in [3.5,4]:
+            inputs={'integer':integer,'years':years,'budget':1000,'entry':100,'target':100,'fx0':1,'fx1':1,'fee':0,'bps':0,'fx_bps':0}
+            cases.append({'inputs':inputs,'result':execute(**inputs)})
+    Path('v4').mkdir(exist_ok=True)
+    Path('v4/execution_cases.json').write_text(json.dumps(cases,indent=2),encoding='utf8')

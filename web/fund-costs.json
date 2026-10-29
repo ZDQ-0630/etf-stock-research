@@ -1,0 +1,447 @@
+{
+  "schema": "v6.official_fund_costs.v1",
+  "checked_at": "2026-10-28T07:24:36.801105+00:00",
+  "funds": {
+    "QQQM": {
+      "name": "Invesco NASDAQ 100 ETF",
+      "issuer": "Invesco",
+      "expense_ratio": 0.0015,
+      "expense_ratio_pct": 0.15,
+      "fee_type": "total_expense_ratio",
+      "management_fee": 0.0015,
+      "gross_expense_ratio": null,
+      "net_expense_ratio": null,
+      "url": "https://www.invesco.com/us-rest/contentdetail?contentId=5b4d8e58e0737710VgnVCM1000006e36b50aRCRD",
+      "asof": "2026-09-30",
+      "published": "2026-10 month only, document imprint10/26",
+      "verification": "verified_official_factsheet_reopened_and_saved_snapshot_agrees",
+      "local_raw_path": "v2/raw/qqqm_factsheet.pdf",
+      "note": "Fact sheet explicitly states total expense ratio and management fee; do not add the two.",
+      "checked_at": "2026-10-28T07:21:11.520681+00:00",
+      "status": "verified",
+      "source_type": "official_issuer",
+      "local_raw_sha256": "89e8f8bf4aff3083544ca1ae6b504170511ff4fa8f3fcb588235e37bbbda8f87"
+    },
+    "SMH": {
+      "name": "VanEck Semiconductor ETF (US)",
+      "issuer": "VanEck",
+      "expense_ratio": 0.0035,
+      "expense_ratio_pct": 0.35,
+      "fee_type": "total_expense_ratio",
+      "management_fee": null,
+      "gross_expense_ratio": null,
+      "net_expense_ratio": null,
+      "url": "https://www.vaneck.com/us/en/investments/semiconductor-etf-smh/",
+      "asof": null,
+      "published": null,
+      "page_market_data_asof": "2026-10-27",
+      "verification": "verified_official_US_product_page",
+      "note": "US listed SMH, not a same-ticker UCITS fund. Fee effective date not separately displayed; exclusions described on issuer page include interest/trading/taxes and other specified expenses.",
+      "checked_at": "2026-10-28T07:21:11.520681+00:00",
+      "status": "verified",
+      "source_type": "official_issuer"
+    },
+    "SOXX": {
+      "name": "iShares Semiconductor ETF",
+      "issuer": "BlackRock iShares",
+      "expense_ratio": 0.0033,
+      "expense_ratio_pct": 0.33,
+      "fee_type": "expense_ratio_fees_as_stated_in_prospectus",
+      "management_fee": 0.0033,
+      "gross_expense_ratio": null,
+      "net_expense_ratio": null,
+      "url": "https://www.ishares.com/us/products/239705/ishares-phlx-semiconductor-etf",
+      "asof": null,
+      "published": null,
+      "page_market_data_asof": "2026-10-27",
+      "supporting_factsheet_asof": "2026-09-30",
+      "verification": "verified_official_product_page_and_saved_official_factsheet",
+      "local_raw_path": "v2/raw/soxx_factsheet.pdf",
+      "note": "Current official fee is0.33%; older0.34% or0.35% figures not used. Fee effective date not separately displayed.",
+      "checked_at": "2026-10-28T07:21:11.520681+00:00",
+      "status": "verified",
+      "source_type": "official_issuer",
+      "local_raw_sha256": "81b3e6a831e0e98b236ba1bcc27f9dfd516fba80e4de0f368908f045798036e3"
+    },
+    "DRAM": {
+      "name": "Roundhill Memory ETF",
+      "issuer": "Roundhill Investments",
+      "expense_ratio": 0.0065,
+      "expense_ratio_pct": 0.65,
+      "fee_type": "gross_expense_ratio",
+      "management_fee": null,
+      "gross_expense_ratio": 0.0065,
+      "net_expense_ratio": null,
+      "url": "https://www.roundhillinvestments.com/etf/dram/",
+      "asof": null,
+      "published": null,
+      "verification": "verified_official_product_page_FAQ_explicit_gross_annual_ratio",
+      "local_raw_path": "v2/raw/dram_factsheet.pdf",
+      "launch_date": "2026-04-02",
+      "economic_holdings_method": "Issuer states weights combine stocks and total return swaps",
+      "swap_financing_cost_included_in_expense_ratio": null,
+      "transaction_costs_fully_included_in_expense_ratio": null,
+      "swap_financing_and_trading_cost_status": "unverified; no assumption that0.65% is an all-in forward financing/trading cost",
+      "summary_prospectus_access": "Official linked DRAM_Summary_Prospectus.pdf returned timeout in this check",
+      "note": "Historical NAV returns already reflect realized fund economics; do not subtract TER again from ETF history.",
+      "checked_at": "2026-10-28T07:21:11.520681+00:00",
+      "status": "verified",
+      "source_type": "official_issuer",
+      "local_raw_sha256": "b29710467c871439da83240f95ad9d0201a7eb6575204311a4082160a434acdb"
+    },
+    "VOO": {
+      "name": "Vanguard S&P500 ETF",
+      "issuer": "Vanguard",
+      "expense_ratio": 0.0003,
+      "expense_ratio_pct": 0.03,
+      "fee_type": "expense_ratio_as_reported_in_latest_prospectus",
+      "management_fee": null,
+      "gross_expense_ratio": null,
+      "net_expense_ratio": null,
+      "url": "https://workplace.vanguard.com/assets/corp/fund_communications/pdf_publish/us-products/fact-sheet/F0968.pdf",
+      "asof": "2026-09-30",
+      "published": null,
+      "checked_at": "2026-10-28T07:24:36.801105+00:00",
+      "status": "verified",
+      "source_type": "official_issuer",
+      "verification": "verified_official_factsheet_reopened",
+      "note": "Fee as disclosed in latest available official document, not a future fixed-rate guarantee. Historical ETF prices already include fund expenses."
+    },
+    "VUG": {
+      "name": "Vanguard Morningstar Growth ETF",
+      "issuer": "Vanguard",
+      "expense_ratio": 0.0003,
+      "expense_ratio_pct": 0.03,
+      "fee_type": "expense_ratio_as_reported_in_latest_prospectus",
+      "management_fee": null,
+      "gross_expense_ratio": null,
+      "net_expense_ratio": null,
+      "url": "https://workplace.vanguard.com/assets/corp/fund_communications/pdf_publish/us-products/fact-sheet/F0967.pdf",
+      "asof": "2026-09-30",
+      "published": null,
+      "checked_at": "2026-10-28T07:24:36.801105+00:00",
+      "status": "verified",
+      "source_type": "official_issuer",
+      "verification": "verified_official_factsheet_reopened",
+      "note": "Fee as disclosed in latest available official document, not a future fixed-rate guarantee. Historical ETF prices already include fund expenses.",
+      "supporting_fee_change": {
+        "url": "https://investor.vanguard.com/investor-resources-education/news/vanguard-lowers-expense-ratios-long-term-investing",
+        "published": "2026-03-16",
+        "effective": "2026-02-01",
+        "prior_expense_ratio": 0.0004,
+        "new_expense_ratio": 0.0003,
+        "checked_at": "2026-10-28T07:24:36.801105+00:00"
+      },
+      "name_note": "Latest September2026 official fact sheet labels the fund Vanguard Morningstar Growth ETF; do not assume a static historical benchmark."
+    },
+    "QQQ": {
+      "name": "Invesco QQQ ETF",
+      "issuer": "Invesco",
+      "expense_ratio": 0.0018,
+      "expense_ratio_pct": 0.18,
+      "fee_type": "total_expense_ratio",
+      "management_fee": null,
+      "gross_expense_ratio": null,
+      "net_expense_ratio": null,
+      "url": "https://www.invesco.com/qqq-etf/en/home.html",
+      "asof": null,
+      "published": null,
+      "checked_at": "2026-10-28T07:24:36.801105+00:00",
+      "status": "verified",
+      "source_type": "official_issuer",
+      "verification": "verified_official_QQQ_site_explicit_TER",
+      "note": "Current total expense ratio0.18% verified on official QQQ site; old0.20% not used. Does not add investor commissions or taxes."
+    }
+  },
+  "fee_application_policy": "Deduct forward TER only for a constituent-based gross scenario; historical ETF returns and already-net fund terminal prices must not receive duplicate TER deduction. All fees are current disclosed annual rates, not guarantees of future unchanged fees.",
+  "tax": {
+    "personal_withholding_rate": null,
+    "personal_tax_residency": null,
+    "not_inferred_from": "SGD budget, Singapore location, school or citizenship",
+    "general_NRA_US_source_dividend_rate": 0.3,
+    "general_rule": "General30% or applicable lower treaty rate, subject to status, income classification and valid documentation; not an individual rate determination",
+    "status": "identity_dependent_not_personally_verified",
+    "sources": [
+      {
+        "url": "https://www.irs.gov/individuals/international-taxpayers/federal-income-tax-withholding-and-reporting-on-other-kinds-of-us-source-income-paid-to-nonresident-aliens",
+        "section": "Dividend income",
+        "checked_at": "2026-10-28T07:21:11.520681+00:00"
+      },
+      {
+        "url": "https://www.irs.gov/individuals/international-taxpayers/claiming-tax-treaty-benefits",
+        "checked_at": "2026-10-28T07:21:11.520681+00:00"
+      },
+      {
+        "url": "https://www.irs.gov/instructions/iw8ben",
+        "checked_at": "2026-10-28T07:21:11.520681+00:00"
+      }
+    ]
+  },
+  "three_year_existing_results": {
+    "source": "v3/model/state_distributions.json",
+    "source_sha256": "051d34f00c5616f38b2138d9897a273af2f21d37ba5114122ecfd5ac6b4adf33",
+    "filters": {
+      "horizon": "3calendar",
+      "period": "all",
+      "current_bin": true
+    },
+    "rows": [
+      {
+        "symbol": "SPY",
+        "bin": "0–5%",
+        "horizon": "3calendar",
+        "period": "all",
+        "daily_n": 3582,
+        "nonoverlap_n": 8,
+        "observed_state_days": 4246,
+        "not_yet_matured_days": 664
+      },
+      {
+        "symbol": "QQQ",
+        "bin": "5–10%",
+        "horizon": "3calendar",
+        "period": "all",
+        "daily_n": 563,
+        "nonoverlap_n": 4,
+        "observed_state_days": 679,
+        "not_yet_matured_days": 116
+      },
+      {
+        "symbol": "QQQM",
+        "bin": "5–10%",
+        "horizon": "3calendar",
+        "period": "all",
+        "daily_n": 125,
+        "nonoverlap_n": 1,
+        "observed_state_days": 241,
+        "not_yet_matured_days": 116
+      },
+      {
+        "symbol": "SMH",
+        "bin": "15–20%",
+        "horizon": "3calendar",
+        "period": "all",
+        "daily_n": 167,
+        "nonoverlap_n": 4,
+        "observed_state_days": 236,
+        "not_yet_matured_days": 69
+      },
+      {
+        "symbol": "SOXX",
+        "bin": "20%+",
+        "horizon": "3calendar",
+        "period": "all",
+        "daily_n": 2894,
+        "nonoverlap_n": 7,
+        "observed_state_days": 3002,
+        "not_yet_matured_days": 108
+      },
+      {
+        "symbol": "DRAM",
+        "bin": "20%+",
+        "horizon": "3calendar",
+        "period": "all",
+        "daily_n": 0,
+        "nonoverlap_n": 0,
+        "observed_state_days": 80,
+        "not_yet_matured_days": 80
+      },
+      {
+        "symbol": "VOO",
+        "bin": "0–5%",
+        "horizon": "3calendar",
+        "period": "all",
+        "daily_n": 2291,
+        "nonoverlap_n": 5,
+        "observed_state_days": 2955,
+        "not_yet_matured_days": 664
+      },
+      {
+        "symbol": "VUG",
+        "bin": "5–10%",
+        "horizon": "3calendar",
+        "period": "all",
+        "daily_n": 753,
+        "nonoverlap_n": 6,
+        "observed_state_days": 893,
+        "not_yet_matured_days": 140
+      },
+      {
+        "symbol": "_GSPC",
+        "bin": "0–5%",
+        "horizon": "3calendar",
+        "period": "all",
+        "daily_n": 8325,
+        "nonoverlap_n": 19,
+        "observed_state_days": 8982,
+        "not_yet_matured_days": 657
+      },
+      {
+        "symbol": "_NDX",
+        "bin": "5–10%",
+        "horizon": "3calendar",
+        "period": "all",
+        "daily_n": 1182,
+        "nonoverlap_n": 8,
+        "observed_state_days": 1299,
+        "not_yet_matured_days": 117
+      },
+      {
+        "symbol": "_SP500TR",
+        "bin": "0–5%",
+        "horizon": "3calendar",
+        "period": "all",
+        "daily_n": 5112,
+        "nonoverlap_n": 10,
+        "observed_state_days": 5782,
+        "not_yet_matured_days": 670
+      }
+    ],
+    "count_scope": "Greedy nonoverlapping windows, not independent crisis events or effective sample size",
+    "strategy_comparison_source": "v3/model/comparison_summary.json",
+    "strategy_common_endpoint": "Last planned monthly DCA entry+minimum_calendar_holding_years3, then first available trading session",
+    "wait21_evaluated_all_period": {
+      "SPY": 7,
+      "QQQ": 4,
+      "QQQM": 1,
+      "SMH": 3,
+      "SOXX": 6,
+      "VOO": 4,
+      "VUG": 6
+    },
+    "DRAM_strategy_status": "explicitly skipped, no mature3year comparison",
+    "from2020_rows": [
+      {
+        "symbol": "SPY",
+        "bin": "0–5%",
+        "horizon": "3calendar",
+        "period": "from2020",
+        "daily_n": 401,
+        "nonoverlap_n": 2,
+        "observed_state_days": 1065,
+        "not_yet_matured_days": 664
+      },
+      {
+        "symbol": "QQQ",
+        "bin": "5–10%",
+        "horizon": "3calendar",
+        "period": "from2020",
+        "daily_n": 165,
+        "nonoverlap_n": 2,
+        "observed_state_days": 281,
+        "not_yet_matured_days": 116
+      },
+      {
+        "symbol": "QQQM",
+        "bin": "5–10%",
+        "horizon": "3calendar",
+        "period": "from2020",
+        "daily_n": 125,
+        "nonoverlap_n": 1,
+        "observed_state_days": 241,
+        "not_yet_matured_days": 116
+      },
+      {
+        "symbol": "SMH",
+        "bin": "15–20%",
+        "horizon": "3calendar",
+        "period": "from2020",
+        "daily_n": 53,
+        "nonoverlap_n": 2,
+        "observed_state_days": 122,
+        "not_yet_matured_days": 69
+      },
+      {
+        "symbol": "SOXX",
+        "bin": "20%+",
+        "horizon": "3calendar",
+        "period": "from2020",
+        "daily_n": 310,
+        "nonoverlap_n": 2,
+        "observed_state_days": 418,
+        "not_yet_matured_days": 108
+      },
+      {
+        "symbol": "DRAM",
+        "bin": "20%+",
+        "horizon": "3calendar",
+        "period": "from2020",
+        "daily_n": 0,
+        "nonoverlap_n": 0,
+        "observed_state_days": 80,
+        "not_yet_matured_days": 80
+      },
+      {
+        "symbol": "VOO",
+        "bin": "0–5%",
+        "horizon": "3calendar",
+        "period": "from2020",
+        "daily_n": 401,
+        "nonoverlap_n": 2,
+        "observed_state_days": 1065,
+        "not_yet_matured_days": 664
+      },
+      {
+        "symbol": "VUG",
+        "bin": "5–10%",
+        "horizon": "3calendar",
+        "period": "from2020",
+        "daily_n": 97,
+        "nonoverlap_n": 2,
+        "observed_state_days": 237,
+        "not_yet_matured_days": 140
+      },
+      {
+        "symbol": "_GSPC",
+        "bin": "0–5%",
+        "horizon": "3calendar",
+        "period": "from2020",
+        "daily_n": 400,
+        "nonoverlap_n": 2,
+        "observed_state_days": 1057,
+        "not_yet_matured_days": 657
+      },
+      {
+        "symbol": "_NDX",
+        "bin": "5–10%",
+        "horizon": "3calendar",
+        "period": "from2020",
+        "daily_n": 166,
+        "nonoverlap_n": 2,
+        "observed_state_days": 283,
+        "not_yet_matured_days": 117
+      },
+      {
+        "symbol": "_SP500TR",
+        "bin": "0–5%",
+        "horizon": "3calendar",
+        "period": "from2020",
+        "daily_n": 447,
+        "nonoverlap_n": 2,
+        "observed_state_days": 1117,
+        "not_yet_matured_days": 670
+      }
+    ]
+  },
+  "cash_and_fx_audit": {
+    "sources": [
+      "v4_execution.py:execute",
+      "sites/etf-research/src/model.js:execution"
+    ],
+    "fx_definition": "SGD per1USD; market currency pair USD/SGD",
+    "C0_definition": "USD remaining after initial SGD-to-USD conversion and stock purchase costs",
+    "double_conversion_found": false,
+    "label_ambiguity_found": true,
+    "scope": "Read-code review, not a fresh execution oracle or full brokerage ledger audit"
+  },
+  "history_basis_audit": {
+    "state_drawdown_basis": "Unadjusted close running peak in v3_engine.state_frame and browser ResearchMath.states",
+    "further_low_basis": "Unadjusted close in V3 forward_labels,3calendar branch,and browser distribution",
+    "forward_price_return_basis": "Unadjusted close",
+    "separate_forward_adjusted_return": "V3 records adjusted_return separately",
+    "strategy_performance_basis": "Vendor-adjusted open aopen and adjusted close adj in v3_engine.wealth",
+    "state_basis_mismatch_found": false,
+    "scope": "Read code and frozen artifacts; not a full raw-data independent audit or rerun",
+    "required_disclosure": "Price state/risk and adjusted strategy performance are different metrics; do not label them as identical returns."
+  }
+}

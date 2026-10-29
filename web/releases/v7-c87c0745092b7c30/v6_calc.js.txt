@@ -1,0 +1,87 @@
+/* V6 cash-flow specification: FX is SGD for one USD; all remaining cash is USD.
+   Prices and growth are conditional assumptions, not an investment signal. */
+(function(g){'use strict';
+ const M=g.ResearchMath, SCENARIO_VERSION='declared-earnings-periods-v7';
+ function finite(x){return typeof x==='number'&&Number.isFinite(x)}
+ function couponValue(annual,tax,rate,years,at=years){
+  let total=0;
+  for(let k=1;k<=Math.floor(years);k++)if(k<=at+1e-10)total+=annual*(1-tax)*(1+rate)**(at-k);
+  const stub=years-Math.floor(years);
+  if(stub>1e-10&&at>=years-1e-10)total+=annual*stub*(1-tax);
+  return total;
+ }
+ function validate(x){
+  const keys=['budget','entry','target','years','fx0','fx1','bps','fee','fx_bps','cash_rate','shock','dividend'];
+  if(!keys.every(k=>finite(x[k]))||Math.min(x.budget,x.entry,x.target,x.years,x.fx0,x.fx1)<=0||x.years>20||x.bps<0||x.bps>=10000||x.fx_bps<0||x.fx_bps>=10000||x.fee<0||x.cash_rate<=-1||x.shock<=-1||x.shock>0||x.dividend<0)throw Error('请检查价格、资金、年数、费用与分红；FX表示1美元对应的新元数');
+  if(x.withholding!==null&&(!finite(x.withholding)||x.withholding<0||x.withholding>1))throw Error('分红预扣率须为0–100%，不清楚时留空');
+  if(x.dividend>0&&x.withholding===null)throw Error('已加入现金分红，请先填写适用的假设预扣率；不能根据SGD计价推断税务居民');
+ }
+ function executionV6(input,integer=false){
+  const x={dividend:0,withholding:null,...input};validate(x);
+  const f=x.fx_bps/10000,c=x.bps/10000,usd=x.budget*(1-f)/x.fx0;
+  const affordable=Math.max(0,(usd-x.fee)/(x.entry*(1+c))),units=integer?Math.floor(affordable):affordable;
+  const cash=Math.max(0,usd-units*x.entry*(1+c)-(units>0?x.fee:0));
+  const tax=x.withholding??0,dividendValue=couponValue(x.dividend,tax,x.cash_rate,x.years);
+  const steps=Math.max(4,Math.ceil(x.years*4)),points=Array.from({length:steps+1},(_,k)=>k/steps);
+  points.push(1/3);for(let k=1;k<=Math.floor(x.years);k++)points.push(k/x.years);
+  let peak=x.budget,dd=0;
+  const path=[...new Set(points)].sort((a,b)=>a-b).map(frac=>{
+   const t=x.years*frac,price=frac<=1/3?x.entry*(1+x.shock)**(frac*3):x.entry*(1+x.shock)*(x.target/(x.entry*(1+x.shock)))**((frac-1/3)*1.5);
+   const cashT=cash*(1+x.cash_rate)**t+units*couponValue(x.dividend,tax,x.cash_rate,x.years,t),fx=x.fx0*(x.fx1/x.fx0)**frac;
+   let value=(units*price+cashT)*fx;
+   if(frac===1)value=((units>0?units*x.target*(1-c)-x.fee:0)+cashT)*x.fx1*(1-f);
+   peak=Math.max(peak,value);dd=Math.min(dd,value/peak-1);
+   return {year:t,price,wealth_sgd:value,cash_usd:cashT};
+  });
+  const terminal=path.at(-1).wealth_sgd;
+  if(!Number.isFinite(terminal))throw Error('参数使计算超出范围');
+  return {units,cash_usd:cash,cash_currency:'USD',initial_usd:usd,dividend_per_unit_at_T_usd:dividendValue,terminal_sgd:terminal,annualized:terminal>0?(terminal/x.budget)**(1/x.years)-1:null,path_max_drawdown:dd,path,sale_fee_exceeds_stock_proceeds:units>0&&x.fee>units*x.target*(1-c)};
+ }
+ function scenarioV6(input){
+  const x={dividend:0,withholding:null,fund_fee:0,fee_mode:'deduct',valuation_basis:'unverified',...input};
+  if(!['reference','g1','growth','multiple','hurdle','fund_fee'].every(k=>finite(x[k]))||x.reference<=0||x.g1<=-1||x.growth<=-1||x.multiple<=0||x.hurdle<=-1||x.fund_fee<0||x.fund_fee>=1||x.years<3||x.years>20||!['deduct','embedded'].includes(x.fee_mode))throw Error('需要有效的基金年费率与3–20年情景；盈利增速须大于−100%');
+  if(!['ttm','ntm','normalized'].includes(x.valuation_basis))throw Error('先声明TTM、NTM或归一化盈利分母；未确认时不输出买价');
+  for(const k of ['valuation_date','base_start','base_end','terminal_start','terminal_end'])if(!M.validDate(x[k]))throw Error('需填写估值日及基准/退出盈利窗口，末日不含');
+  if(!Number.isInteger(x.years))throw Error('V7盈利窗口目前要求整数持有年数');
+  if(addYears(x.base_start,1)!==x.base_end||addYears(x.base_start,x.years)!==x.terminal_start||addYears(x.base_end,x.years)!==x.terminal_end)throw Error('盈利窗口须为一日历年，退出窗口须整体平移持有年数');
+  if(x.valuation_basis==='ntm'&&x.base_start!==x.valuation_date)throw Error('NTM窗口必须从估值日开始');
+  if(x.valuation_basis==='ttm'&&x.base_end!==x.valuation_date)throw Error('TTM窗口末日必须为估值日');
+  if(!finite(x.base_eps)||x.base_eps<=0||typeof x.source_note!=='string'||!x.source_note.trim())throw Error('需填写同一基金份额口径的基准EPS及来源/假设说明；局部持仓EPS不可代填');
+  if(x.valuation_basis==='normalized'&&x.source_note.trim().length<12)throw Error('归一化盈利需说明周期期间和调整方法');
+  const earnings=(1+x.g1)*(1+x.growth)**(x.years-1),gross=x.reference*earnings*x.multiple,expense=x.fee_mode==='embedded'?1:(1-x.fund_fee)**x.years,target=gross*expense;
+  const v={...x,target},fractional=executionV6(v,false),integer=executionV6(v,true),f=x.fx_bps/10000,c=x.bps/10000;
+  const required=x.budget*(1+x.hurdle)**x.years/(x.fx1*(1-f)),dividend=fractional.dividend_per_unit_at_T_usd;
+  if(!Number.isFinite(required)||required<=0)throw Error('目标回报或持有年数超出可计算范围');
+  const requiredUnits=(required+x.fee)/(target*(1-c)+dividend),maxEntry=fractional.initial_usd>x.fee?(fractional.initial_usd-x.fee)/(requiredUnits*(1+c)):null;
+  if(maxEntry!==null&&(!Number.isFinite(maxEntry)||maxEntry<=0))throw Error('参数使条件买价超出可计算范围');
+  let reverse={status:'no_stock_exposure'};
+  if(fractional.units>0){
+   const q=fractional.units,net=Math.max(0,(required-fractional.cash_usd*(1+x.cash_rate)**x.years-q*dividend+x.fee)/(q*(1-c))),needFactor=(net/expense)/(x.reference*x.multiple);
+   reverse={status:'conditional_breakpoint',required_net_target:net,required_gross_target:net/expense,required_earnings_factor:needFactor,required_uniform_growth:needFactor**(1/x.years)-1,required_later_growth:(needFactor/(1+x.g1))**(1/(x.years-1))-1,required_multiple:(net/expense)/(x.reference*earnings)};
+  }
+  return {base_eps:x.base_eps,base_pe:x.reference/x.base_eps,terminal_eps:x.base_eps*earnings,terminal_pe:x.reference/x.base_eps*x.multiple,valuation_basis:x.valuation_basis,base_window:[x.base_start,x.base_end],terminal_window:[x.terminal_start,x.terminal_end],target,gross_target:gross,expense_factor:expense,maxEntry,fractional,integer,reverse,earnings_factor:earnings,scope:x.dividend>0?'Conditional cash dividends and price, using user-assumed withholding':'Conditional capital-price return; distributions omitted',decision_status:'not_decision_ready',algorithm_version:SCENARIO_VERSION};
+ }
+ function addYears(date,n){const [y,m,d]=date.split('-').map(Number),year=y+n,last=new Date(Date.UTC(year,m,0)).getUTCDate();return `${year}-${String(m).padStart(2,'0')}-${String(Math.min(d,last)).padStart(2,'0')}`}
+ function endIndex(rows,i,h){if(h!=='3y')return i+Number(h);const target=addYears(rows[i][0],3);let a=i+1,b=rows.length;while(a<b){const c=(a+b)>>1;if(rows[c][0]<target)a=c+1;else b=c}return a}
+ function episodeLabels(prices){
+  const assignments=prices.map(()=>-1),episodes=[];let peak=prices[0],anchor=0,active=null;
+  prices.forEach((v,i)=>{if(active===null){if(v>=peak){peak=v;anchor=i;return}active=episodes.length;episodes.push({anchor,recovery:null,recovered:false});for(let j=anchor;j<=i;j++)assignments[j]=active}
+   else if(v>=peak){Object.assign(episodes[active],{recovery:i,recovered:true});active=null;peak=v;anchor=i}else assignments[i]=active});
+  return {assignments,episodes};
+ }
+ function distributionV6(rows,h=126){
+  if(h!=='3y'&&(!Number.isInteger(h)||h<1))throw Error('前向窗口无效');
+  const states=M.states(rows),current=states.at(-1)?.bin,down=[],returns=[],incomplete=[],supported=new Set();let observed=0,nonoverlap=0,last=-1,episode=0,inEpisode=false;
+  const labels=episodeLabels(rows.map(r=>r[1])),episodes=labels.assignments;
+  let inside=0,outside=0;
+
+  for(let i=0;i<states.length;i++){
+   if(states[i].bin!==current)continue;observed++;const end=endIndex(rows,i,h),observedEnd=Math.min(end,rows.length-1);let low=states[i].close;
+   for(let j=i+1;j<=observedEnd;j++)low=Math.min(low,states[j].close);
+   if(end>=rows.length){incomplete.push({date:rows[i][0],observed_sessions:observedEnd-i,observed_loss_lower_bound:observedEnd>i?Math.max(0,1-low/states[i].close):null});continue}
+   down.push(low/states[i].close-1);returns.push(states[end].close/states[i].close-1);if(episodes[i]>=0){supported.add(episodes[i]);inside++}else outside++;if(i>last){nonoverlap++;last=end}
+  }
+  return {bin:current,n:returns.length,observed,censored:incomplete.length,nonoverlap,episode_count:supported.size,recovered_episode_count:[...supported].filter(k=>labels.episodes[k].recovered).length,open_episode_count:[...supported].filter(k=>!labels.episodes[k].recovered).length,inside_episode_observations:inside,outside_episode_observations:outside,episode_policy:'Any strict decline; retrospective latest-peak anchor to recovery exclusive; counts are not independent samples',downside:[.1,.5,.9].map(p=>M.q(down,p)),returns:[.1,.5,.9].map(p=>M.q(returns,p)),incomplete_recent:incomplete.slice(-10),censored_loss_lower_bound:[.1,.5,.9].map(p=>M.q(incomplete.map(v=>v.observed_loss_lower_bound).filter(v=>v!==null),p)),horizon:h,scope:'price close basis; observed losses in incomplete windows are lower bounds of eventual loss magnitude, not lower bounds of signed return'};
+ }
+ Object.assign(M,{HISTORY_VIEW_VERSION:'any-decline-episodes-v7',SCENARIO_VERSION,episodeLabels,couponValue,executionV6,scenarioV6,distributionV6,calendarEndIndex:endIndex});
+})(typeof window==='undefined'?globalThis:window);

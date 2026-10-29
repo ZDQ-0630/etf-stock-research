@@ -1,0 +1,844 @@
+{
+  "retrieved_at": "2026-10-29 02:22:29 UTC",
+  "forecast_retrievals": "2026-10-28T17:19:51.624936+00:00",
+  "companies": [
+    {
+      "symbol": "NVDA",
+      "name": "NVIDIA",
+      "quote": {
+        "price": 215.38,
+        "date": "2026-10-28",
+        "timestamp": "2026-10-28T20:00:00Z",
+        "session": "常规收盘快照；非当前可执行报价",
+        "post_market": {
+          "last_done": "213.925",
+          "timestamp": "1793231998",
+          "volume": "6338603",
+          "turnover": "1363069359.241",
+          "high": "216.2",
+          "low": "212.68",
+          "prev_close": "215.38"
+        },
+        "source": {
+          "name": "Longbridge行情快照",
+          "url": "https://longbridge.com/en/quote/NVDA.US"
+        }
+      },
+      "actuals": {
+        "period": "FY27 Q2",
+        "unit": "USD billions except EPS",
+        "revenue": 96.221,
+        "operating_income": 63.734,
+        "operating_margin": 0.6623710000935347,
+        "eps": 2.46,
+        "cfo": 24.077,
+        "capex": 2.677,
+        "fcf": 21.341,
+        "source_url": "https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-second-quarter-fiscal-2027/"
+      },
+      "forecasts": [
+        {
+          "start": "2026-02-01",
+          "end": "Jan 2027",
+          "eps_mean": 9.3,
+          "analysts": 17.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/nvda/earnings-forecast"
+        },
+        {
+          "start": "2027-02-01",
+          "end": "Jan 2028",
+          "eps_mean": 15.74,
+          "analysts": 15.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/nvda/earnings-forecast"
+        },
+        {
+          "start": "2028-02-01",
+          "end": "Jan 2029",
+          "eps_mean": 21.82,
+          "analysts": 9.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/nvda/earnings-forecast"
+        },
+        {
+          "start": "2029-02-01",
+          "end": "Jan 2030",
+          "eps_mean": 26.64,
+          "analysts": 3.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/nvda/earnings-forecast"
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "stress",
+          "label": "经营受压",
+          "years": 3,
+          "terminal_eps": 13.092,
+          "terminal_pe": 12,
+          "source_type": "analysis_assumption",
+          "rationale": "以Jan 2029数据商EPS 21.82（9家）为参考，乘0.6，再以最近已结束财年盈利代理三年后退出盈利；未外推年增长。退出PE 12为分析压力假设，非市场共识/公允值；EPS*调整口径及估计asOf仍未知。"
+        },
+        {
+          "id": "reference",
+          "label": "预测锚持平",
+          "years": 3,
+          "terminal_eps": 21.82,
+          "terminal_pe": 18,
+          "source_type": "analysis_assumption",
+          "rationale": "以Jan 2029数据商EPS 21.82（9家）为参考，乘1.0，再以最近已结束财年盈利代理三年后退出盈利；未外推年增长。退出PE 18为分析压力假设，非市场共识/公允值；EPS*调整口径及估计asOf仍未知。"
+        },
+        {
+          "id": "upside",
+          "label": "盈利高于锚",
+          "years": 3,
+          "terminal_eps": 25.093,
+          "terminal_pe": 25,
+          "source_type": "analysis_assumption",
+          "rationale": "以Jan 2029数据商EPS 21.82（9家）为参考，乘1.15，再以最近已结束财年盈利代理三年后退出盈利；未外推年增长。退出PE 25为分析压力假设，非市场共识/公允值；EPS*调整口径及估计asOf仍未知。"
+        }
+      ],
+      "missing": [
+        "预测形成时间asOf未提供，取回时间不代表分析师更新时间。",
+        "数据商EPS调整定义尚未完整勾稽，财年仅精确到月份。",
+        "分析师最高/最低值是分歧范围，不是置信区间。",
+        "分析情景不是概率分布；退出盈利的财年代理不等同三年后NTM",
+        "盘后价格与常规收盘分列；测算使用常规收盘",
+        "经营桥不能自动修复会计/ADR口径或预测asOf"
+      ],
+      "forecast_retrievals": {
+        "longbridge_forecast_eps": "2026-10-28T17:13:23+00:00",
+        "longbridge_consensus": "2026-10-28T17:13:19+00:00",
+        "nasdaq": "2026-10-28T17:15:08.401948+00:00"
+      },
+      "growth_bridge_status": "blocked_definition_or_oneoff_reconciliation"
+    },
+    {
+      "symbol": "MSFT",
+      "name": "Microsoft",
+      "quote": {
+        "price": 531.01,
+        "date": "2026-10-28",
+        "timestamp": "2026-10-28T20:00:01Z",
+        "session": "常规收盘快照；非当前可执行报价",
+        "post_market": {
+          "last_done": "546.389",
+          "timestamp": "1793231999",
+          "volume": "4600807",
+          "turnover": "2514105656.347",
+          "high": "568.03",
+          "low": "529.5",
+          "prev_close": "531.01"
+        },
+        "source": {
+          "name": "Longbridge行情快照",
+          "url": "https://longbridge.com/en/quote/MSFT.US"
+        }
+      },
+      "actuals": {
+        "period": "FY27 Q1",
+        "unit": "USD billions except EPS",
+        "revenue": 92.279,
+        "operating_income": 45.915,
+        "operating_margin": 0.4975671604590427,
+        "eps": 4.92,
+        "cfo": 58.0,
+        "capex": 39.367,
+        "fcf": 18.633,
+        "source_url": "https://www.microsoft.com/en-us/Investor/earnings/FY-2027-Q1/press-release-webcast"
+      },
+      "forecasts": [
+        {
+          "start": "2026-07-01",
+          "end": "Jun 2027",
+          "eps_mean": 19.66,
+          "analysts": 21.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/msft/earnings-forecast"
+        },
+        {
+          "start": "2027-07-01",
+          "end": "Jun 2028",
+          "eps_mean": 23.29,
+          "analysts": 18.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/msft/earnings-forecast"
+        },
+        {
+          "start": "2028-07-01",
+          "end": "Jun 2029",
+          "eps_mean": 28.29,
+          "analysts": 8.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/msft/earnings-forecast"
+        },
+        {
+          "start": "2029-07-01",
+          "end": "Jun 2030",
+          "eps_mean": 33.49,
+          "analysts": 4.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/msft/earnings-forecast"
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "stress",
+          "label": "经营受压",
+          "years": 3,
+          "terminal_eps": 16.974,
+          "terminal_pe": 18,
+          "source_type": "analysis_assumption",
+          "rationale": "以Jun 2029数据商EPS 28.29（8家）为参考，乘0.6，再以最近已结束财年盈利代理三年后退出盈利；未外推年增长。退出PE 18为分析压力假设，非市场共识/公允值；EPS*调整口径及估计asOf仍未知。"
+        },
+        {
+          "id": "reference",
+          "label": "预测锚持平",
+          "years": 3,
+          "terminal_eps": 28.29,
+          "terminal_pe": 24,
+          "source_type": "analysis_assumption",
+          "rationale": "以Jun 2029数据商EPS 28.29（8家）为参考，乘1.0，再以最近已结束财年盈利代理三年后退出盈利；未外推年增长。退出PE 24为分析压力假设，非市场共识/公允值；EPS*调整口径及估计asOf仍未知。"
+        },
+        {
+          "id": "upside",
+          "label": "盈利高于锚",
+          "years": 3,
+          "terminal_eps": 32.5335,
+          "terminal_pe": 30,
+          "source_type": "analysis_assumption",
+          "rationale": "以Jun 2029数据商EPS 28.29（8家）为参考，乘1.15，再以最近已结束财年盈利代理三年后退出盈利；未外推年增长。退出PE 30为分析压力假设，非市场共识/公允值；EPS*调整口径及估计asOf仍未知。"
+        }
+      ],
+      "missing": [
+        "预测形成时间asOf未提供，取回时间不代表分析师更新时间。",
+        "数据商EPS调整定义尚未完整勾稽，财年仅精确到月份。",
+        "分析师最高/最低值是分歧范围，不是置信区间。",
+        "分析情景不是概率分布；退出盈利的财年代理不等同三年后NTM",
+        "盘后价格与常规收盘分列；测算使用常规收盘",
+        "经营桥不能自动修复会计/ADR口径或预测asOf",
+        "年度预测取回早于10月28日财报窗口；不能保证已含最新财报修订。",
+        "MSFT此处FCF为CFO减现金PP&E自算，不包含融资租赁全口径。"
+      ],
+      "forecast_retrievals": {
+        "longbridge_forecast_eps": "2026-10-28T17:17:34+00:00",
+        "longbridge_consensus": "2026-10-28T17:13:23+00:00",
+        "nasdaq": "2026-10-28T17:15:08.402955+00:00"
+      },
+      "growth_bridge_status": "provisional_only_no_verified_same_basis_growth"
+    },
+    {
+      "symbol": "GOOGL",
+      "name": "Alphabet",
+      "quote": {
+        "price": 324.89,
+        "date": "2026-10-28",
+        "timestamp": "2026-10-28T20:00:01Z",
+        "session": "常规收盘快照；非当前可执行报价",
+        "post_market": {
+          "last_done": "292.5",
+          "timestamp": "1793231999",
+          "volume": "13793885",
+          "turnover": "4119006646.937",
+          "high": "327.65",
+          "low": "287.33",
+          "prev_close": "324.89"
+        },
+        "source": {
+          "name": "Longbridge行情快照",
+          "url": "https://longbridge.com/en/quote/GOOGL.US"
+        }
+      },
+      "actuals": {
+        "period": "Q2 2026",
+        "unit": "USD billions",
+        "revenue": 119.796,
+        "operating_income": 40.77,
+        "operating_margin": 0.3403285585495342,
+        "eps": null,
+        "cfo": 39.069,
+        "capex": 44.924,
+        "fcf": -5.855,
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000066/googexhibit991q22026.htm"
+      },
+      "forecasts": [
+        {
+          "start": "2026-01-01",
+          "end": "Dec 2026",
+          "eps_mean": 20.6,
+          "analysts": 18.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/googl/earnings-forecast"
+        },
+        {
+          "start": "2027-01-01",
+          "end": "Dec 2027",
+          "eps_mean": 15.03,
+          "analysts": 18.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/googl/earnings-forecast"
+        },
+        {
+          "start": "2028-01-01",
+          "end": "Dec 2028",
+          "eps_mean": 18.39,
+          "analysts": 11.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/googl/earnings-forecast"
+        },
+        {
+          "start": "2029-01-01",
+          "end": "Dec 2029",
+          "eps_mean": 21.92,
+          "analysts": 2.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/googl/earnings-forecast"
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "stress",
+          "label": "经营受压",
+          "years": 3,
+          "terminal_eps": 11.034,
+          "terminal_pe": 15,
+          "source_type": "analysis_assumption",
+          "rationale": "以Dec 2028数据商EPS 18.39（11家）为参考，乘0.6，再以最近已结束财年盈利代理三年后退出盈利；未外推年增长。退出PE 15为分析压力假设，非市场共识/公允值；EPS*调整口径及估计asOf仍未知。"
+        },
+        {
+          "id": "reference",
+          "label": "预测锚持平",
+          "years": 3,
+          "terminal_eps": 18.39,
+          "terminal_pe": 20,
+          "source_type": "analysis_assumption",
+          "rationale": "以Dec 2028数据商EPS 18.39（11家）为参考，乘1.0，再以最近已结束财年盈利代理三年后退出盈利；未外推年增长。退出PE 20为分析压力假设，非市场共识/公允值；EPS*调整口径及估计asOf仍未知。"
+        },
+        {
+          "id": "upside",
+          "label": "盈利高于锚",
+          "years": 3,
+          "terminal_eps": 21.1485,
+          "terminal_pe": 25,
+          "source_type": "analysis_assumption",
+          "rationale": "以Dec 2028数据商EPS 18.39（11家）为参考，乘1.15，再以最近已结束财年盈利代理三年后退出盈利；未外推年增长。退出PE 25为分析压力假设，非市场共识/公允值；EPS*调整口径及估计asOf仍未知。"
+        }
+      ],
+      "missing": [
+        "预测形成时间asOf未提供，取回时间不代表分析师更新时间。",
+        "数据商EPS调整定义尚未完整勾稽，财年仅精确到月份。",
+        "分析师最高/最低值是分歧范围，不是置信区间。",
+        "分析情景不是概率分布；退出盈利的财年代理不等同三年后NTM",
+        "盘后价格与常规收盘分列；测算使用常规收盘",
+        "经营桥不能自动修复会计/ADR口径或预测asOf",
+        "年度预测取回早于10月28日财报窗口；不能保证已含最新财报修订。"
+      ],
+      "forecast_retrievals": {
+        "longbridge_forecast_eps": "2026-10-28T17:13:19+00:00",
+        "longbridge_consensus": "2026-10-28T17:13:58+00:00",
+        "nasdaq": "2026-10-28T17:15:08.390690+00:00"
+      },
+      "growth_bridge_status": "blocked_definition_or_oneoff_reconciliation"
+    },
+    {
+      "symbol": "AMZN",
+      "name": "Amazon",
+      "quote": {
+        "price": 254.6,
+        "date": "2026-10-28",
+        "timestamp": "2026-10-28T20:00:01Z",
+        "session": "常规收盘快照；非当前可执行报价",
+        "post_market": {
+          "last_done": "253.582",
+          "timestamp": "1793231995",
+          "volume": "2391634",
+          "turnover": "608452671.629",
+          "high": "257.35",
+          "low": "251.75",
+          "prev_close": "254.6"
+        },
+        "source": {
+          "name": "Longbridge行情快照",
+          "url": "https://longbridge.com/en/quote/AMZN.US"
+        }
+      },
+      "actuals": {
+        "period": "Q2 2026",
+        "unit": "USD billions",
+        "revenue": 200.6,
+        "operating_income": 27.5,
+        "operating_margin": 0.1370887337986042,
+        "eps": null,
+        "cfo": null,
+        "capex": null,
+        "fcf": null,
+        "source_url": "https://ir.aboutamazon.com/news-release/news-release-details/2026/Amazon-com-Announces-Second-Quarter-Results/default.aspx"
+      },
+      "forecasts": [
+        {
+          "start": "2026-01-01",
+          "end": "Dec 2026",
+          "eps_mean": 8.0,
+          "analysts": 12.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/amzn/earnings-forecast"
+        },
+        {
+          "start": "2027-01-01",
+          "end": "Dec 2027",
+          "eps_mean": 10.65,
+          "analysts": 17.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/amzn/earnings-forecast"
+        },
+        {
+          "start": "2028-01-01",
+          "end": "Dec 2028",
+          "eps_mean": 14.06,
+          "analysts": 9.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/amzn/earnings-forecast"
+        },
+        {
+          "start": "2029-01-01",
+          "end": "Dec 2029",
+          "eps_mean": 15.71,
+          "analysts": 3.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/amzn/earnings-forecast"
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "stress",
+          "label": "经营受压",
+          "years": 3,
+          "terminal_eps": 8.436,
+          "terminal_pe": 18,
+          "source_type": "analysis_assumption",
+          "rationale": "以Dec 2028数据商EPS 14.06（9家）为参考，乘0.6，再以最近已结束财年盈利代理三年后退出盈利；未外推年增长。退出PE 18为分析压力假设，非市场共识/公允值；EPS*调整口径及估计asOf仍未知。"
+        },
+        {
+          "id": "reference",
+          "label": "预测锚持平",
+          "years": 3,
+          "terminal_eps": 14.06,
+          "terminal_pe": 25,
+          "source_type": "analysis_assumption",
+          "rationale": "以Dec 2028数据商EPS 14.06（9家）为参考，乘1.0，再以最近已结束财年盈利代理三年后退出盈利；未外推年增长。退出PE 25为分析压力假设，非市场共识/公允值；EPS*调整口径及估计asOf仍未知。"
+        },
+        {
+          "id": "upside",
+          "label": "盈利高于锚",
+          "years": 3,
+          "terminal_eps": 16.169,
+          "terminal_pe": 32,
+          "source_type": "analysis_assumption",
+          "rationale": "以Dec 2028数据商EPS 14.06（9家）为参考，乘1.15，再以最近已结束财年盈利代理三年后退出盈利；未外推年增长。退出PE 32为分析压力假设，非市场共识/公允值；EPS*调整口径及估计asOf仍未知。"
+        }
+      ],
+      "missing": [
+        "预测形成时间asOf未提供，取回时间不代表分析师更新时间。",
+        "数据商EPS调整定义尚未完整勾稽，财年仅精确到月份。",
+        "分析师最高/最低值是分歧范围，不是置信区间。",
+        "分析情景不是概率分布；退出盈利的财年代理不等同三年后NTM",
+        "盘后价格与常规收盘分列；测算使用常规收盘",
+        "经营桥不能自动修复会计/ADR口径或预测asOf"
+      ],
+      "forecast_retrievals": {
+        "longbridge_forecast_eps": "2026-10-28T17:17:36+00:00",
+        "longbridge_consensus": "2026-10-28T17:14:01+00:00",
+        "nasdaq": "2026-10-28T17:15:08.460899+00:00"
+      },
+      "growth_bridge_status": "blocked_definition_or_oneoff_reconciliation"
+    },
+    {
+      "symbol": "META",
+      "name": "Meta",
+      "quote": {
+        "price": 612.49,
+        "date": "2026-10-28",
+        "timestamp": "2026-10-28T20:00:00Z",
+        "session": "常规收盘快照；非当前可执行报价",
+        "post_market": {
+          "last_done": "616.189",
+          "timestamp": "1793231997",
+          "volume": "5480352",
+          "turnover": "3360227240.595",
+          "high": "620.5",
+          "low": "612.49",
+          "prev_close": "612.49"
+        },
+        "source": {
+          "name": "Longbridge行情快照",
+          "url": "https://longbridge.com/en/quote/META.US"
+        }
+      },
+      "actuals": {
+        "period": "Q3 2026",
+        "unit": "USD billions",
+        "revenue": 64.601,
+        "operating_income": 12.988,
+        "operating_margin": 0.2010495193572855,
+        "eps": 3.83,
+        "cfo": 32.786,
+        "capex": 33.942,
+        "fcf": -2.12,
+        "source_url": "https://investor.atmeta.com/investor-news/press-release-details/2026/Meta-Reports-Third-Quarter-2026-Results/default.aspx"
+      },
+      "forecasts": [
+        {
+          "start": "2026-01-01",
+          "end": "Dec 2026",
+          "eps_mean": 28.98,
+          "analysts": 10.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/meta/earnings-forecast"
+        },
+        {
+          "start": "2027-01-01",
+          "end": "Dec 2027",
+          "eps_mean": 33.98,
+          "analysts": 17.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/meta/earnings-forecast"
+        },
+        {
+          "start": "2028-01-01",
+          "end": "Dec 2028",
+          "eps_mean": 39.69,
+          "analysts": 10.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/meta/earnings-forecast"
+        },
+        {
+          "start": "2029-01-01",
+          "end": "Dec 2029",
+          "eps_mean": 52.4,
+          "analysts": 4.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/meta/earnings-forecast"
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "stress",
+          "label": "经营受压",
+          "years": 3,
+          "terminal_eps": 23.814,
+          "terminal_pe": 12,
+          "source_type": "analysis_assumption",
+          "rationale": "以Dec 2028数据商EPS 39.69（10家）为参考，乘0.6，再以最近已结束财年盈利代理三年后退出盈利；未外推年增长。退出PE 12为分析压力假设，非市场共识/公允值；EPS*调整口径及估计asOf仍未知。"
+        },
+        {
+          "id": "reference",
+          "label": "预测锚持平",
+          "years": 3,
+          "terminal_eps": 39.69,
+          "terminal_pe": 18,
+          "source_type": "analysis_assumption",
+          "rationale": "以Dec 2028数据商EPS 39.69（10家）为参考，乘1.0，再以最近已结束财年盈利代理三年后退出盈利；未外推年增长。退出PE 18为分析压力假设，非市场共识/公允值；EPS*调整口径及估计asOf仍未知。"
+        },
+        {
+          "id": "upside",
+          "label": "盈利高于锚",
+          "years": 3,
+          "terminal_eps": 45.6435,
+          "terminal_pe": 24,
+          "source_type": "analysis_assumption",
+          "rationale": "以Dec 2028数据商EPS 39.69（10家）为参考，乘1.15，再以最近已结束财年盈利代理三年后退出盈利；未外推年增长。退出PE 24为分析压力假设，非市场共识/公允值；EPS*调整口径及估计asOf仍未知。"
+        }
+      ],
+      "missing": [
+        "预测形成时间asOf未提供，取回时间不代表分析师更新时间。",
+        "数据商EPS调整定义尚未完整勾稽，财年仅精确到月份。",
+        "分析师最高/最低值是分歧范围，不是置信区间。",
+        "分析情景不是概率分布；退出盈利的财年代理不等同三年后NTM",
+        "盘后价格与常规收盘分列；测算使用常规收盘",
+        "经营桥不能自动修复会计/ADR口径或预测asOf"
+      ],
+      "forecast_retrievals": {
+        "longbridge_forecast_eps": "2026-10-28T17:14:03+00:00",
+        "longbridge_consensus": "2026-10-28T17:14:06+00:00",
+        "nasdaq": "2026-10-28T17:15:08.500505+00:00"
+      },
+      "growth_bridge_status": "provisional_only_no_verified_same_basis_growth"
+    },
+    {
+      "symbol": "TSM",
+      "name": "TSMC ADR",
+      "quote": {
+        "price": 439.51,
+        "date": "2026-10-28",
+        "timestamp": "2026-10-28T20:00:00Z",
+        "session": "常规收盘快照；非当前可执行报价",
+        "post_market": {
+          "last_done": "431.09",
+          "timestamp": "1793231997",
+          "volume": "211969",
+          "turnover": "92376410.495",
+          "high": "440.92",
+          "low": "427.5",
+          "prev_close": "439.51"
+        },
+        "source": {
+          "name": "Longbridge行情快照",
+          "url": "https://longbridge.com/en/quote/TSM.US"
+        }
+      },
+      "actuals": {
+        "period": "Q3 2026",
+        "unit": "USD billions",
+        "revenue": 46.72,
+        "operating_income": null,
+        "operating_margin": 0.587,
+        "eps": 4.6,
+        "cfo": null,
+        "capex": null,
+        "fcf": null,
+        "source_url": "https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2026-10/526b65af7305df2dde6b9ece6812b1fdf1e49f9b/3Q26%20EarningsRelease.pdf"
+      },
+      "forecasts": [
+        {
+          "start": "2026-01-01",
+          "end": "Dec 2026",
+          "eps_mean": 17.07,
+          "analysts": 9.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/tsm/earnings-forecast"
+        },
+        {
+          "start": "2027-01-01",
+          "end": "Dec 2027",
+          "eps_mean": 22.44,
+          "analysts": 9.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/tsm/earnings-forecast"
+        },
+        {
+          "start": "2028-01-01",
+          "end": "Dec 2028",
+          "eps_mean": 26.69,
+          "analysts": 3.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/tsm/earnings-forecast"
+        },
+        {
+          "start": "2029-01-01",
+          "end": "Dec 2029",
+          "eps_mean": 24.08,
+          "analysts": 1.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/tsm/earnings-forecast"
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "stress",
+          "label": "经营受压",
+          "years": 3,
+          "terminal_eps": 16.014,
+          "terminal_pe": 12,
+          "source_type": "analysis_assumption",
+          "rationale": "以Dec 2028数据商EPS 26.69（3家）为参考，乘0.6，再以最近已结束财年盈利代理三年后退出盈利；未外推年增长。退出PE 12为分析压力假设，非市场共识/公允值；EPS*调整口径及估计asOf仍未知。"
+        },
+        {
+          "id": "reference",
+          "label": "预测锚持平",
+          "years": 3,
+          "terminal_eps": 26.69,
+          "terminal_pe": 18,
+          "source_type": "analysis_assumption",
+          "rationale": "以Dec 2028数据商EPS 26.69（3家）为参考，乘1.0，再以最近已结束财年盈利代理三年后退出盈利；未外推年增长。退出PE 18为分析压力假设，非市场共识/公允值；EPS*调整口径及估计asOf仍未知。"
+        },
+        {
+          "id": "upside",
+          "label": "盈利高于锚",
+          "years": 3,
+          "terminal_eps": 30.6935,
+          "terminal_pe": 24,
+          "source_type": "analysis_assumption",
+          "rationale": "以Dec 2028数据商EPS 26.69（3家）为参考，乘1.15，再以最近已结束财年盈利代理三年后退出盈利；未外推年增长。退出PE 24为分析压力假设，非市场共识/公允值；EPS*调整口径及估计asOf仍未知。"
+        }
+      ],
+      "missing": [
+        "预测形成时间asOf未提供，取回时间不代表分析师更新时间。",
+        "数据商EPS调整定义尚未完整勾稽，财年仅精确到月份。",
+        "分析师最高/最低值是分歧范围，不是置信区间。",
+        "分析情景不是概率分布；退出盈利的财年代理不等同三年后NTM",
+        "盘后价格与常规收盘分列；测算使用常规收盘",
+        "经营桥不能自动修复会计/ADR口径或预测asOf",
+        "TSM披露EPS为USD/ADS，每ADS=5普通股；台币普通股EPS不可直接混用。"
+      ],
+      "forecast_retrievals": {
+        "longbridge_forecast_eps": "2026-10-28T17:14:08+00:00",
+        "longbridge_consensus": "2026-10-28T17:14:11+00:00",
+        "nasdaq": "2026-10-28T17:15:08.432361+00:00"
+      },
+      "growth_bridge_status": "provisional_only_no_verified_same_basis_growth"
+    },
+    {
+      "symbol": "MU",
+      "name": "Micron",
+      "quote": {
+        "price": 983.23,
+        "date": "2026-10-28",
+        "timestamp": "2026-10-28T20:00:01Z",
+        "session": "常规收盘快照；非当前可执行报价",
+        "post_market": {
+          "last_done": "958.875",
+          "timestamp": "1793231995",
+          "volume": "1235675",
+          "turnover": "1200771303.67",
+          "high": "989.971",
+          "low": "955.67",
+          "prev_close": "983.23"
+        },
+        "source": {
+          "name": "Longbridge行情快照",
+          "url": "https://longbridge.com/en/quote/MU.US"
+        }
+      },
+      "actuals": {
+        "period": "FY26 Q4",
+        "unit": "USD billions except EPS",
+        "revenue": 54.229,
+        "operating_income": null,
+        "operating_margin": null,
+        "eps": 32.87,
+        "cfo": 43.973,
+        "capex": 10.774,
+        "fcf": 33.199,
+        "source_url": "https://investors.micron.com/news/press-release/2026/Micron-Technology-Inc--Reports-Record-Fiscal-Fourth-Quarter-and-Full-Year-2026-Results/",
+        "capex_label": "净资本开支",
+        "fcf_label": "调整后自由现金流"
+      },
+      "forecasts": [
+        {
+          "start": "2026-09-01",
+          "end": "Aug 2027",
+          "eps_mean": 177.03,
+          "analysts": 14.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/mu/earnings-forecast"
+        },
+        {
+          "start": "2027-09-01",
+          "end": "Aug 2028",
+          "eps_mean": 207.57,
+          "analysts": 9.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/mu/earnings-forecast"
+        },
+        {
+          "start": "2028-09-01",
+          "end": "Aug 2029",
+          "eps_mean": 183.07,
+          "analysts": 3.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/mu/earnings-forecast"
+        },
+        {
+          "start": "2029-09-01",
+          "end": "Aug 2030",
+          "eps_mean": 149.79,
+          "analysts": 1.0,
+          "basis": "Nasdaq EPS* GAAP/adjusted definition not specified in response；财年末月份代理，不是实际日历化窗口",
+          "asof": null,
+          "source": "https://www.nasdaq.com/market-activity/stocks/mu/earnings-forecast"
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "stress",
+          "label": "经营受压",
+          "years": 3,
+          "terminal_eps": 109.842,
+          "terminal_pe": 5,
+          "source_type": "analysis_assumption",
+          "rationale": "以Aug 2029数据商EPS 183.07（3家）为参考，乘0.6，再以最近已结束财年盈利代理三年后退出盈利；未外推年增长。退出PE 5为分析压力假设，非市场共识/公允值；EPS*调整口径及估计asOf仍未知。"
+        },
+        {
+          "id": "reference",
+          "label": "预测锚持平",
+          "years": 3,
+          "terminal_eps": 183.07,
+          "terminal_pe": 8,
+          "source_type": "analysis_assumption",
+          "rationale": "以Aug 2029数据商EPS 183.07（3家）为参考，乘1.0，再以最近已结束财年盈利代理三年后退出盈利；未外推年增长。退出PE 8为分析压力假设，非市场共识/公允值；EPS*调整口径及估计asOf仍未知。"
+        },
+        {
+          "id": "upside",
+          "label": "盈利高于锚",
+          "years": 3,
+          "terminal_eps": 210.5305,
+          "terminal_pe": 12,
+          "source_type": "analysis_assumption",
+          "rationale": "以Aug 2029数据商EPS 183.07（3家）为参考，乘1.15，再以最近已结束财年盈利代理三年后退出盈利；未外推年增长。退出PE 12为分析压力假设，非市场共识/公允值；EPS*调整口径及估计asOf仍未知。"
+        }
+      ],
+      "missing": [
+        "预测形成时间asOf未提供，取回时间不代表分析师更新时间。",
+        "数据商EPS调整定义尚未完整勾稽，财年仅精确到月份。",
+        "分析师最高/最低值是分歧范围，不是置信区间。",
+        "分析情景不是概率分布；退出盈利的财年代理不等同三年后NTM",
+        "盘后价格与常规收盘分列；测算使用常规收盘",
+        "经营桥不能自动修复会计/ADR口径或预测asOf",
+        "MU现金流采用公司净资本开支及调整后FCF，不能与其他公司的毛资本开支直接相比。"
+      ],
+      "forecast_retrievals": {
+        "longbridge_forecast_eps": "2026-10-28T17:17:39+00:00",
+        "longbridge_consensus": "2026-10-28T17:13:19+00:00",
+        "nasdaq": "2026-10-28T17:15:08.502536+00:00"
+      },
+      "growth_bridge_status": "provisional_only_no_verified_same_basis_growth"
+    }
+  ],
+  "macro": {
+    "nominal_10y": {
+      "value_pct": 5.0,
+      "observation_date": "2026-10-26",
+      "source": "https://fred.stlouisfed.org/series/DGS10"
+    },
+    "real_10y": {
+      "value_pct": 2.66,
+      "observation_date": "2026-10-26",
+      "source": "https://fred.stlouisfed.org/series/DFII10"
+    },
+    "hy_oas": {
+      "value_pct": 3.18,
+      "observation_date": "2026-10-27",
+      "source": "https://fred.stlouisfed.org/series/BAMLH0A0HYM2"
+    }
+  },
+  "forecast_status": "vendor_estimates_asof_unverified_no_probabilities",
+  "automation": "PAUSED"
+}

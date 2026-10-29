@@ -1,0 +1,133 @@
+"""V7 retrospective drawdown-episode labels; frozen price distributions unchanged.
+
+Every strict fall below the running peak may define an episode. Its interval is
+[latest_peak_anchor, first_recovery), so the recovery observation is never owned
+by the preceding episode. Peak anchors are back-labelled after a drawdown occurs;
+these are descriptive statistical labels, never information for a live signal.
+"""
+from pathlib import Path
+from datetime import datetime,timezone
+import json,math
+import numpy as np
+import pandas as pd
+from v6_history import SYMBOLS,LABELS,load_close,bucket,endpoints,greedy_nonoverlap
+
+ROOT=Path(__file__).resolve().parent
+
+
+def _date(dates,i):
+    return str(pd.Timestamp(dates[i]).date())if dates is not None else None
+
+
+def label_episodes(prices,dates=None):
+    """Return one episode ID per observation, or -1 if outside all episodes.
+
+    Equal peak observations update the anchor to the latest such observation.
+    An anchor is assigned only after a subsequent strict drawdown actually occurs.
+    An open episode has null recovery fields; observed_stop_exclusive is merely
+    the boundary of data currently available, not a predicted recovery.
+    """
+    p=[float(x)for x in prices]
+    if not p or any(not math.isfinite(x)or x<=0 for x in p):raise ValueError('Positive finite prices required')
+    if dates is not None and len(dates)!=len(p):raise ValueError('Date/price length mismatch')
+    n=len(p);owners=[-1]*n;eps=[];peak=p[0];anchor=0;active=None
+    for i,value in enumerate(p):
+        if active is None:
+            if value>=peak:
+                peak=value;anchor=i
+                continue
+            active=len(eps)
+            eps.append({'id':active,'peak_anchor_index':anchor,'peak_anchor_date':_date(dates,anchor),
+                'peak_price':peak,'first_drawdown_index':i,'first_drawdown_date':_date(dates,i),
+                'recovery_index':None,'recovery_date':None,'observed_stop_exclusive':n,'status':'open'})
+            for j in range(anchor,i+1):
+                if owners[j]!=-1:raise AssertionError('Episode intervals must not overlap')
+                owners[j]=active
+        elif value>=peak:
+            eps[active].update(recovery_index=i,recovery_date=_date(dates,i),observed_stop_exclusive=i,status='recovered')
+            # i remains outside the old interval. A later strict fall may make i
+            # the next episode's anchor; a later equal/higher peak supersedes it.
+            active=None;peak=value;anchor=i
+        else:
+            owners[i]=active
+    return {'assignments':owners,'episodes':eps,
+        'episode_count':len(eps),'recovered_episode_count':sum(e['status']=='recovered'for e in eps),
+        'open_episode_count':sum(e['status']=='open'for e in eps),
+        'outside_episode_observations':sum(i<0 for i in owners)}
+
+
+def support_counts(positions,assignments,episodes):
+    ids=[int(i)for i in positions];owners=[assignments[i]for i in ids]
+    support=sorted(set(e for e in owners if e>=0))
+    recovered=[e for e in support if episodes[e]['recovery_index']is not None]
+    opened=[e for e in support if episodes[e]['recovery_index']is None]
+    outside=sum(e<0 for e in owners);inside=len(ids)-outside
+    return {'episode_count':len(support),'recovered_episode_count':len(recovered),'open_episode_count':len(opened),
+        'inside_episode_observations':inside,'outside_episode_observations':outside,
+        'episode_ids':support,'recovered_episode_ids':recovered,'open_episode_ids':opened,
+        'coverage_identity_holds':inside+outside==len(ids),
+        'count_identity_holds':len(recovered)+len(opened)==len(support)}
+
+
+def quantiles(values):
+    x=np.asarray(values,dtype=float);x=x[np.isfinite(x)]
+    if not len(x):return {'n':0,'p10':None,'median':None,'p90':None,'min':None,'max':None}
+    return {'n':int(len(x)),'p10':float(np.quantile(x,.1)),'median':float(np.quantile(x,.5)),
+        'p90':float(np.quantile(x,.9)),'min':float(x.min()),'max':float(x.max())}
+
+
+def diagnose(symbol,config):
+    close,source=load_close(symbol,config);prices=close.to_numpy();index=close.index;n=len(prices)
+    source={**source,'basis':'saved_close_price_only_not_adjclose_no_cash_distributions',
+        'corporate_action_note':'Vendor split/corporate-action treatment was not independently reverified; no claim that close is unadjusted for every corporate action.'}
+    dd=prices/np.maximum.accumulate(prices)-1;bins=np.array([bucket(x)for x in dd]);current=int(bins[-1])
+    labels=label_episodes(prices,index);out={'symbol':symbol,'source':source,
+        'current':{'date':str(index[-1].date()),'close':float(prices[-1]),'drawdown':float(dd[-1]),'bin':LABELS[current],'running_peak':float(np.max(prices))},
+        'all_history_episode_counts':{k:labels[k]for k in ['episode_count','recovered_episode_count','open_episode_count','outside_episode_observations']},
+        'episodes':labels['episodes'],'horizons':[]}
+    for h in [63,126,252,'3calendar']:
+        ends=endpoints(index,h);ids=np.flatnonzero((ends<n)&(bins==current));nonoverlap=greedy_nonoverlap(ids,ends)
+        returns=[float(prices[ends[i]]/prices[i]-1)for i in ids]
+        minimum=[min(0.,float(prices[i+1:ends[i]+1].min()/prices[i]-1))for i in ids]
+        counts=support_counts(ids,labels['assignments'],labels['episodes'])
+        if not counts['coverage_identity_holds']or not counts['count_identity_holds']:raise AssertionError('Episode count coverage failed')
+        out['horizons'].append({'horizon':h,'mature_n':len(ids),'nonoverlap_n':len(nonoverlap),
+            'endpoint_rule':'First available session on or after third calendar anniversary'if h=='3calendar'else f'{h} subsequent available close observations',
+            'first_mature_start':str(index[ids[0]].date())if len(ids)else None,
+            'last_mature_start':str(index[ids[-1]].date())if len(ids)else None,
+            **counts,'price_return_quantiles':quantiles(returns),
+            'minimum_signed_return_quantiles':quantiles(minimum),
+            'maximum_positive_loss_quantiles':quantiles([-x for x in minimum]),
+            'episode_count_interpretation':'Distinct retrospective episodes containing at least one mature current-bin start; includes recovered and open episodes. Not an independent sample count.'})
+    return out
+
+
+def build(write=True):
+    config=json.loads((ROOT/'v3_config.json').read_text(encoding='utf8'));series=[diagnose(s,config)for s in SYMBOLS]
+    result={'schema':'v7.episodes_summary.v1','built_at':datetime.now(timezone.utc).isoformat(),'price_cutoff':config['asof'],
+        'protocol':{'episode_definition':'Any strict drawdown from a running high; [latest equal-or-higher peak anchor, first recovery), half-open',
+            'recovery_boundary':'Recovery observation is excluded from the preceding episode. It can become a later episode anchor only if a subsequent strict decline occurs.',
+            'flat_peaks':'Each equal peak supersedes the anchor until a strict decline; earlier equal-peak observations are not forced into an episode.',
+            'outside_coverage':'Every mature current-bin observation is counted either inside one episode or outside episodes; totals must equal mature_n.',
+            'open_episodes':'Recovery index/date are null. observed_stop_exclusive only describes available observations, not an episode recovery.',
+            'information_time':'Peak anchors are back-labelled after a later decline; episode boundaries are retrospective evaluation labels and must not enter historical signals.',
+            'counts':'episode_count includes recovered and open supported episodes. Neither episodes nor nonoverlap windows are claimed IID independent samples.',
+            'price_basis':'Own ETF saved close, not adjclose, for both current buckets and outcomes; frozen source hashes retained. No proxy splice, cash dividends, fees or FX. Vendor corporate-action treatment not independently reverified.',
+            'unchanged_statistics':'Episode relabelling does not change mature starts, nonoverlap window count or forward price/loss quantiles from V6.',
+            'main_output':'No conditional/unconditional mean difference, p-value, confidence interval or bottom probability is included.'},'series':series}
+    if write:
+        path=ROOT/'v7/episodes_summary.json';path.parent.mkdir(exist_ok=True);path.write_text(json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False),encoding='utf8')
+    return result
+
+
+GOLDEN_CASES=[
+    {'name':'shallow_recovered','prices':[100,99,100],'assignments':[0,0,-1],'anchors':[0],'recoveries':[2]},
+    {'name':'unrecovered','prices':[100,99,98],'assignments':[0,0,0],'anchors':[0],'recoveries':[None]},
+    {'name':'flat_peaks_latest_anchor','prices':[100,100,99,100,100,99],'assignments':[-1,0,0,-1,1,1],'anchors':[1,4],'recoveries':[3,None]},
+    {'name':'continuous_ATH','prices':[100,101,102,103],'assignments':[-1,-1,-1,-1],'anchors':[],'recoveries':[]},
+    {'name':'recovery_is_next_anchor','prices':[100,99,100,99,101],'assignments':[0,0,1,1,-1],'anchors':[0,2],'recoveries':[2,4]},
+    {'name':'last_equal_high_only','prices':[100,101,101,100,101],'assignments':[-1,-1,0,0,-1],'anchors':[2],'recoveries':[4]},
+]
+
+if __name__=='__main__':
+    r=build();print(json.dumps({'series':len(r['series']),'horizons':sum(len(s['horizons'])for s in r['series']),'price_cutoff':r['price_cutoff']}))

@@ -1,0 +1,28 @@
+{
+  "completed": [
+    "stock research UI with source-backed annual estimates and explicit adopted scenarios",
+    "regular/postmarket price separation",
+    "full issuer holdings records",
+    "snapshot and raw-source hashes",
+    "manual update and paused scheduler shown",
+    "failed or missing source state retained"
+  ],
+  "blocked_by_data": [
+    "complete comparable ETF three-year earnings",
+    "estimate formation dates and some accounting bases",
+    "all derivative financing costs"
+  ],
+  "limits": [
+    "no calibrated bottom probability",
+    "steady-state and EPS/PE models remain assumptions",
+    "no independent prospective performance validation"
+  ],
+  "stocks": 7,
+  "annual_estimates": 28,
+  "holdings_records": {
+    "QQQM": 108,
+    "SOXX": 34,
+    "SMH": 27,
+    "DRAM": 25
+  }
+}

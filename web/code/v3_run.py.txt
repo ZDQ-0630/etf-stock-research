@@ -1,0 +1,145 @@
+"""Reproducible V3 state/distribution reference. Current fundamentals live separately.
+Usage: python v3_run.py --config v3_config.json
+"""
+from pathlib import Path
+import json,argparse,hashlib
+import numpy as np
+import pandas as pd
+from v3_engine import load_chart,state_frame,calendar_endpoint,monthly_entries,nonoverlap,wealth,forward_labels,distribution,lagged_source,first_condition_entry
+from v3_engine import condition_entry_status
+
+ROOT=Path(__file__).resolve().parent
+
+def safe(x):
+    if isinstance(x,dict):return {str(k):safe(v)for k,v in x.items()}
+    if isinstance(x,(list,tuple)):return [safe(v)for v in x]
+    if isinstance(x,np.ndarray):return safe(x.tolist())
+    if isinstance(x,(np.integer,)):return int(x)
+    if isinstance(x,(np.bool_,)):return bool(x)
+    if isinstance(x,(float,np.floating)):return float(x)if np.isfinite(x)else None
+    if isinstance(x,(pd.Timestamp,)):return x.isoformat()
+    return x
+
+def run(config):
+    c=json.loads(Path(config).read_text(encoding='utf-8'));out=ROOT/c.get('model_output_dir','v3/model');out.mkdir(parents=True,exist_ok=True)
+    def save(name,obj):(out/name).write_text(json.dumps(safe(obj),ensure_ascii=False,indent=2),encoding='utf-8')
+    save('protocol.json',{'config':c,'status':'Historical exploratory reference, no fitted bottom predictor','primary_price_feature':'Expanding running-peak drawdown, not rolling peak. Allsourcehistories used only up to eachdecision.','research_order':'Current business/macro/valuation/event/positioning lead; history calibrates risk and checks rules, not a claim this AI cycle matches earlier cycles.','comparison':'Primaryfixed21waitvsimmediate; cashandcosts included. DCAand64uniformreturndeferraldelays plus singlemacrofiltersexploratory.','common_endpoint':'LastplannedmonthlyDCAentry+3calendar years; everyonecomparedatsameterminalday; finaltrancheholdsfull3years.','dependence':'All-daily distributions are descriptive and overlapping. Greedychronological nonoverlap counts reported separately, not claimedindependent. No probabilityorconfidenceclaim.','falsifiability':'Protocol frozen after V2 results were seen, before V3 runs; therefore cannot be called untouched out-of-sample.','asof':c['asof']})
+    filenames={s:ROOT/'v2/raw'/f'yahoo_{s}.json'for s in ['SPY','QQQ','QQQM','SMH','SOXX','DRAM']}
+    filenames.update({s:ROOT/'v3/raw'/f'yahoo_{s}.json'for s in ['VOO','VUG','_GSPC','_NDX','_SP500TR']})
+    filenames.update({s:ROOT/p for s,p in c.get('input_chart_paths',{}).items() if s in filenames})
+    series={};quality=[]
+    for symbol,path in filenames.items():
+        f=load_chart(path,c['asof'])
+        if symbol=='SMH':f=f.loc['2011-12-20':]
+        f=state_frame(f);series[symbol]=f
+        quality.append({'symbol':symbol,'start':str(f.index[0].date()),'end':str(f.index[-1].date()),'rows':len(f),'return_type':'price_only_index'if symbol in ['_GSPC','_NDX']else('gross_total_return_index'if symbol=='_SP500TR'else'ETF_vendor_adjusted_total_return'),'raw':str(path.relative_to(ROOT)),'sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'close_outside_range':int(((f.close>f.high+1e-5)|(f.close<f.low-1e-5)).sum())})
+    save('data_quality.json',quality)
+    calendar=pd.DatetimeIndex(sorted(set().union(*(set(f.index)for f in series.values()))))
+    def source_path(sym):return ROOT/c.get('input_chart_paths',{}).get(sym,f'v2/raw/yahoo_{sym}.json')
+    def source(sym):return load_chart(source_path(sym),c['asof'],allow_nonpositive=True).close
+    age_limit=c['source_max_age_calendar_days']
+    tnx=lagged_source(source('_TNX'),calendar,2,age_limit);irx=lagged_source(source('_IRX'),calendar,2,age_limit)
+    vixraw=pd.read_csv(ROOT/c.get('cboe_vix_path','v2/raw/cboe_vix.csv'));vixraw.index=pd.to_datetime(vixraw.DATE)
+    vix=lagged_source(vixraw.CLOSE,calendar,1,age_limit)
+    h=load_chart(source_path('HYG'),c['asof']).adj;i=load_chart(source_path('IEF'),c['asof']).adj
+    hh=lagged_source(h,calendar,0,age_limit).value;ii=lagged_source(i,calendar,0,age_limit).value
+    hr=hh.pct_change(fill_method=None);ir=ii.pct_change(fill_method=None);beta=hr.rolling(126).cov(ir)/ir.rolling(126).var()
+    macro=pd.DataFrame({'rate20':tnx.value.diff(20),'vix5':vix.value.diff(5),'credit20':(hr-beta.shift(1)*ir).rolling(20).sum().shift(1)},index=calendar)
+    # Cash rate is a lagged91day bank-discount conversion, not a tradableTbill totalreturn index.
+    d=irx.value/100;macro['cash_rate']=d/(1-d*91/360)*365/360
+    for k in ['rate20','vix5','credit20']:
+        positive=macro[k]<=0 if k!='credit20'else macro[k]>=0
+        macro[k+'_pass']=positive.astype(float).where(macro[k].notna())
+    macro.to_csv(out/'macro_history.csv',index_label='date')
+    save('macro_latest_proxy.json',macro.iloc[-1].to_dict())
+    save('source_freshness_latest.json',{'tnx':tnx.iloc[-1].to_dict(),'irx':irx.iloc[-1].to_dict(),'vix':vix.iloc[-1].to_dict()})
+    currents=[];risk=[];comparison=[];paired=[]
+    capital=c['budget_sgd']/c['usdsgd_reference']
+    for symbol,f in series.items():
+        print('Analyze '+symbol,flush=True)
+        last=f.iloc[-1];curbin=str(last['bin'])
+        currents.append({'symbol':symbol,'date':str(f.index[-1].date()),'close':last.close,'drawdown_running_peak':last.dd,'drawdown_252':last.dd252,'running_peak':last.peak,'bin':curbin,'ma200':last.ma200,'vol20':last.vol20,'basis':next(x['return_type']for x in quality if x['symbol']==symbol)})
+        for horizon in [63,126,252,'3calendar']:
+            if horizon=='3calendar':
+                records=[]
+                for j in range(0,len(f)-1):
+                    end=calendar_endpoint(f.index,j,years=3)
+                    if end is None:break
+                    future=f.close.iloc[j+1:end+1]
+                    records.append({'i':j,'end':end,'further_low':min(0,float(future.min()/f.close.iloc[j]-1)),'close_return':float(f.close.iloc[end]/f.close.iloc[j]-1),'adjusted_return':float(f.adj.iloc[end]/f.adj.iloc[j]-1)})
+            else:records=forward_labels(f,horizon)
+            rec={r['i']:r for r in records}
+            for b in ['0–5%','5–10%','10–15%','15–20%','20%+']:
+                positions=[j for j in rec if f['bin'].iloc[j]==b]
+                for period in ['all','before2020','from2020']:
+                    pp=[j for j in positions if period=='all'or(period=='before2020'and f.index[j]<pd.Timestamp('2020-01-01'))or(period=='from2020'and f.index[j]>=pd.Timestamp('2020-01-01'))]
+                    selected=nonoverlap(pp,{j:rec[j]['end']for j in pp})
+                    row={'symbol':symbol,'bin':b,'horizon':horizon,'period':period,'daily_n':len(pp),'nonoverlap_n':len(selected),'current_bin':b==curbin}
+                    observed=[j for j in range(len(f))if f['bin'].iloc[j]==b and(period=='all'or(period=='before2020'and f.index[j]<pd.Timestamp('2020-01-01'))or(period=='from2020'and f.index[j]>=pd.Timestamp('2020-01-01')))]
+                    row['observed_state_days']=len(observed);row['not_yet_matured_days']=len(observed)-len(pp)
+                    for scope,ids in [('daily',pp),('nonoverlap',selected)]:
+                        row[scope+'_further_low']=distribution([rec[j]['further_low']for j in ids]);row[scope+'_adjusted_return']=distribution([rec[j]['adjusted_return']for j in ids]);row[scope+'_price_return']=distribution([rec[j]['close_return']for j in ids])
+                    risk.append(row)
+        if symbol.startswith('_')or symbol=='DRAM':continue # indicesare not executableETF histories;DRAMno mature3ycomparison
+        mf=macro.reindex(f.index)
+        # No wholesaleffillofsignals; eachfactoralreadyhaslimitedagealignment.
+        rates=mf.cash_rate
+        candidates=[];endpoints={};schedule={}
+        for j in range(0,len(f)-1):
+            if f['bin'].iloc[j]!=curbin:continue
+            buys=monthly_entries(f.index,j,c['dca_tranches'])
+            if buys is None:continue
+            end=calendar_endpoint(f.index,buys[-1],years=c['minimum_calendar_holding_years'])
+            if end is None:continue
+            if rates.iloc[j:buys[-1]].isna().any():continue
+            candidates.append(j);endpoints[j]=end;schedule[j]=buys
+        # Prefix-safe rule inputs are fixed before return evaluation.
+        for period in ['all','before2020','from2020']:
+            pp=[j for j in candidates if period=='all'or(period=='before2020'and f.index[j]<pd.Timestamp('2020-01-01'))or(period=='from2020'and f.index[j]>=pd.Timestamp('2020-01-01'))]
+            chosen=nonoverlap(pp,endpoints)
+            buckets={k:[]for k in ['immediate','dca6monthly','wait3','wait21','delay_placebo_mean','rate_only','vix_only','credit_only']}
+            for j in chosen:
+                end=endpoints[j]
+                options={'immediate':[j+1],'dca6monthly':schedule[j],'wait3':[j+4],'wait21':[j+1+c['fixed_wait_sessions']]}
+                for name,factor in [('rate_only','rate20_pass'),('vix_only','vix5_pass'),('credit_only','credit20_pass')]:
+                    if pd.isna(mf[factor].iloc[j]):options[name]=None;continue
+                    decision=condition_entry_status(f,j,mf[factor],63)
+                    options[name]=([decision['entry']] if decision['status']=='triggered' else
+                                   [] if decision['status']=='not_triggered' else None)
+                base=wealth(f,j,end,options['immediate'],rates,c['cost_bps_per_trade'],c['fixed_fee_usd_per_order'],capital)
+                if base is None:continue
+                for name,buys in options.items():
+                    if buys is None:continue
+                    w=wealth(f,j,end,buys,rates,c['cost_bps_per_trade'],c['fixed_fee_usd_per_order'],capital)
+                    if w is None:continue
+                    row={'symbol':symbol,'period':period,'date':str(f.index[j].date()),'end':str(f.index[end].date()),'bin':curbin,'strategy':name,'wealth':w['wealth'],'excess':w['wealth']-base['wealth'],'extra_sgd_constant_fx':c['budget_sgd']*(w['wealth']-base['wealth']),'drawdown':w['max_drawdown'],'entered':bool(buys),'wait_after_immediate':buys[0]-j-1 if buys else None,'first_entry':str(f.index[buys[0]].date())if buys else None}
+                    buckets[name].append(row);paired.append(row)
+                placebo=[]
+                for delay in range(c['placebo_delay_sessions'][0],c['placebo_delay_sessions'][1]+1):
+                    w=wealth(f,j,end,[j+1+delay],rates,c['cost_bps_per_trade'],c['fixed_fee_usd_per_order'],capital)
+                    if w is not None:placebo.append(w['wealth'])
+                if placebo:
+                    row={'symbol':symbol,'period':period,'date':str(f.index[j].date()),'end':str(f.index[end].date()),'bin':curbin,'strategy':'delay_placebo_mean','wealth':float(np.mean(placebo)),'excess':float(np.mean(placebo)-base['wealth']),'extra_sgd_constant_fx':c['budget_sgd']*float(np.mean(placebo)-base['wealth']),'entered':True,'delay_n':len(placebo)}
+                    buckets['delay_placebo_mean'].append(row);paired.append(row)
+            # Matched-delay diagnostic preserves eachfilter's observedwait/abstentionmix.
+            # Usesrealizeddelaysretrospectively; not a deployable/out-of-samplestrategy.
+            for name in ['rate_only','vix_only','credit_only']:
+                actual=buckets[name];delays=[r['wait_after_immediate']for r in actual]
+                if not actual:continue
+                matched=[]
+                for row in actual:
+                    j=f.index.get_loc(pd.Timestamp(row['date']));end=endpoints[j];vals=[]
+                    for delay in delays:
+                        w=wealth(f,j,end,[]if delay is None else[j+1+delay],rates,c['cost_bps_per_trade'],c['fixed_fee_usd_per_order'],capital)
+                        if w is not None:vals.append(w['wealth'])
+                    if vals:matched.append(c['budget_sgd']*(row['wealth']-float(np.mean(vals))))
+                comparison.append({'symbol':symbol,'bin':curbin,'period':period,'strategy':name+'_minus_matched_delay','evaluated':len(matched),'extra_sgd_constant_fx':distribution(matched),'label':'Retrospective timing diagnostic, preserves observedwaitandabstentionmix; not prospectiveperformance'})
+            for name,rows in buckets.items():
+                comparison.append({'symbol':symbol,'bin':curbin,'period':period,'strategy':name,'overlapping_candidates':len(pp),'nonoverlap_candidates':len(chosen),'evaluated':len(rows),'entered':sum(r['entered']for r in rows),'excess_factor':distribution([r['excess']for r in rows]),'extra_sgd_constant_fx':distribution([r['extra_sgd_constant_fx']for r in rows]),'wealth':distribution([r['wealth']for r in rows])})
+    save('current_states.json',currents);save('state_distributions.json',risk);save('paired_comparisons.json',paired);save('comparison_summary.json',comparison)
+    pd.DataFrame(paired).to_csv(out/'paired_comparisons.csv',index=False)
+    save('run_summary.json',{'research_date':c['research_date'],'complete_close_cutoff':c['asof'],'series':len(series),'risk_groups':len(risk),'comparison_groups':len(comparison),'paired_rows':len(paired),'budget_sgd':c['budget_sgd'],'current_fx_reference':c['usdsgd_reference'],'usd_budget_illustrative':capital,'risk_policy':'No bottomprobabilityor statisticalexpectedreturn. Currentevidence mustleadthedecision.'})
+    print(json.dumps(safe({'states':currents,'comparisons':[x for x in comparison if x['symbol']in['SPY','QQQ']and x['period']=='all']}),ensure_ascii=False,indent=2))
+
+if __name__=='__main__':
+    parser=argparse.ArgumentParser();parser.add_argument('--config',default=str(ROOT/'v3_config.json'));args=parser.parse_args();run(args.config)

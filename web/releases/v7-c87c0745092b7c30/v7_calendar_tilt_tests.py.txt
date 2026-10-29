@@ -1,0 +1,111 @@
+"""Specifications for mass-preserving within-year EPS shape sensitivity."""
+from copy import deepcopy
+from datetime import date
+import math
+import unittest
+from v6_calendar import calendarize, company_panel, aggregate_pair
+from v7_calendar_tilt import linear_density, linear_mass, exponential_mass, shape_window, company_shapes, fund_shapes
+
+
+def annual(month, year, eps, count=5):
+    return {'period': f'{month} {year}', 'eps_mean': eps, 'estimate_count': count}
+
+
+def company(symbol='ABC', currency='USD'):
+    return {'symbol': symbol, 'currency': currency,
+            'annual_forecasts': [annual('Dec', y, (y-2025)*12) for y in range(2026, 2032)],
+            'price_reference': {'value': 100, 'asof': '2026-10-26_close'}}
+
+
+class TiltTests(unittest.TestCase):
+    def test_linear_full_year_mass_and_partition_conservation(self):
+        cuts = [0, .03, .2, .45, .9, 1]
+        for s in [-.5, 0., .5]:
+            self.assertEqual(linear_mass(0, 1, s), 1)
+            self.assertAlmostEqual(sum(linear_mass(a, b, s) for a, b in zip(cuts, cuts[1:])), 1)
+            self.assertAlmostEqual(sum(27*linear_mass(a, b, s) for a, b in zip(cuts, cuts[1:])), 27)
+
+    def test_density_nonnegative(self):
+        for s in [-1, -.5, 0, .5, 1]:
+            self.assertTrue(all(linear_density(i/100, s) >= 0 for i in range(101)))
+        with self.assertRaises(ValueError):
+            linear_density(.2, 1.01)
+
+    def test_stable_mass_equals_requested_integral(self):
+        a, b, s = .2, .7, .5
+        self.assertAlmostEqual(linear_mass(a, b, s), (b-a)+s*((b*b-b)-(a*a-a)))
+
+    def test_uniform_reproduces_v6_cross_year_window(self):
+        c = company_panel(company())
+        out = company_shapes(c)
+        for old, new in zip(c['windows'], out['windows']):
+            self.assertAlmostEqual(new['uniform_difference_from_v6'], 0)
+            self.assertAlmostEqual(next(s['eps_proxy'] for s in new['linear_scenarios'] if s['s'] == 0), old['eps_proxy'])
+
+    def test_front_and_back_tilt_move_in_opposite_directions(self):
+        c = company_shapes(company_panel(company()))['windows'][0]
+        vals = [s['eps_proxy'] for s in c['linear_scenarios']]
+        self.assertGreater(vals[0], vals[1])
+        self.assertLess(vals[2], vals[1])
+        self.assertAlmostEqual((vals[0]+vals[2])/2, vals[1])
+
+    def test_missing_fy_blocks_all_three_shapes(self):
+        raw = company();raw['annual_forecasts'] = raw['annual_forecasts'][:1]
+        w = company_shapes(company_panel(raw))['windows'][0]
+        self.assertIsNone(w['eps_range'])
+        self.assertTrue(all(s['eps_proxy'] is None for s in w['linear_scenarios']))
+
+    def test_sparse_fy_does_not_become_reliable_by_tilting(self):
+        for count in [1, 2]:
+            raw = company();raw['annual_forecasts'][1]['estimate_count'] = count
+            w = company_shapes(company_panel(raw))['windows'][0]
+            self.assertFalse(w['eligible_for_shape_diagnostics'])
+            self.assertIsNone(w['eps_range'])
+
+    def test_nvda_and_mrvl_units_remain_excluded_from_aggregate(self):
+        for symbol, currency in [('NVDA', 'USD'), ('MRVL', 'USD_assumed_US_listing_not_independently_reconciled')]:
+            v6 = company_panel(company(symbol, currency));v7 = company_shapes(v6)
+            self.assertTrue(v7['windows'][0]['eligible_for_shape_diagnostics'])
+            self.assertFalse(v7['windows'][0]['eligible_for_provisional_fund_aggregation'])
+            self.assertTrue(v7['aggregate_exclusion_reasons'])
+
+    def test_same_fund_members_for_every_shape(self):
+        a, b = company_panel(company('AAA')), company_panel(company('BBB'))
+        holdings = [{'fund': 'F', 'date': '2026-10-26', 'symbol': 'AAA', 'weight': .2},
+                    {'fund': 'F', 'date': '2026-10-26', 'symbol': 'BBB', 'weight': .3}]
+        pair = aggregate_pair('F', holdings, {'AAA': a, 'BBB': b}, 1, '2026-10-26_close')
+        x = fund_shapes(pair, {'AAA': company_shapes(a), 'BBB': company_shapes(b)})
+        sets = [{r['symbol'] for r in s['components']} for s in x['linear_scenarios']]
+        self.assertEqual(sets, [{'AAA', 'BBB'}]*3)
+        self.assertAlmostEqual(x['uniform_difference_from_v6'], 0)
+
+    def test_inherited_three_year_gap_keeps_empty_subset(self):
+        raw = company();raw['annual_forecasts'] = raw['annual_forecasts'][:4]
+        c = company_panel(raw)
+        p = aggregate_pair('F', [{'fund': 'F', 'date': '2026-10-26', 'symbol': 'ABC', 'weight': .3}], {'ABC': c}, 3, '2026-10-26_close')
+        x = fund_shapes(p, {'ABC': company_shapes(c)})
+        self.assertEqual(x['members_fixed_across_linear_shapes'], [])
+        self.assertIsNone(x['growth_range'])
+        self.assertTrue(all(s['growth_of_fixed_covered_subset'] is None for s in x['linear_scenarios']))
+
+    def test_exponential_full_mass_and_uniform_limit(self):
+        for k in [-100, -.7, 0, .7, 100]:
+            self.assertAlmostEqual(exponential_mass(0, 1, k), 1)
+            self.assertAlmostEqual(sum(exponential_mass(i/10, (i+1)/10, k) for i in range(10)), 1)
+        self.assertAlmostEqual(exponential_mass(.2, .7, 0), .5)
+
+    def test_optional_exponential_needs_adjacent_qualified_year(self):
+        raw = company();raw['annual_forecasts'] = raw['annual_forecasts'][:2]
+        c = company_shapes(company_panel(raw))
+        self.assertTrue(c['windows'][0]['eligible_for_shape_diagnostics'])
+        self.assertIsNone(c['windows'][0]['exponential_scenario']['eps_proxy'])
+
+    def test_source_component_dates_must_match_denominator(self):
+        old = company_panel(company())['windows'][0]
+        old['components'][0]['fiscal_days'] = 100
+        with self.assertRaises(ValueError):
+            shape_window(old)
+
+
+if __name__ == '__main__':
+    unittest.main(verbosity=1)

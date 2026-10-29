@@ -1,0 +1,345 @@
+"""Common-window EPS calendarisation from saved annual forecast snapshots.
+
+This is a day-weighted *proxy*, not vendor-reported NTM consensus.  The source
+usually provides fiscal-end month only; calendar month-end boundaries and uniform
+daily EPS accrual are explicit approximations.  No downloads or writes on import.
+"""
+from __future__ import annotations
+from pathlib import Path
+from datetime import date, datetime, timedelta, timezone
+import calendar
+import hashlib
+import json
+import math
+
+ROOT = Path(__file__).resolve().parent
+ASOF = date(2026, 10, 27)
+MIN_ANALYSTS = 3
+BLOCKED = {
+    'GOOGL': 'One-off investment gains / annual normalized EPS basis not reconciled',
+    'GOOG': 'Same Alphabet one-off and share-class EPS basis issue',
+    'AMZN': 'One-off investment gains / annual normalized EPS basis not reconciled',
+    'SKHY': 'Ordinary-share / ADR / currency conversion remains unresolved',
+    '000660.KS': 'Ordinary-share / ADR / currency conversion remains unresolved',
+    'NVDA': 'Annual EPS SBC/adjustment basis remains unreconciled; excluded from aggregate',
+}
+
+
+def anniversary(value: date, years: int) -> date:
+    """Calendar anniversary; a leap-day anniversary falls on February 28."""
+    if not isinstance(years, int):
+        raise ValueError('Year offset must be an integer')
+    return date(value.year + years, value.month,
+                min(value.day, calendar.monthrange(value.year + years, value.month)[1]))
+
+
+def ntm_window(asof: date = ASOF, offset: int = 0) -> tuple[date, date]:
+    if not isinstance(offset, int) or offset < 0:
+        raise ValueError('NTM offset must be a non-negative integer')
+    return anniversary(asof, offset), anniversary(asof, offset + 1)
+
+
+def _finite(value):
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
+
+
+def fiscal_intervals(forecasts: list[dict]) -> list[dict]:
+    """Make non-overlapping [start,end) annual intervals.
+
+    Optional ``fiscal_start_date`` and ``fiscal_end_date`` mean verified inclusive
+    report dates if both are supplied.  Current Nasdaq rows do not provide them.
+    ``fiscal_period_end_month`` is never promoted to a verified actual fiscal day.
+    """
+    intervals = []
+    for row in forecasts:
+        eps = row.get('eps_mean')
+        if not _finite(eps):
+            raise ValueError('Annual EPS must be a finite number')
+        if row.get('fiscal_start_date') and row.get('fiscal_end_date'):
+            start = date.fromisoformat(row['fiscal_start_date'])
+            end_inclusive = date.fromisoformat(row['fiscal_end_date'])
+            precision = 'explicit_report_dates_supplied_not_independently_verified_by_this_function'
+        else:
+            month_value = row.get('fiscal_period_end_month')
+            if month_value:
+                d = date.fromisoformat(month_value)
+            else:
+                d = datetime.strptime(row['period'], '%b %Y').date()
+            end_inclusive = date(d.year, d.month, calendar.monthrange(d.year, d.month)[1])
+            previous_end = date(d.year - 1, d.month, calendar.monthrange(d.year - 1, d.month)[1])
+            start = previous_end + timedelta(days=1)
+            precision = 'calendar_month_end_proxy_actual_52_53_week_fiscal_day_unknown'
+        end = end_inclusive + timedelta(days=1)
+        if not 350 <= (end - start).days <= 380:
+            raise ValueError('Fiscal interval must describe one ordinary annual period')
+        count = row.get('estimate_count')
+        intervals.append({
+            'period': row.get('period', end_inclusive.isoformat()),
+            'fiscal_start': start.isoformat(),
+            'fiscal_end_inclusive': end_inclusive.isoformat(),
+            'fiscal_end_exclusive': end.isoformat(),
+            'fiscal_days': (end - start).days,
+            'date_precision': precision,
+            'eps_mean': float(eps),
+            'estimate_count': int(count) if _finite(count) and count >= 0 and int(count) == count else None,
+        })
+    intervals.sort(key=lambda x: x['fiscal_start'])
+    for a, b in zip(intervals, intervals[1:]):
+        if date.fromisoformat(a['fiscal_end_exclusive']) > date.fromisoformat(b['fiscal_start']):
+            raise ValueError('Overlapping or duplicate annual forecast periods')
+    return intervals
+
+
+def calendarize(forecasts: list[dict], start: date, end: date,
+                min_analysts: int = MIN_ANALYSTS) -> dict:
+    """Return complete-window proxy plus explicit sparse/missing component flags."""
+    if not isinstance(start, date) or not isinstance(end, date) or end <= start:
+        raise ValueError('Calendar window must have positive length')
+    if not isinstance(min_analysts, int) or min_analysts < 1:
+        raise ValueError('Minimum analyst count must be a positive integer')
+    parts, gaps = [], []
+    cursor = start
+    intervals = fiscal_intervals(forecasts)
+    for row in intervals:
+        a = max(start, date.fromisoformat(row['fiscal_start']))
+        b = min(end, date.fromisoformat(row['fiscal_end_exclusive']))
+        if b <= a:
+            continue
+        if a > cursor:
+            gaps.append({'start': cursor.isoformat(), 'end_exclusive': a.isoformat(),
+                         'days': (a - cursor).days, 'status': 'missing_annual_forecast'})
+        days = (b - a).days
+        count_ok = row['estimate_count'] is not None and row['estimate_count'] >= min_analysts
+        parts.append({**row, 'overlap_start': a.isoformat(), 'overlap_end_exclusive': b.isoformat(),
+                      'overlap_days': days,
+                      'fraction_of_fiscal_year': days / row['fiscal_days'],
+                      'window_time_weight': days / (end - start).days,
+                      'eps_contribution': row['eps_mean'] * days / row['fiscal_days'],
+                      'count_screen_pass': count_ok})
+        cursor = b
+    if cursor < end:
+        gaps.append({'start': cursor.isoformat(), 'end_exclusive': end.isoformat(),
+                     'days': (end - cursor).days, 'status': 'missing_annual_forecast'})
+    observed = sum(p['overlap_days'] for p in parts)
+    complete = observed == (end - start).days and not gaps
+    count_ok = bool(parts) and all(p['count_screen_pass'] for p in parts)
+    value = sum(p['eps_contribution'] for p in parts)
+    missing_periods = []
+    end_months = {date.fromisoformat(r['fiscal_end_inclusive']).month for r in intervals}
+    if len(end_months) == 1 and all('month_end_proxy' in r['date_precision'] for r in intervals):
+        month = next(iter(end_months))
+        for gap in gaps:
+            a, stop = date.fromisoformat(gap['start']), date.fromisoformat(gap['end_exclusive'])
+            while a < stop:
+                yr = a.year
+                e = date(yr, month, calendar.monthrange(yr, month)[1])
+                if a > e:
+                    yr += 1
+                    e = date(yr, month, calendar.monthrange(yr, month)[1])
+                b = min(stop, e + timedelta(days=1))
+                missing_periods.append({'period': e.strftime('%b %Y'), 'fiscal_end_year': yr,
+                                        'overlap_start': a.isoformat(), 'overlap_end_exclusive': b.isoformat(),
+                                        'overlap_days': (b-a).days,
+                                        'label_status': 'inferred_missing_period_label_only_no_forecast_filled'})
+                a = b
+    return {
+        'start': start.isoformat(), 'end_exclusive': end.isoformat(),
+        'window_days': (end - start).days,
+        'covered_days': observed, 'complete_calendar_coverage': complete,
+        'eps_proxy': value if complete else None,
+        'observed_component_eps_not_a_complete_ntm': value,
+        'minimum_component_analyst_count': min((p['estimate_count'] for p in parts if p['estimate_count'] is not None), default=None),
+        'analyst_count_screen_pass': count_ok,
+        'analyst_count_threshold': min_analysts,
+        'provisional_window_usable': complete and count_ok,
+        'missing_ranges': gaps,
+        'missing_annual_periods': missing_periods,
+        'missing_fiscal_end_years': sorted({p['fiscal_end_year']for p in missing_periods}),
+        'sparse_or_unknown_annual_periods': [p['period'] for p in parts if not p['count_screen_pass']],
+        'components': parts,
+        'method': 'Annual EPS × overlap calendar days / fiscal-proxy-year calendar days; no missing-year extrapolation',
+        'seasonality_assumption': 'uniform_daily_eps_accrual_unverified',
+        'interpretation': 'calendarised_annual_forecast_proxy_not_vendor_ntm_consensus',
+        'date_precision': ('calendar_month_end_proxy_actual_fiscal_day_unknown'
+                           if any('month_end_proxy' in p['date_precision'] for p in parts)
+                           else 'explicit_report_dates_supplied'),
+    }
+
+
+def company_panel(company: dict, asof: date = ASOF,
+                  min_analysts: int = MIN_ANALYSTS) -> dict:
+    symbol = company['symbol']
+    exclusions = []
+    if symbol in BLOCKED:
+        exclusions.append(BLOCKED[symbol])
+    if company.get('currency') != 'USD':
+        exclusions.append('USD EPS / share unit not confirmed in saved company record')
+    price = company.get('price_reference') or {}
+    if not _finite(price.get('value')) or price['value'] <= 0:
+        exclusions.append('Missing positive same-snapshot security price for earnings weights')
+    windows = []
+    for offset in range(4):
+        start, end = ntm_window(asof, offset)
+        w = calendarize(company['annual_forecasts'], start, end, min_analysts)
+        w.update(offset_years=offset, label='NTM_'+str(offset),
+                 eligible_for_provisional_aggregate=w['provisional_window_usable'] and not exclusions,
+                 reliable_verified_ntm=False)
+        windows.append(w)
+    return {
+        'symbol': symbol, 'currency': company.get('currency'),
+        'eps_basis': company.get('eps_basis'),
+        'basis_status': 'provider_adjusted_or_GAAP_basis_unreconciled',
+        'source_url': company.get('source_url'),
+        'public_page_url': company.get('public_page_url'),
+        'source_asof': company.get('source_asof'),
+        'retrieved_at': company.get('retrieved_at'),
+        'raw_path': company.get('raw_path'), 'raw_sha256': company.get('raw_sha256'),
+        'price_reference': price,
+        'aggregate_exclusion_reasons': exclusions,
+        'windows': windows,
+        'all_results_provisional': True,
+        'reliable_verified_ntm_available': False,
+    }
+
+
+def aggregate_pair(fund: str, holdings: list[dict], panels: dict[str, dict],
+                   terminal_offset: int, expected_price_asof: str, asof: date = ASOF) -> dict:
+    """Freeze initial shares; identical eligible subset in both EPS windows."""
+    if terminal_offset not in [1, 2, 3]:
+        raise ValueError('Terminal offset must be 1, 2 or 3 years')
+    rows = [r for r in holdings if r['fund'] == fund]
+    if not rows:
+        raise ValueError('Fund holdings missing')
+    holdings_date = max(r['date'] for r in rows)
+    rows = [r for r in rows if r['date'] == holdings_date]
+    if len({r['symbol'] for r in rows}) != len(rows):
+        raise ValueError('Duplicate symbols within the same fund holdings date')
+    members, excluded = [], []
+    for r in rows:
+        weight = r.get('weight')
+        if not _finite(weight):
+            raise ValueError('NAV weight must be finite')
+        if weight <= 0:
+            excluded.append({'symbol': r['symbol'], 'nav_weight': weight,
+                             'reasons': ['Non-positive cash/rounding row; not a company EPS forecast']})
+            continue
+        c = panels.get(r['symbol'])
+        reasons = []
+        if c is None:
+            reasons.append('No comparable saved annual EPS forecast / share unit')
+        else:
+            reasons.extend(c['aggregate_exclusion_reasons'])
+            for offset in [0, terminal_offset]:
+                w = c['windows'][offset]
+                a, b = ntm_window(asof, offset)
+                if (w['start'], w['end_exclusive']) != (a.isoformat(), b.isoformat()):
+                    reasons.append(w['label']+': calendar endpoints differ from the common anchor')
+                if not w['complete_calendar_coverage']:
+                    reasons.append(w['label']+': missing annual forecast day coverage')
+                if not w['analyst_count_screen_pass']:
+                    reasons.append(w['label']+': a component has fewer than '+str(w['analyst_count_threshold'])+' estimates or unknown count')
+            if c['price_reference'].get('asof') != expected_price_asof:
+                reasons.append('Security price reference date differs from common snapshot')
+            if c['windows'][0]['eps_proxy'] is not None and c['windows'][0]['eps_proxy'] <= 0:
+                reasons.append('Non-positive base-window EPS; growth ratio not comparable')
+        if reasons:
+            excluded.append({'symbol': r['symbol'], 'nav_weight': weight, 'reasons': sorted(set(reasons))})
+            continue
+        e0, e1 = c['windows'][0]['eps_proxy'], c['windows'][terminal_offset]['eps_proxy']
+        price = c['price_reference']['value']
+        members.append({'symbol': r['symbol'], 'nav_weight': weight,
+                        'base_eps_proxy': e0, 'terminal_eps_proxy': e1,
+                        'price_USD': price, 'price_asof': expected_price_asof,
+                        'base_earnings_per_nav': weight * e0 / price,
+                        'terminal_earnings_per_nav': weight * e1 / price,
+                        'minimum_used_annual_estimate_count': min(c['windows'][j]['minimum_component_analyst_count'] for j in [0, terminal_offset])})
+    base = sum(r['base_earnings_per_nav'] for r in members)
+    terminal = sum(r['terminal_earnings_per_nav'] for r in members)
+    g = terminal / base - 1 if base > 0 else None
+    coverage = sum(r['nav_weight'] for r in members)
+    if coverage > 1 + 1e-6:
+        raise ValueError('Included NAV weights exceed 100%')
+    return {
+        'fund': fund, 'holdings_date': holdings_date,
+        'terminal_offset_years': terminal_offset,
+        'base_window': {'start': asof.isoformat(), 'end_exclusive': anniversary(asof, 1).isoformat()},
+        'terminal_window': {'start': anniversary(asof, terminal_offset).isoformat(),
+                            'end_exclusive': anniversary(asof, terminal_offset + 1).isoformat()},
+        'coverage_nav_weight': coverage,
+        'uncovered_nav_weight_not_assigned_growth': 1 - coverage,
+        'represented_positive_holdings_nav_weight': sum(r['weight'] for r in rows if r['weight'] > 0),
+        'signed_cash_or_rounding_nav_weight': sum(r['weight'] for r in rows if r['weight'] <= 0),
+        'growth_of_same_covered_subset': g,
+        'annualized_earnings_proxy_growth': ((1 + g) ** (1 / terminal_offset) - 1) if g is not None and g > -1 else None,
+        'base_earnings_per_nav': base if members else None,
+        'terminal_earnings_per_nav': terminal if members else None,
+        'members': members, 'excluded_holdings': excluded,
+        'member_count': len(members),
+        'status': 'provisional_partial_proxy' if members else 'blocked_no_complete_count_screened_subset',
+        'complete_fund_growth': None,
+        'verified_full_fund_ntm': None,
+        'usable_as_default_etf_forecast': False,
+        'reliable_aggregate_available': False,
+        'basis_warning': 'All vendor EPS bases remain incompletely reconciled; this is an explicitly provisional comparison, never a reliable full-fund consensus',
+        'coverage_warning': 'NAV share coverage is not earnings coverage; missing holdings are unknown, not zero growth',
+        'horizon_comparison_warning': 'Eligible subsets can differ across terminal offsets; do not splice their growth rates into a single earnings path',
+    }
+
+
+def build() -> dict:
+    source_path = ROOT/'v5/expectations_sources.json'
+    holdings_path = ROOT/'v2/model/holdings.json'
+    source = json.loads(source_path.read_text(encoding='utf8'))
+    holdings = json.loads(holdings_path.read_text(encoding='utf8'))
+    companies = [company_panel(c) for c in source['companies']]
+    panels = {c['symbol']: c for c in companies}
+    common_price_asof = '2026-10-26_close'
+    funds = [aggregate_pair(fund, holdings, panels, offset, common_price_asof)
+             for fund in ['QQQM', 'SMH', 'SOXX', 'DRAM'] for offset in [1, 2, 3]]
+    result = {
+        'schema': 'etf.calendar_eps_proxy.v1',
+        'built_utc': datetime.now(timezone.utc).isoformat(),
+        'asof': ASOF.isoformat(),
+        'source_information_cutoff': source['information_cutoff'],
+        'source_asof_policy': 'Retrieval timestamps are not individual analyst update timestamps; Nasdaq source_asof remains unknown',
+        'temporal_alignment_status': 'Calendar-window endpoints aligned only; calendar anchor, reference-price session and source retrieval remain different clocks, not same-time executable market data',
+        'source_sha256': hashlib.sha256(source_path.read_bytes()).hexdigest(),
+        'holdings_sha256': hashlib.sha256(holdings_path.read_bytes()).hexdigest(),
+        'common_price_asof': common_price_asof,
+        'minimum_analyst_count_per_used_annual_component': MIN_ANALYSTS,
+        'threshold_status': 'Conservative source-quality rule, not an empirically optimized forecasting threshold',
+        'calendarisation': 'Annual EPS × actual overlap calendar-day fraction of proxy fiscal year; source fiscal-end month converted to month-end only when exact report dates absent',
+        'calendarisation_status': 'uniform_daily_proxy_not_direct_vendor_ntm_consensus_or_verified_report_year_calendarisation',
+        'windows': [{'label': 'NTM_'+str(i), 'offset_years': i,
+                     'start': ntm_window(ASOF, i)[0].isoformat(),
+                     'end_exclusive': ntm_window(ASOF, i)[1].isoformat(),
+                     'days': (ntm_window(ASOF, i)[1]-ntm_window(ASOF, i)[0]).days} for i in range(4)],
+        'companies': companies, 'funds': funds,
+        'formulas': {
+            'eps_proxy': 'sum(annual_EPS * overlap_days / fiscal_proxy_year_days)',
+            'same_subset_growth': 'sum(w_i*calendar_EPS_terminal_i/P_i)/sum(w_i*calendar_EPS_base_i/P_i)-1',
+            'forward_multiple_period': 'P_asof / EPS[asof,asof+1year); at T=3, terminal forward multiple requires EPS[asof+3years,asof+4years)',
+        },
+        'limits': [
+            'Fiscal end month is known, actual fiscal day and 52/53-week boundaries often are not; month-end is an explicit proxy',
+            'Uniform daily EPS accrual ignores seasonality, product launches and changes in margins, diluted shares or accounting',
+            'At least three estimates per annual component is only a screening rule, not statistical validation or independent coverage',
+            'GOOGL/AMZN one-off earnings, SKHY units and NVDA annual adjustment/SBC basis exclude them from aggregates',
+            'Other EPS bases and foreign/ADR forecast FX assumptions remain provisional; there is no reliable verified aggregate',
+            'Fixed current holdings and reference prices do not model rebalancing, taxes, dividends or swaps',
+            'A three-year exit priced on forward NTM needs forecasts into the fourth future year, often FY2030 or FY2031; missing or sparse years block output',
+            'Do not substitute these calendarised first-year ratios for a three-year ETF default, expected return or a bottom signal',
+        ],
+    }
+    out = ROOT/'v6'; out.mkdir(exist_ok=True)
+    (out/'calendar_eps.json').write_text(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False), encoding='utf8')
+    return result
+
+
+if __name__ == '__main__':
+    x = build()
+    print(json.dumps({'companies': len(x['companies']), 'fund_pairs': [
+        {'fund': f['fund'], 'T': f['terminal_offset_years'],
+         'coverage': round(f['coverage_nav_weight'], 6),
+         'growth': f['growth_of_same_covered_subset'], 'members': f['member_count'], 'status': f['status']}
+        for f in x['funds']]}, ensure_ascii=False))

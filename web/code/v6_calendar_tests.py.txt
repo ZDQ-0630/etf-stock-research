@@ -1,0 +1,133 @@
+"""Calendar alignment specification tests using hand-constructed annual panels."""
+from datetime import date
+import unittest
+from v6_calendar import fiscal_intervals, calendarize, company_panel, aggregate_pair, ntm_window
+
+
+def annual(month, year, eps, count=5):
+    return {'period': f'{month} {year}', 'eps_mean': eps, 'estimate_count': count}
+
+
+def company(symbol='ABC', month='Dec', count=5, currency='USD'):
+    return {'symbol': symbol, 'currency': currency, 'annual_forecasts': [
+        annual(month, y, 12*(y-2025), count) for y in range(2026, 2032)],
+        'price_reference': {'value': 100, 'asof': '2026-10-26_close'}}
+
+
+class CalendarTests(unittest.TestCase):
+    def test_common_windows_and_leap_year(self):
+        a, b = ntm_window(date(2026, 10, 27), 0)
+        self.assertEqual((a, b), (date(2026, 10, 27), date(2027, 10, 27)))
+        a, b = ntm_window(date(2026, 10, 27), 1)
+        self.assertEqual((b-a).days, 366)
+
+    def test_calendar_year_hand_calculation(self):
+        x = calendarize([annual('Dec', 2026, 12), annual('Dec', 2027, 24)],
+                        date(2026, 10, 27), date(2027, 10, 27))
+        self.assertEqual([p['overlap_days'] for p in x['components']], [66, 299])
+        self.assertAlmostEqual(x['eps_proxy'], (12*66+24*299)/365)
+        self.assertEqual(x['covered_days'], 365)
+
+    def test_leap_fiscal_year_uses_366_day_denominator(self):
+        x = calendarize([annual('Dec', 2027, 12), annual('Dec', 2028, 24)],
+                        date(2027, 10, 27), date(2028, 10, 27))
+        self.assertEqual([p['overlap_days'] for p in x['components']], [66, 300])
+        self.assertAlmostEqual(x['eps_proxy'], 12*66/365+24*300/366)
+
+    def test_june_fiscal_year_calendarisation(self):
+        x = calendarize([annual('Jun', 2027, 12), annual('Jun', 2028, 24)],
+                        date(2026, 10, 27), date(2027, 10, 27))
+        self.assertEqual([p['overlap_days'] for p in x['components']], [247, 118])
+        self.assertAlmostEqual(x['eps_proxy'], 12*247/365+24*118/366)
+
+    def test_missing_year_does_not_become_partial_ntm(self):
+        x = calendarize([annual('Dec', 2026, 12)], date(2026, 10, 27), date(2027, 10, 27))
+        self.assertFalse(x['complete_calendar_coverage'])
+        self.assertIsNone(x['eps_proxy'])
+        self.assertEqual(x['missing_ranges'][0]['days'], 299)
+        self.assertEqual(x['missing_annual_periods'][0]['period'], 'Dec 2027')
+
+    def test_sparse_year_is_displayed_but_excluded(self):
+        for count in [1, 2, None]:
+            x = calendarize([annual('Dec', 2026, 12), annual('Dec', 2027, 24, count)],
+                            date(2026, 10, 27), date(2027, 10, 27))
+            self.assertIsNotNone(x['eps_proxy'])
+            self.assertFalse(x['provisional_window_usable'])
+            self.assertEqual(x['sparse_or_unknown_annual_periods'], ['Dec 2027'])
+        x = calendarize([annual('Dec', 2026, 12, 3), annual('Dec', 2027, 24, 3)],
+                        date(2026, 10, 27), date(2027, 10, 27))
+        self.assertTrue(x['provisional_window_usable'])
+
+    def test_duplicate_annual_period_rejected(self):
+        with self.assertRaises(ValueError):
+            fiscal_intervals([annual('Dec', 2026, 12), annual('Dec', 2026, 13)])
+
+    def test_explicit_53_week_dates_are_not_forced_to_month_end(self):
+        rows = [{'period': 'FY2027', 'fiscal_start_date': '2026-02-01',
+                 'fiscal_end_date': '2027-02-06', 'eps_mean': 10, 'estimate_count': 5}]
+        x = calendarize(rows, date(2026, 2, 1), date(2027, 2, 7))
+        self.assertEqual(x['window_days'], 371)
+        self.assertAlmostEqual(x['eps_proxy'], 10)
+        self.assertEqual(x['date_precision'], 'explicit_report_dates_supplied')
+
+    def test_month_only_boundaries_stay_marked_approximate(self):
+        x = calendarize([annual('Dec', 2026, 12)], date(2026, 1, 1), date(2027, 1, 1))
+        self.assertIn('month_end_proxy', x['date_precision'])
+        self.assertEqual(x['seasonality_assumption'], 'uniform_daily_eps_accrual_unverified')
+
+    def test_unreconciled_company_exclusions_not_cured_by_date_alignment(self):
+        for sym in ['GOOGL', 'AMZN', 'SKHY', 'NVDA']:
+            c = company_panel(company(sym))
+            self.assertTrue(c['aggregate_exclusion_reasons'])
+            self.assertTrue(c['windows'][0]['complete_calendar_coverage'])
+            self.assertFalse(c['windows'][0]['eligible_for_provisional_aggregate'])
+
+    def test_unknown_currency_not_promoted_to_USD(self):
+        c = company_panel(company(currency='USD_assumed_US_listing_not_independently_reconciled'))
+        self.assertFalse(c['windows'][0]['eligible_for_provisional_aggregate'])
+
+    def test_pair_requires_identical_usable_subset(self):
+        a = company_panel(company('AAA'))
+        limited = company('BBB');limited['annual_forecasts'] = limited['annual_forecasts'][:2]
+        b = company_panel(limited)
+        holdings = [{'fund': 'F', 'date': '2026-10-26', 'symbol': 'AAA', 'weight': .2},
+                    {'fund': 'F', 'date': '2026-10-26', 'symbol': 'BBB', 'weight': .3}]
+        x = aggregate_pair('F', holdings, {'AAA': a, 'BBB': b}, 1, '2026-10-26_close')
+        self.assertEqual([m['symbol'] for m in x['members']], ['AAA'])
+        self.assertAlmostEqual(x['coverage_nav_weight'], .2)
+        self.assertAlmostEqual(x['growth_of_same_covered_subset'], a['windows'][1]['eps_proxy']/a['windows'][0]['eps_proxy']-1)
+        self.assertIsNone(x['complete_fund_growth'])
+
+    def test_calendar_windows_same_for_different_fiscal_months(self):
+        a, b = company_panel(company('AAA', 'Jun')), company_panel(company('BBB', 'Dec'))
+        self.assertEqual([(w['start'], w['end_exclusive'])for w in a['windows']],
+                         [(w['start'], w['end_exclusive'])for w in b['windows']])
+
+    def test_price_date_mismatch_is_excluded(self):
+        c = company('AAA');c['price_reference']['asof'] = '2026-10-27_close'
+        x = aggregate_pair('F', [{'fund': 'F', 'date': '2026-10-26', 'symbol': 'AAA', 'weight': .2}],
+                           {'AAA': company_panel(c)}, 1, '2026-10-26_close')
+        self.assertEqual(x['member_count'], 0)
+
+    def test_mixed_calendar_anchors_cannot_be_aggregated(self):
+        c = company_panel(company('AAA'), date(2026, 10, 28))
+        x = aggregate_pair('F', [{'fund': 'F', 'date': '2026-10-26', 'symbol': 'AAA', 'weight': .2}],
+                           {'AAA': c}, 1, '2026-10-26_close')
+        self.assertEqual(x['member_count'], 0)
+        self.assertTrue(any('calendar endpoints' in r for r in x['excluded_holdings'][0]['reasons']))
+
+    def test_missing_fourth_forward_year_blocks_three_year_exit(self):
+        c = company('AAA');c['annual_forecasts'] = c['annual_forecasts'][:4]
+        panel = company_panel(c)
+        self.assertEqual(panel['windows'][3]['start'], '2029-10-27')
+        self.assertEqual(panel['windows'][3]['end_exclusive'], '2030-10-27')
+        self.assertIsNone(panel['windows'][3]['eps_proxy'])
+        self.assertEqual(panel['windows'][3]['missing_fiscal_end_years'], [2030])
+        x = aggregate_pair('F', [{'fund': 'F', 'date': '2026-10-26', 'symbol': 'AAA', 'weight': .2}],
+                           {'AAA': panel}, 3, '2026-10-26_close')
+        self.assertEqual(x['status'], 'blocked_no_complete_count_screened_subset')
+        self.assertIsNone(x['growth_of_same_covered_subset'])
+
+
+if __name__ == '__main__':
+    unittest.main(verbosity=1)

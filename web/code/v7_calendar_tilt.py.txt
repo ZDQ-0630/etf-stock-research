@@ -1,0 +1,279 @@
+"""Annual-EPS-mass-preserving shape sensitivity around V6 calendar proxies.
+
+No network, no forecasting fit, no missing-year extrapolation and no writes on
+import.  Inputs inherit V6's source, count, currency and accounting exclusions.
+"""
+from pathlib import Path
+from datetime import date, datetime, timezone
+import hashlib
+import json
+import math
+
+ROOT = Path(__file__).resolve().parent
+SHAPES = [('front_loaded', -.5), ('uniform', 0.), ('back_loaded', .5)]
+
+
+def _finite(value):
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
+
+
+def linear_density(u, s):
+    if not all(_finite(x) for x in [u, s]) or not 0 <= u <= 1 or not -1 <= s <= 1:
+        raise ValueError('Density requires u in [0,1] and s in [-1,1]')
+    return 1+s*(2*u-1)
+
+
+def linear_mass(a, b, s):
+    """Stable form of (b-a)+s*((b*b-b)-(a*a-a))."""
+    if not all(_finite(x) for x in [a, b, s]) or not 0 <= a <= b <= 1 or not -1 <= s <= 1:
+        raise ValueError('Mass interval requires 0<=a<=b<=1 and s in [-1,1]')
+    return (b-a)*(1+s*(a+b-1))
+
+
+def exponential_mass(a, b, k):
+    """Integral of exp(k*u)/Z, preserving a whole year's EPS total."""
+    if not all(_finite(x) for x in [a, b, k]) or not 0 <= a <= b <= 1:
+        raise ValueError('Exponential mass interval invalid')
+    if abs(k) < 1e-10:
+        return b-a
+    if k > 50:
+        return math.exp(k*(b-1)) * (-math.expm1(-k*(b-a))) / (-math.expm1(-k))
+    return math.exp(k*a)*math.expm1(k*(b-a))/math.expm1(k)
+
+
+def bounds(component):
+    start = date.fromisoformat(component['fiscal_start'])
+    end = date.fromisoformat(component['fiscal_end_exclusive'])
+    a = date.fromisoformat(component['overlap_start'])
+    b = date.fromisoformat(component['overlap_end_exclusive'])
+    days = (end-start).days
+    if days != component['fiscal_days'] or not start <= a < b <= end:
+        raise ValueError('V6 component interval/date denominator is inconsistent')
+    return (a-start).days/days, (b-start).days/days
+
+
+def annual_index(company):
+    result = {}
+    for window in company['windows']:
+        for part in window['components']:
+            key = part['fiscal_start']
+            value = {k: part[k] for k in ['period', 'fiscal_start', 'fiscal_end_exclusive', 'fiscal_days', 'eps_mean', 'estimate_count']}
+            if key in result and result[key] != value:
+                raise ValueError('Same fiscal-year forecast differs across V6 windows')
+            result[key] = value
+    return result
+
+
+def _blocking(window):
+    reasons = []
+    if not window['complete_calendar_coverage']:
+        reasons.append('Missing FY/date coverage; shape sensitivity cannot fill missing EPS')
+    if not window['analyst_count_screen_pass']:
+        reasons.append('An annual component fails the inherited minimum-analyst-count rule')
+    return reasons
+
+
+def shape_window(window, index=None):
+    reasons = _blocking(window)
+    eligible = not reasons
+    scenarios = []
+    for shape, s in SHAPES:
+        parts = []
+        if eligible:
+            for row in window['components']:
+                a, b = bounds(row)
+                mass = linear_mass(a, b, s)
+                parts.append({'period': row['period'], 'a': a, 'b': b,
+                              'annual_eps_unchanged': row['eps_mean'], 'annual_shape_mass': 1.,
+                              'overlap_mass_fraction': mass,
+                              'eps_contribution': row['eps_mean']*mass,
+                              'estimate_count': row['estimate_count']})
+        scenarios.append({'id': shape, 's': s,
+                          'eps_proxy': sum(p['eps_contribution'] for p in parts) if eligible else None,
+                          'components': parts})
+    values = [s['eps_proxy'] for s in scenarios if s['eps_proxy'] is not None]
+    uniform = next(s['eps_proxy'] for s in scenarios if s['id'] == 'uniform')
+    if eligible and (window['eps_proxy'] is None or abs(uniform-window['eps_proxy']) > 1e-10):
+        raise ValueError('s=0 does not reproduce the V6 uniform-window proxy')
+    exp_parts, exp_blockers = [], list(reasons)
+    if eligible:
+        for row in window['components']:
+            nxt = (index or {}).get(row['fiscal_end_exclusive'])
+            if (nxt is None or not _finite(nxt['eps_mean']) or nxt['eps_mean'] <= 0
+                    or row['eps_mean'] <= 0
+                    or not _finite(nxt['estimate_count'])
+                    or nxt['estimate_count'] < window['analyst_count_threshold']):
+                exp_blockers.append(row['period']+': adjacent positive, count-qualified FY EPS unavailable')
+                continue
+            k = math.log(nxt['eps_mean']/row['eps_mean'])
+            a, b = bounds(row)
+            mass = exponential_mass(a, b, k)
+            exp_parts.append({'period': row['period'], 'k': k, 'a': a, 'b': b,
+                              'annual_eps_unchanged': row['eps_mean'],
+                              'adjacent_period': nxt['period'], 'adjacent_eps': nxt['eps_mean'],
+                              'overlap_mass_fraction': mass, 'eps_contribution': row['eps_mean']*mass})
+    return {
+        'label': window['label'], 'offset_years': window['offset_years'],
+        'start': window['start'], 'end_exclusive': window['end_exclusive'],
+        'window_days': window['window_days'],
+        'source_v6_uniform_eps': window['eps_proxy'],
+        'eligible_for_shape_diagnostics': eligible,
+        'eligible_for_provisional_fund_aggregation': window['eligible_for_provisional_aggregate'],
+        'blocking_reasons': reasons,
+        'missing_annual_periods': window.get('missing_annual_periods', []),
+        'sparse_or_unknown_annual_periods': window['sparse_or_unknown_annual_periods'],
+        'linear_scenarios': scenarios,
+        'eps_range': [min(values), max(values)] if values else None,
+        'range_span_fraction_of_uniform': (max(values)-min(values))/abs(uniform) if values and uniform else None,
+        'uniform_difference_from_v6': uniform-window['eps_proxy'] if eligible else None,
+        'exponential_scenario': {
+            'id': 'adjacent_annual_ratio_exponential',
+            'status': 'provisional_shape_only' if not exp_blockers else 'blocked_no_complete_adjacent_year_path',
+            'eps_proxy': sum(p['eps_contribution'] for p in exp_parts) if not exp_blockers else None,
+            'components': exp_parts,
+            'blocking_reasons': exp_blockers,
+            'interpretation': 'Adjacent annual EPS ratio only selects an illustrative normalized within-year density; it is not a fitted or actual quarterly path',
+        },
+        'range_interpretation': 'Bounds across three stipulated shapes, not confidence limits, probabilities or forecasts',
+    }
+
+
+def company_shapes(company):
+    index = annual_index(company)
+    return {'symbol': company['symbol'], 'currency': company['currency'],
+            'eps_basis': company['eps_basis'], 'aggregate_exclusion_reasons': company['aggregate_exclusion_reasons'],
+            'individual_diagnostic_only': True, 'reliable_verified_forecast': False,
+            'windows': [shape_window(w, index) for w in company['windows']]}
+
+
+def fund_shapes(pair, panels):
+    members = pair['members']
+    offset = pair['terminal_offset_years']
+    all_scenarios = []
+    fixed = []
+    for member in members:
+        company = panels[member['symbol']]
+        if company['aggregate_exclusion_reasons']:
+            raise ValueError('V6 excluded accounting/currency basis slipped into fund members')
+        for j in [0, offset]:
+            w = company['windows'][j]
+            if not w['eligible_for_shape_diagnostics'] or not w['eligible_for_provisional_fund_aggregation']:
+                raise ValueError('V6 unusable window slipped into a fixed subset')
+        fixed.append({k: member[k] for k in ['symbol', 'nav_weight', 'price_USD', 'price_asof']})
+    for shape, s in SHAPES:
+        components = []
+        for m in fixed:
+            c = panels[m['symbol']]
+            e0 = next(r['eps_proxy'] for r in c['windows'][0]['linear_scenarios'] if r['id'] == shape)
+            et = next(r['eps_proxy'] for r in c['windows'][offset]['linear_scenarios'] if r['id'] == shape)
+            components.append({'symbol': m['symbol'], 'base_eps_proxy': e0, 'terminal_eps_proxy': et,
+                               'base_earnings_per_nav': m['nav_weight']*e0/m['price_USD'],
+                               'terminal_earnings_per_nav': m['nav_weight']*et/m['price_USD']})
+        base = sum(r['base_earnings_per_nav'] for r in components)
+        terminal = sum(r['terminal_earnings_per_nav'] for r in components)
+        g = terminal/base-1 if members and base > 0 else None
+        all_scenarios.append({'id': shape, 's': s,
+                              'growth_of_fixed_covered_subset': g,
+                              'base_earnings_per_nav': base if members else None,
+                              'terminal_earnings_per_nav': terminal if members else None,
+                              'components': components})
+    values = [s['growth_of_fixed_covered_subset'] for s in all_scenarios if s['growth_of_fixed_covered_subset'] is not None]
+    uniform = next(s['growth_of_fixed_covered_subset'] for s in all_scenarios if s['id'] == 'uniform')
+    if members and abs(uniform-pair['growth_of_same_covered_subset']) > 1e-10:
+        raise ValueError('s=0 does not reproduce V6 same-subset fund growth')
+    exp_components, exp_blocked = [], []
+    for m in fixed:
+        c = panels[m['symbol']]
+        a, b = c['windows'][0]['exponential_scenario'], c['windows'][offset]['exponential_scenario']
+        if a['eps_proxy'] is None or b['eps_proxy'] is None:
+            exp_blocked.append(m['symbol'])
+        else:
+            exp_components.append({'symbol': m['symbol'],
+                                   'base_earnings_per_nav': m['nav_weight']*a['eps_proxy']/m['price_USD'],
+                                   'terminal_earnings_per_nav': m['nav_weight']*b['eps_proxy']/m['price_USD']})
+    eb = sum(m['base_earnings_per_nav'] for m in exp_components)
+    et = sum(m['terminal_earnings_per_nav'] for m in exp_components)
+    return {
+        'fund': pair['fund'], 'terminal_offset_years': offset,
+        'holdings_date': pair['holdings_date'], 'base_window': pair['base_window'], 'terminal_window': pair['terminal_window'],
+        'coverage_nav_weight': pair['coverage_nav_weight'],
+        'uncovered_nav_weight_not_assigned_growth': pair['uncovered_nav_weight_not_assigned_growth'],
+        'status': 'provisional_fixed_subset_shape_sensitivity' if members else 'blocked_inherited_v6_missing_or_sparse_forecasts',
+        'members_fixed_across_linear_shapes': fixed,
+        'excluded_holdings': pair['excluded_holdings'],
+        'linear_scenarios': all_scenarios,
+        'growth_range': [min(values), max(values)] if values else None,
+        'range_span_percentage_points': (max(values)-min(values))*100 if values else None,
+        'uniform_difference_from_v6': uniform-pair['growth_of_same_covered_subset'] if members else None,
+        'exponential_pair': {'status': 'provisional_fixed_subset_shape_only' if members and not exp_blocked else 'blocked_do_not_change_subset_to_make_it_fit',
+                             'growth_of_same_subset': et/eb-1 if members and not exp_blocked and eb > 0 else None,
+                             'members_without_complete_adjacent_year_shapes': exp_blocked,
+                             'components': exp_components},
+        'complete_fund_growth': None, 'expected_return': None, 'probability': None,
+        'use_as_default_growth': False,
+        'range_interpretation': 'Three deterministic annual-shape scenarios using the exact V6 eligible subset; not a full ETF forecast or confidence interval',
+    }
+
+
+def build():
+    path = ROOT/'v6/calendar_eps.json'
+    source = json.loads(path.read_text(encoding='utf8'))
+    companies = [company_shapes(c) for c in source['companies']]
+    panels = {c['symbol']: c for c in companies}
+    funds = [fund_shapes(f, panels) for f in source['funds']]
+    focus = []
+    for symbol in ['MRVL', 'NVDA']:
+        c = panels[symbol]
+        individual_pairs = []
+        for shape, s in SHAPES:
+            a = next(x['eps_proxy'] for x in c['windows'][0]['linear_scenarios'] if x['id'] == shape)
+            b = next(x['eps_proxy'] for x in c['windows'][1]['linear_scenarios'] if x['id'] == shape)
+            individual_pairs.append({'id': shape, 's': s,
+                                     'ntm0_to_ntm1_growth_proxy': b/a-1 if a is not None and b is not None and a > 0 else None})
+        individual_values = [x['ntm0_to_ntm1_growth_proxy'] for x in individual_pairs if x['ntm0_to_ntm1_growth_proxy'] is not None]
+        focus.append({'symbol': symbol, 'currency': c['currency'],
+                      'remains_excluded_from_fund_aggregation': bool(c['aggregate_exclusion_reasons']),
+                      'aggregate_exclusion_reasons': c['aggregate_exclusion_reasons'],
+                      'individual_ntm0_to_ntm1_linear_scenarios': individual_pairs,
+                      'individual_ntm0_to_ntm1_growth_range': [min(individual_values), max(individual_values)] if individual_values else None,
+                      'individual_pair_interpretation': 'Source-unit diagnostic only; currency/accounting exclusions remain and no ETF/default growth is inferred',
+                      'windows': [{k: w[k] for k in ['label', 'start', 'end_exclusive', 'source_v6_uniform_eps', 'eps_range', 'range_span_fraction_of_uniform', 'exponential_scenario', 'blocking_reasons']} for w in c['windows']]})
+    result = {
+        'schema': 'etf.calendar_eps_shape_sensitivity.v1',
+        'built_utc': datetime.now(timezone.utc).isoformat(),
+        'asof': source['asof'], 'source_information_cutoff': source['source_information_cutoff'],
+        'v6_input_sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
+        'source_annual_forecast_sha256': source['source_sha256'],
+        'same_v6_common_price_asof': source['common_price_asof'],
+        'shapes': [{'id': k, 's': s, 'density': '1+s*(2*u-1)', 'full_year_mass': linear_mass(0, 1, s)} for k, s in SHAPES],
+        'formulas': {'linear_mass': '(b-a)+s*((b^2-b)-(a^2-a)) = (b-a)*(1+s*(a+b-1))',
+                     'eps_contribution': 'FY annual EPS unchanged × normalized density mass over the overlap',
+                     'exponential_density': 'exp(k*u)/Z with k=log(next_FY_EPS/current_FY_EPS), only adjacent positive, count-qualified known forecasts',
+                     'same_subset_growth': 'sum(w_i*EPS_T_i/P_i)/sum(w_i*EPS_0_i/P_i)-1 using identical members for all three linear s'},
+        'companies': companies, 'funds': funds, 'focus_companies': focus,
+        'controls': {'annual_eps_total_unchanged': True, 'density_nonnegative_for_presets': True,
+                     'v6_count_currency_accounting_exclusions_retained': True,
+                     'linear_subset_fixed_across_shapes': True, 'no_missing_year_extrapolation': True,
+                     'no_model_default_growth_written': True},
+        'limits': [
+            'These stipulated shapes are not estimated seasonality or realized earnings timing',
+            'Annual total forecasts, EPS/share definitions and month-end fiscal proxies remain as uncertain as V6',
+            'Each fiscal year resets its shape; continuity across fiscal boundaries is not imposed or claimed',
+            'Exponential k uses another uncertain annual forecast; absent/sparse adjacent years block that optional scenario without fallback',
+            'Individual MRVL/NVDA diagnostics do not cure currency or accounting exclusions; neither is added to fund aggregates',
+            'Three-year exit NTM gaps remain blocked; shape sensitivity does not invent FY2030/FY2031 data',
+            'Ranges describe deterministic scenario variation, not confidence bounds, probability distributions or full ETF expected growth',
+            'Eligible subsets may differ by horizon in V6; growth from different horizons cannot be spliced into a path',
+        ],
+    }
+    out = ROOT/'v7';out.mkdir(exist_ok=True)
+    (out/'calendar_tilt.json').write_text(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False), encoding='utf8')
+    return result
+
+
+if __name__ == '__main__':
+    x = build()
+    print(json.dumps({'funds': [{'fund': f['fund'], 'T': f['terminal_offset_years'],
+                               'coverage': f['coverage_nav_weight'], 'growth_range': f['growth_range']}
+                              for f in x['funds']],
+                      'focus': [{'symbol': c['symbol'], 'windows': [{'label': w['label'], 'range': w['eps_range']} for w in c['windows']]} for c in x['focus_companies']]}, ensure_ascii=False))

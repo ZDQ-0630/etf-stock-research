@@ -1,0 +1,75 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="ETF与个股研究V5架构、公式、来源、局限和独立审阅入口。正文无需JavaScript。"><title>Claude审阅说明 · ETF Research</title><link rel="stylesheet" href="style.css"><style>.review{max-width:940px}.review h1{font-size:clamp(30px,4vw,48px)}.review h2{font-size:24px;margin-top:38px}.review p,.review li{font-size:15px;line-height:1.9}.review li{margin:9px 0}.review code{overflow-wrap:anywhere;font-size:13px;background:#edf3ee;padding:2px 5px}.review .tablewrap{margin:20px 0}</style></head><body><header><div class="shell topbar"><a class="brand" href="index.html"><em>ER</em>ETF 入场研究</a><nav><a href="index.html">研究总览</a><a href="history.html">历史风险</a><a href="scenarios.html">ETF情景</a><a href="stocks.html">个股研究</a><a href="current-data.html">数据来源</a><a href="guide.html">使用指南</a></nav></div></header><main><div class="shell"><p class="notice">方法与版本记录保留各自数据时点，部分为旧版本。当前快照见<a href="current-data.html">数据来源</a>，最新使用范围见<a href="limitations.html">局限性</a>。</p></div><div class="shell"><p class="notice"><a href="review-response.html">V7审阅修正：默认预测留空、期间校验、事件计数与EPS敏感性</a></p></div><div class="shell review"><p class="notice error"><a href="review-response.html">V6反馈核查与修正</a> · <a href="code/index.html">直接读取源码，无需ZIP</a>。本页后半保留V5设计记录供对照。</p><div class="eyebrow">Architecture · evidence · independent review</div><div class="actions"><a class="button" href="review-code.zip">下载核心代码与审阅数据</a><a class="button secondary" href="review.md">查看纯文本说明</a><a class="button secondary" href="data.json">研究数据JSON</a></div><article class="sheet"><h1>ETF与个股研究：V5设计记录与V6修正</h1>
+<p><strong>V6更新入口：</strong> https://etf-research-notebook-zdq.zhaodingqi0630.chatgpt.site/review-response.html</p>
+<p><strong>无需ZIP的逐文件源码：</strong> https://etf-research-notebook-zdq.zhaodingqi0630.chatgpt.site/code/index.html</p>
+<p>下文保留V5设计记录供对照。V6已补充费用/分红/反向检验、共同NTM窗口及三年样本展示，撤下“已验证基准”含义；当前状态仍为估值未就绪。请以V6复核页及源码为准，不把下文旧版限制当作当前实现。</p>
+<p>网站：https://etf-research-notebook-zdq.zhaodingqi0630.chatgpt.site</p>
+<p>这是一套研究原型，目标是帮助比较美股ETF的入场条件，研究期限至少三年，示例资金S$3,000。重点为QQQM、SMH、SOXX、DRAM，VOO/VUG等用于比较。请审阅数据、推理和计算，不要把界面完成或测试通过当成投资模型有效。</p>
+<h2>1. 先知道它能回答什么</h2>
+<p>目前能回答：处于类似回撤状态时历史上有什么风险；给定经营、盈利和估值假设，什么买价满足目标回报；新财报或宏观消息要求重审哪些假设。</p>
+<p>目前不能可靠回答：具体哪天见底、下一阶段最低价、经过校准的底部概率、已验证的未来预期收益。没有将情景年化回报称作统计预期收益。</p>
+<p>市场价格历史冻结至2026-10-26美国收盘；预测数据在2026-10-28取回；公司实际财务资料各有报告期。后续消息台账单独更新。取回时间不等于数据商最后更新预测的时间。不要把这些不同日期统称为实时数据。</p>
+<h2>2. 搭建逻辑与数据流</h2>
+<p>数据源与原始快照 → 期间/币种/口径检查 → 计算模块 → 带日期的研究快照 → 网站互动计算。</p>
+<ul>
+<li>历史：保存Yahoo价格与长期指数代理，保留来源哈希。网站图使用收盘价格口径；完整历史策略测试另用保存的复权开收盘、现金及成本口径。</li>
+<li>经营：优先公司IR、SEC、Fed/BLS/BEA原文。实际、管理层指引、数据商一致预期、分析假设、未验证项目分开。</li>
+<li>前瞻：28家公司Nasdaq年度/季度EPS预测，加Longbridge财季营收预测及同期实际值；保存原始返回和取回时间。</li>
+<li>模型：Python负责离线数据整理、研究计算和构建；浏览器JavaScript负责互动图表、情景和导入后重算。没有在线训练机器学习模型。</li>
+<li>网站：HTML/CSS/原生JavaScript的静态网站，托管于Sites。访客数据与假设保存在自己的浏览器，可导出JSON迁移；没有交易功能或券商账户读取。</li>
+<li>监测：本地桌面任务每30分钟检查，追加证据及运行记录，有必要才重建发布。电脑和桌面应用关闭时不保证执行；不是7×24云端消息流。</li>
+</ul>
+<h2>3. 历史模块：描述分布与策略比较分开</h2>
+<p>回撤使用从可用历史起点累计的最高收盘价，避免252日峰值滚出窗口机械缩小回撤。分桶为0–5%、5–10%、10–15%、15–20%、20%以上。</p>
+<p><code>DD_t = P_t / max(P_0,...,P_t) - 1</code></p>
+<p>网站对当前回撤桶，计算成熟的63/126/252交易日前向窗口：进一步最低收盘、窗口末价格收益，以及10%/50%/90%分位。只使用已成熟窗口，未成熟样本另计。日度窗口重叠；不重叠计数也不当作独立危机数。它是固定窗口低点，不是整段熊市最低点。</p>
+<p>策略比较包括次日开盘立即买入、六期分批、固定延迟、0–63日均匀延迟安慰剂、单独宏观代理及事后匹配延迟对照；采用共同终点、现金收益、费用与未触发处理。事后匹配延迟属于探索性诊断，不能作为可实盘预知的规则。</p>
+<p>另有130组固定稳健性方案，改变起点偏移、峰值定义、当前/相邻回撤桶。结果高度相关，不是130个独立验证。没有声称真正样本外，也没有用这些变体挑出最佳参数。长期成熟独立样本仍少，特别是QQQM及DRAM。</p>
+<h2>4. 经营与盈利模块：不要混用指标</h2>
+<p>公司经营桥接使用同季实际收入及经营利润率作为起点，首年收入增长与后续增长分开：</p>
+<p><code>OPPS_T / OPPS_0 = (1+g_R1) × (1+g_R)^(T-1) × (m_T/m_0) / (1+g_S)^T</code></p>
+<p>g_R1是首年收入变化，g_R是后续年增速，g_S是股数年增速，m是经营利润率。利润率变化只应用一次。本季没有乘4冒充全年。经营利润/股不是净EPS；税、利息、投资收益和会计差异未完整建模。capex不机械全额扣成当期费用，未来折旧和现金回报仍需审查。</p>
+<p>公司条件价格因子再乘终值估值倍数比例。按初始NAV权重计算覆盖部分回报贡献：<code>Σ w_i × (价格因子_i - 1)</code>。未覆盖部分不自动设成零增长，不填写残余情景时不输出完整基金价格。</p>
+<p>营收近期预期采用：<code>未来2–3财季预测营收合计 / 去年相同财季实际营收合计 - 1</code>。这不是完整年度共识，也不是季度增长乘4。将它推为首年和后续年数值，仍属于分析判断。</p>
+<p>EPS部分覆盖聚合采用：<code>Σ(w_i × EPS_future_i / P_i) / Σ(w_i × EPS_base_i / P_i) - 1</code>，同一子集前后相除。不能直接用NAV权重平均公司EPS增长；NAV覆盖率也不是盈利覆盖率。</p>
+<h2>5. 当前预填值及其身份</h2>
+<p>以下是可调整的归一化分析情景，不是完整ETF市场一致预期，也没有经过前瞻有效性验证。</p>
+<div class="tablewrap"><table><thead><tr><th>ETF</th><th>首年每股盈利代理变化</th><th>后续每年</th><th>说明</th></tr></thead><tbody><tr><td>QQQM</td><td>20%</td><td>12%</td><td>可用年度预测约36.85% NAV，整篮子仍需分析判断</td></tr><tr><td>SMH</td><td>35%</td><td>18%</td><td>可用年度预测约91.08% NAV，财年和口径仍混合</td></tr><tr><td>SOXX</td><td>30%</td><td>15%</td><td>可用年度预测约90.00% NAV，未验证全基金共识</td></tr><tr><td>DRAM</td><td>15%</td><td>-5%</td><td>可用可比年度EPS仅MU、约28.12% NAV，属于证据薄弱的周期风险情景</td></tr></tbody></table></div>
+<p>终值倍数比例默认0.90，是人为假设收缩10%。预设的压力/改善按钮也是演示情景，没有赋概率。公司首年/后续收入路径及采用理由在研究依据页面逐项列出；管理层指引保留原财年，不能将NVDA FY2028或TSM 2026指引误称为从今天起未来12个月。</p>
+<p>GOOGL/AMZN存在一次性投资收益及EPS口径疑点，已从EPS增长聚合排除。NVDA跨期调整后EPS涉及SBC定义，未勾稽前不纳入滚动归一化EPS聚合。TSM使用ADR单位；SK hynix普通股/ADR/币种转换及三星预测覆盖不足，不扩充DRAM的可比EPS覆盖。Nasdaq的asOf为空，部分远期预测只有1–3家，分析师高低值不是置信区间。</p>
+<h2>6. 价格情景与执行模块</h2>
+<p><code>P_T = P_ref × (1+g_1) × (1+g)^(T-1) × multiple_ratio</code></p>
+<p>P_ref固定为有日期的参考价格；导入新报价改变拟买价和历史状态，不自动移动估值锚。手动计划买价会保留。公式只是给定盈利与倍数假设下的条件价格路径，P_ref本身不证明当前价格公允。完整起始基金EPS/PE缺失、预测财年与情景年错配，是尚未解决的估值限制。</p>
+<p>将期末资产扣除买卖费用与换汇摩擦后，以SGD计算情景年化，并反解达到用户目标年化的最高碎股买价。整股向下取整，余款单独计息，资金不足时不收不存在的股票交易费；相同终值比较整股与碎股。中途路径先在前1/3期下跌，再到终值，是人为压力路径，不是预测区间。</p>
+<p>没有完整模拟分红、税、基金费用、未来再平衡、互换实现差异、市场冲击或所有券商限制。请检查它们是否足以使页面上的具体买价不能用于决策。</p>
+<h2>7. 消息、台账与失效机制</h2>
+<p>证据修订、事件结果、事前预测和分析复核使用追加记录及哈希链。历史视图只读当时已经写入的记录；事后填写不算事前预测；发布日期精度不足时不捏造时分。新证据或有效期到期会要求重审旧结论。</p>
+<p>运行状态区分访问探测、真实内容检查、完整成功和部分失败。一次HTTP200不等于审阅内容，更不等于没有新消息。目前存在动态IR目录读取不完整，页面明确列出缺口。NVIDIA/Oracle扩容公告已作为定性证据记录，没有直接变成已确认营收或自动加一次AI增长。</p>
+<p>哈希链仅有本地可追踪性，不是外部可信时间戳、来源真实性证明或独立审计。监测无法保证全量、秒级或无遗漏。</p>
+<h2>8. 已做的检查与没有证明的事</h2>
+<ul>
+<li>本轮12项前瞻数据/计算检查、14项监测控制检查通过。</li>
+<li>浏览器检查：既有页面28项、情景持久化25项、新参考与收入路径27项通过；包括手机布局、导入拒绝、买价/估值锚分离和错误状态。</li>
+<li>21组历史计算及40组执行案例曾与另写的Python计算比较。公司收入路径也核对了Python/JavaScript的显示精度。</li>
+<li>从完整离线包重建后，价格序列、公司预期数值、参考参数和证据哈希一致。这叫确定性复现，不叫独立来源核实。</li>
+<li>这些检查验证实现，不证明收益、择时能力、底部概率或当前预填增长率正确。现时预测没有历史点时版本，不能回填旧回测证明有效。</li>
+</ul>
+<h2>9. 请Claude优先检查什么</h2>
+<ol>
+<li>以市场价格作锚、缺少完整起始EPS/PE，是否只能做条件回报敏感性？是否存在把已定价增长再次当新增收益的风险？</li>
+<li>财年、日历年、未来12个月、同季路径之间是否错配？管理层展望到模型首年/后续的调整是否合理，有没有伪精确？</li>
+<li>归一化EPS、一次性收益、SBC、ADR/币种是否仍有混用？“覆盖91% NAV”是否让读者误以为完整可靠的盈利覆盖？</li>
+<li>首年/后续增长和终值倍数目前依赖分析判断，范围是否过窄？利润率正常化、折旧、资本回报、竞争与AI终端变现还缺什么？</li>
+<li>历史窗口重叠、成熟样本、选择偏差、费用、现金收益、next-open成交及随机延迟对照是否处理正确？哪些结果不能外推到当下？</li>
+<li>网站最高买价、压力回撤、SGD年化、整股/碎股和现金是否数学正确，是否有过度解释？</li>
+<li>新报价、旧锚、缓存、预测版本、消息失效和公开页面是否可能让旧数据伪装成实时判断？</li>
+</ol>
+<p>请将反馈分为：确定的实现错误、设计层面的局限、数据待核实、值得新增但尚未验证的研究。区分代码审阅、实际执行和独立核实；不要声称做过未做的检查。建议按影响程度排序，并指出具体公式、文件或页面。</p>
+<h2>10. 阅读与代码入口</h2>
+<ul>
+<li>公式与因子：method.html；来源及原始预测：research.html；完整历史结果和经营桥接：workbench.html。</li>
+<li>网站计算：model.js；页面状态与保存：app.js；研究快照：data.json。</li>
+<li>核心审阅代码包：review-code.zip；包含本说明、Python核心、浏览器计算、前瞻原始返回、数据快照和文件哈希。</li>
+<li>包内可离线运行<code>python v5_tests.py</code>和<code>python reproduce.py --symbol QQQM --horizon 126</code>；图表复现使用Python标准库。</li>
+<li>此公开代码包用于审阅与图表/前瞻参考复算，不含全部历史OHLC、SEC原始档案与回测产物；全量策略重跑需要另附本地完整V5复现包。不要因缺失这些文件就声称已重跑完整回测。</li>
+</ul>
+<p>请先独立评价，不需要维护现有模型或同意已有结论。最有价值的反馈是指出会改变判断的错误、缺失数据和可执行修复。</p></article></div></main><footer><div class="shell">公开审阅版本 · 正文可直接读取，无需运行网页脚本。<br>网站图表与情景计算仍在浏览器执行，访客手填内容保存在各自浏览器。</div></footer></body></html>

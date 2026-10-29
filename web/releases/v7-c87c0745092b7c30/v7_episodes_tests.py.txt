@@ -1,0 +1,69 @@
+"""Boundary and coverage checks for V7 retrospective episode labels."""
+from pathlib import Path
+import json,unittest
+from v7_episodes import ROOT,GOLDEN_CASES,label_episodes,support_counts,build
+
+class EpisodeBoundaries(unittest.TestCase):
+    def test_small_sequence_oracles(self):
+        for case in GOLDEN_CASES:
+            with self.subTest(case=case['name']):
+                r=label_episodes(case['prices']);self.assertEqual(r['assignments'],case['assignments'])
+                self.assertEqual([e['peak_anchor_index']for e in r['episodes']],case['anchors'])
+                self.assertEqual([e['recovery_index']for e in r['episodes']],case['recoveries'])
+    def test_any_strict_drawdown_not_five_percent(self):
+        r=label_episodes([100,100-1e-10,100]);self.assertEqual(r['episode_count'],1)
+        self.assertEqual(r['assignments'],[0,0,-1])
+    def test_no_episode_for_flat_or_increasing_peaks(self):
+        r=label_episodes([100,100,101,101,102]);self.assertEqual(r['episode_count'],0)
+        self.assertEqual(r['outside_episode_observations'],5)
+    def test_recovery_half_open_no_double_ownership(self):
+        r=label_episodes([100,99,100,99,101]);first,second=r['episodes']
+        self.assertEqual(first['recovery_index'],second['peak_anchor_index'])
+        self.assertEqual(r['assignments'][2],second['id'])
+        for e in r['episodes']:
+            stop=e['recovery_index']if e['recovery_index']is not None else len(r['assignments'])
+            self.assertTrue(all(r['assignments'][i]==e['id']for i in range(e['peak_anchor_index'],stop)))
+    def test_open_recovery_fields_remain_null(self):
+        e=label_episodes([100,99])['episodes'][0]
+        self.assertIsNone(e['recovery_index']);self.assertIsNone(e['recovery_date'])
+        self.assertEqual(e['observed_stop_exclusive'],2)
+    def test_mature_positions_covered_inside_plus_outside(self):
+        r=label_episodes([100,101,100,102]);counts=support_counts([0,1,2],r['assignments'],r['episodes'])
+        self.assertEqual(counts['inside_episode_observations'],2);self.assertEqual(counts['outside_episode_observations'],1)
+        self.assertEqual(counts['episode_count'],1);self.assertEqual(counts['recovered_episode_count'],1)
+    def test_recovered_and_open_counts_distinct(self):
+        r=label_episodes([100,99,100,99]);counts=support_counts([0,1,2,3],r['assignments'],r['episodes'])
+        self.assertEqual(counts['episode_count'],2);self.assertEqual(counts['recovered_episode_count'],1)
+        self.assertEqual(counts['open_episode_count'],1)
+
+
+class FrozenIntegration(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.result=build(write=False)
+        cls.v6=json.loads((ROOT/'v6/history_diagnostics.json').read_text(encoding='utf8'))
+    def test_all_eight_assets_four_horizons(self):
+        self.assertEqual(len(self.result['series']),8)
+        self.assertEqual(sum(len(s['horizons'])for s in self.result['series']),32)
+    def test_v6_mature_counts_and_quantiles_unchanged(self):
+        for s in self.result['series']:
+            old=next(o for o in self.v6['series']if o['symbol']==s['symbol'])
+            self.assertEqual(s['current'],old['current'])
+            for r in s['horizons']:
+                a=next(o for o in old['horizons']if o['horizon']==r['horizon'])['conditional_current_bin']
+                self.assertEqual(r['mature_n'],a['mature_observations']);self.assertEqual(r['nonoverlap_n'],a['greedy_nonoverlap_windows'])
+                for newkey,oldkey in [('price_return_quantiles','window_price_return'),('minimum_signed_return_quantiles','window_minimum_signed_return'),('maximum_positive_loss_quantiles','window_maximum_positive_loss')]:
+                    for k,v in r[newkey].items():self.assertEqual(v,a[oldkey][k])
+    def test_every_current_bucket_mature_observation_accounted_for(self):
+        for s in self.result['series']:
+            for r in s['horizons']:
+                self.assertEqual(r['inside_episode_observations']+r['outside_episode_observations'],r['mature_n'])
+                self.assertEqual(r['recovered_episode_count']+r['open_episode_count'],r['episode_count'])
+                self.assertTrue(r['coverage_identity_holds']);self.assertTrue(r['count_identity_holds'])
+    def test_no_mean_difference_in_main_payload(self):
+        for s in self.result['series']:
+            for r in s['horizons']:
+                self.assertFalse(any('mean' in k for k in r))
+                self.assertFalse(any('mean' in k for k in r['price_return_quantiles']))
+
+if __name__=='__main__':unittest.main(verbosity=2)

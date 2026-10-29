@@ -1,0 +1,61 @@
+"""Material source, basis and forecasting checks; no network calls."""
+from pathlib import Path
+import json,hashlib,math,unittest
+from v5_reference import operating_path,build
+ROOT=Path(__file__).resolve().parent
+
+class ExpectationChecks(unittest.TestCase):
+ @classmethod
+ def setUpClass(cls):
+  cls.ref=build();cls.data=cls.ref['source_data'];cls.companies={x['symbol']:x for x in cls.data['companies']}
+ def test_raw_forecast_hashes(self):
+  self.assertEqual(len(self.companies),28)
+  for c in self.companies.values():self.assertEqual(hashlib.sha256((ROOT/c['raw_path']).read_bytes()).hexdigest(),c['raw_sha256'])
+ def test_source_refresh_not_estimate_time(self):
+  for c in self.companies.values():
+   self.assertIsNone(c['source_asof']);self.assertTrue(c['retrieved_at']);self.assertFalse(c['eligible_for_auto_full_fund_default'])
+ def test_fiscal_transition_arithmetic_and_analyst_counts(self):
+  for c in self.companies.values():
+   for prev,a in zip(c['annual_forecasts'],c['annual_forecasts'][1:]):
+    self.assertEqual(prev['period'][:3],a['period'][:3]);self.assertGreater(a['estimate_count'],0)
+    if prev['eps_mean']>0:self.assertAlmostEqual(a['growth_from_previous_forecast_fy'],a['eps_mean']/prev['eps_mean']-1)
+ def test_no_oneoff_profit_contamination(self):
+  for f in self.data['funds']:
+   for k in ['annual_fiscal_reference','first4_vs_last4_reference']:
+    self.assertTrue({'GOOGL','AMZN','SKHY'}.isdisjoint(r['symbol']for r in f[k]['members']))
+ def test_rolling_nvidia_basis_not_silently_spliced(self):
+  for f in self.data['funds']:self.assertNotIn('NVDA',[r['symbol']for r in f['first4_vs_last4_reference']['members']])
+ def test_income_weight_aggregation_not_nav_growth_average(self):
+  for f in self.data['funds']:
+   a=f['annual_fiscal_reference'];m=a['members']
+   self.assertAlmostEqual(a['coverage_nav_weight'],sum(r['nav_weight']for r in m))
+   self.assertAlmostEqual(a['first_forecast_fy_to_second_growth'],sum(r['ey1']for r in m)/sum(r['ey0']for r in m)-1)
+   self.assertAlmostEqual(a['second_forecast_fy_to_third_growth'],sum(r['ey2']for r in m)/sum(r['ey1']for r in m)-1)
+   self.assertFalse(a['auto_apply']);self.assertTrue(f['not_full_etf_consensus'])
+ def test_revenue_not_a_quarter_times_four(self):
+  for c in self.companies.values():
+   r=c.get('revenue_reference')
+   if not r:continue
+   qs=r['quarters'];self.assertIsNone(r['annual_consensus_growth'])
+   if not qs:
+    self.assertIsNone(r['aggregate_matched_yoy_growth']);continue
+   self.assertIn(len(qs),[2,3])
+   for q in qs:
+    p,b=q['forecast_period'].split(),q['base_period'].split();self.assertEqual(p[0],b[0]);self.assertEqual(int(p[1]),int(b[1])+1)
+   self.assertAlmostEqual(r['aggregate_matched_yoy_growth'],sum(q['revenue_estimate']for q in qs)/sum(q['prior_same_quarter_actual_revenue']for q in qs)-1)
+ def test_firstyear_and_later_revenue_are_separate(self):
+  actual=operating_path(.70,.35,.60,.50,.01,3,.9)
+  self.assertAlmostEqual(actual['per_share_operating_factor'],1.7*1.35**2*.5/.6/1.01**3)
+  self.assertNotAlmostEqual(actual['per_share_operating_factor'],1.7**3*.5/.6/1.01**3)
+ def test_later_growth_not_applied_to_first_year(self):
+  self.assertAlmostEqual(operating_path(.2,.8,.4,.4,0,1,1)['per_share_operating_factor'],1.2)
+ def test_not_a_forecast_probability(self):
+  for r in self.ref['reference_inputs_by_symbol'].values():
+   self.assertEqual(r['input_type'],'analyst_scenario_not_full_fund_market_consensus');self.assertNotIn('probability',r)
+   self.assertLess(r['coverage_nav_weight'],1)
+ def test_memory_includes_margin_normalization(self):
+  r=self.ref['company_inputs_by_symbol'];self.assertEqual(r['MU']['later_revenue_growth'],0);self.assertLess(r['MU']['future_margin_override'],.8)
+ def test_bad_bridge_inputs_blocked(self):
+  for args in [(-1,.1,.4,.4,0),(.2,float('nan'),.4,.4,0),(.2,.1,.4,1.2,0)]:
+   with self.assertRaises(ValueError):operating_path(*args)
+if __name__=='__main__':unittest.main(verbosity=1)

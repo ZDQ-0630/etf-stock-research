@@ -1,0 +1,160 @@
+"""Build inspectable EPS references. Offline and import-safe; never estimates bottom odds.
+
+python expectations_acquire.py refreshes Nasdaq raw files.
+python expectations_sources.py rebuilds this source table without network access.
+"""
+from pathlib import Path
+from datetime import datetime, timezone
+import calendar, hashlib, json
+
+ROOT = Path(__file__).resolve().parent
+OUT = ROOT / 'v5'
+EPS_BASIS = 'Nasdaq EPS* provider basis unspecified; GAAP/adjusted and share definitions not fully reconciled'
+BLOCK_AGGREGATE = {'GOOGL': 'Exceptional investment gains: annual EPS basis is inconsistent with normalized operating run rate', 'AMZN': 'Exceptional investment gains: annual EPS basis is inconsistent with normalized operating run rate', 'SKHY': 'ADR units and stale Q3 unreleased flag conflict with official same-day release; no normalized actual base'}
+
+def read(path):
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+
+def num(value):
+    if value is None or str(value).strip() in {'', '--', 'N/A'}:
+        return None
+    try:
+        return float(str(value).replace(',', '').replace('$', ''))
+    except (TypeError, ValueError):
+        return None
+
+def payload(result):
+    if result.get('structuredContent'):
+        return result['structuredContent']
+    for item in result.get('content', []):
+        if item.get('type') == 'text' and item.get('text', '').startswith('{'):
+            return json.loads(item['text'])
+    return {}
+
+def date_end(label):
+    try:
+        dt = datetime.strptime(label, '%b %Y')
+        return dt.replace(day=calendar.monthrange(dt.year, dt.month)[1]).date().isoformat()
+    except ValueError:
+        return None
+
+def growth(base, future):
+    return future / base - 1 if base is not None and base > 0 and future is not None else None
+
+def annual_rows(data):
+    result = []
+    for row in (data.get('yearlyForecast') or {}).get('rows') or []:
+        result.append({'period': row['fiscalEnd'], 'fiscal_period_end_month': date_end(row['fiscalEnd']), 'eps_mean': num(row.get('consensusEPSForecast')), 'eps_low': num(row.get('lowEPSForecast')), 'eps_high': num(row.get('highEPSForecast')), 'estimate_count': num(row.get('noOfEstimates')), 'revision_up_4w': num(row.get('up')), 'revision_down_4w': num(row.get('down'))})
+    result.sort(key=lambda row: row['fiscal_period_end_month'] or '')
+    for i, row in enumerate(result):
+        row['growth_from_previous_forecast_fy'] = growth(result[i-1]['eps_mean'], row['eps_mean']) if i else None
+        row['growth_base_period'] = result[i-1]['period'] if i else None
+        row['type'] = 'provider_consensus_forecast'
+        row['analyst_dispersion_is_not_probability_interval'] = True
+    return result
+
+def normalized_actual_panel(longbridge):
+    rows = []
+    for row in longbridge.get('list', []):
+        values = {d['key']: d for d in row.get('details', [])}
+        normal = values.get('normalized_eps', {})
+        gaap = values.get('eps', {})
+        if normal.get('is_released') and num(normal.get('actual')) is not None:
+            rows.append({'fiscal_year': row['fiscal_year'], 'fiscal_quarter': int(row['fiscal_period']), 'period': row['period_text'], 'normalized_eps': num(normal['actual']), 'gaap_eps': num(gaap.get('actual'))})
+    rows.sort(key=lambda row: (row['fiscal_year'], row['fiscal_quarter']))
+    return rows[-4:]
+
+def revenue_reference(longbridge):
+    """Compare forecast quarters with the SAME fiscal quarters one year earlier."""
+    indexed = {(int(q['fiscal_year']),int(q['fiscal_period'])):q for q in longbridge.get('list',[])}
+    matched=[]
+    for (year,quarter),row in sorted(indexed.items()):
+        current=next((d for d in row.get('details',[]) if d['key']=='revenue'),{})
+        previous=indexed.get((year-1,quarter),{})
+        actual=next((d for d in previous.get('details',[]) if d['key']=='revenue'),{})
+        forecast_value=num(current.get('estimate'))
+        base_value=num(actual.get('actual'))
+        if current.get('is_released') is False and actual.get('is_released') and forecast_value is not None and base_value is not None and base_value>0:
+            matched.append({'forecast_period':row['period_text'],'base_period':previous['period_text'],'revenue_estimate':forecast_value,'prior_same_quarter_actual_revenue':base_value,'yoy_growth':growth(base_value,forecast_value)})
+    base=sum(x['prior_same_quarter_actual_revenue'] for x in matched)
+    future=sum(x['revenue_estimate'] for x in matched)
+    value=growth(base,future)
+    return {'type':'provider_consensus_forecast_quarterly_matched_yoy','currency':longbridge.get('currency'),'matched_quarter_count':len(matched),'quarters':matched,'aggregate_matched_yoy_growth':value,'annual_consensus_growth':None,'annual_consensus_status':'not_available_from_this_endpoint','year1_scenario_anchor':value if len(matched)>=2 else None,'year1_scenario_type':'analyst_inference_using_2_to_3_quarter_consensus_momentum_as_year1_sensitivity_not_annual_consensus','year2_year3_scenario_anchor':value*0.5 if value is not None and len(matched)>=2 else None,'later_growth_type':'explicit_analyst_assumption_50pct_persistence_not_market_consensus','firstyear_sensitivity_range':[value*0.5,value] if value is not None and value>=0 and len(matched)>=2 else None,'later_sensitivity_range':[value*0.25,value*0.75] if value is not None and value>=0 and len(matched)>=2 else None,'range_note':'Chosen sensitivity bounds, not estimated confidence or probability intervals. 50% persistence is editable and not fitted or validated. No quarterly revenue is multiplied by four.'}
+
+def build():
+    manifest = {x['symbol']: x for x in read(OUT/'raw'/'nasdaq_refresh_manifest.json')}
+    lb_raw = read(OUT/'raw'/'longbridge_consensus_latest.json')
+    lb = {x['symbol']: payload(x['response']) for x in lb_raw['items']}
+    rolling_raw = read(OUT/'raw'/'longbridge_forecast_latest.json')
+    rolling = {x['symbol']: payload(x['response']) for x in rolling_raw['items']}
+    clocks=[datetime.fromisoformat(t.replace('Z','+00:00')) for t in [lb_raw.get('retrieved_at'),rolling_raw.get('retrieved_at'),*(m.get('retrieved_at')for m in manifest.values())]if t]
+    information_cutoff=max(clocks).astimezone(timezone.utc).isoformat()
+    old_prices = {x['symbol']: x for x in read(ROOT/'v2'/'model'/'consensus_current.json')}
+    companies = []
+    for symbol in sorted(manifest):
+        source = OUT/'raw'/f'nasdaq_{symbol}.json'
+        metadata = manifest[symbol]
+        source_kind = 'current_retrieval'if metadata.get('status')=='downloaded'else'cached_existing_unverified_freshness'
+        if not source.exists():
+            source = ROOT/'v2'/'raw'/f'nasdaq_{symbol}.json'
+            source_kind = 'cached_2026_10_27'
+        data = read(source).get('data') or {}
+        annual = annual_rows(data)
+        quarters = ((data.get('quarterlyForecast') or {}).get('rows') or [])[:4]
+        qvalues = [num(q.get('consensusEPSForecast')) for q in quarters]
+        eps4 = sum(qvalues) if len(qvalues)==4 and all(v is not None for v in qvalues) else None
+        norm = normalized_actual_panel(lb.get(symbol, {}))
+        ttm = sum(q['normalized_eps'] for q in norm) if len(norm)==4 else None
+        metadata = manifest[symbol]
+        latest_rolling = (rolling.get(symbol, {}).get('latest') or [None])[-1]
+        issues = [EPS_BASIS, 'Provider asOf is null: retrieval date does not establish each estimate update time', 'Annual EPS periods are each company fiscal years and are not identical to the next 12 months']
+        if symbol in BLOCK_AGGREGATE:
+            issues.append(BLOCK_AGGREGATE[symbol])
+        if symbol == 'NVDA':
+            issues.append('Historical non-GAAP methodology including SBC must be reconciled before treating rolling growth as like-for-like')
+        if symbol == 'TSM':
+            issues.append('Longbridge currency USD and official Q3 EPS 4.60 per ADR corroborate unit; forecast FX assumptions remain unknown')
+        company = {'symbol': symbol, 'source_type': 'provider_consensus_forecast', 'source_url': f'https://api.nasdaq.com/api/analyst/{symbol}/earnings-forecast', 'public_page_url': f'https://www.nasdaq.com/market-activity/stocks/{symbol.lower()}/earnings', 'retrieved_at': metadata.get('retrieved_at') if source_kind=='current_retrieval' else '2026-10-27', 'retrieval_status': source_kind, 'source_asof': (data.get('yearlyForecast') or {}).get('asOf'), 'raw_path': str(source.relative_to(ROOT)).replace('\\','/'), 'raw_sha256': hashlib.sha256(source.read_bytes()).hexdigest(), 'currency': lb.get(symbol, {}).get('currency') or 'USD_assumed_US_listing_not_independently_reconciled', 'eps_basis': EPS_BASIS, 'annual_forecasts': annual, 'first_four_unreported_quarters': quarters, 'first_four_quarter_eps_sum': eps4, 'min_quarter_estimate_count': min([num(q.get('noOfEstimates')) or 0 for q in quarters], default=None), 'longbridge_normalized_actual_quarters': norm, 'normalized_actual_four_quarter_sum': ttm, 'first4_forecast_vs_normalized_last4_growth': growth(ttm, eps4), 'rolling_growth_type': 'analyst_inference_cross_provider_provisional_not_full_fund_consensus', 'rolling_growth_eligible': symbol not in BLOCK_AGGREGATE and ttm is not None and eps4 is not None, 'longbridge_consensus_retrieved_at': lb_raw['retrieved_at'] if symbol in lb else None, 'longbridge_rolling_forecast_snapshot': latest_rolling, 'longbridge_rolling_forecast_period': 'unspecified; forecast_start/end refer to snapshot validity, not fiscal year', 'longbridge_institution_count_interpretation': 'Zero returned is missing/unusable coverage, not evidence of zero analysts', 'price_reference': {'value': old_prices.get(symbol, {}).get('price'), 'asof': '2026-10-26_close', 'retrieved': old_prices.get(symbol, {}).get('retrieved'), 'note': 'Only used for approximate covered-sleeve earnings weights; not live price'}, 'eligible_for_auto_full_fund_default': False, 'limitations': issues}
+        company['revenue_reference']=revenue_reference(lb.get(symbol,{}))
+        company['revenue_reference']['source']={'provider':'Longbridge','tool':'consensus','symbol':symbol+'.US','raw_path':'v5/raw/longbridge_consensus_latest.json','retrieval_completed_before':lb_raw['retrieved_at'],'source_asof':None,'estimate_count':None,'count_note':'Analyst count not supplied by this endpoint; not assumed zero'}
+        if symbol=='NVDA':
+            company['rolling_growth_eligible']=False
+            company['rolling_growth_exclusion']='Historical normalized EPS predates SBC methodology change; FY26 prior comparisons are not fully recast in this endpoint'
+        companies.append(company)
+    holdings = read(ROOT/'v2'/'model'/'holdings.json')
+    by_symbol = {c['symbol']:c for c in companies}
+    funds = []
+    for fund in ['QQQM','SMH','SOXX','DRAM']:
+        rows = [h for h in holdings if h['fund']==fund]
+        sleeve = []
+        fy_sleeve = []
+        for row in rows:
+            c = by_symbol.get(row['symbol'])
+            if not c or c['symbol'] in BLOCK_AGGREGATE:
+                continue
+            price = c['price_reference']['value']
+            if not price or price<=0:
+                continue
+            weight = row['weight']
+            if c['rolling_growth_eligible']:
+                sleeve.append({'symbol':c['symbol'], 'nav_weight':weight, 'base_earnings_per_nav':weight*c['normalized_actual_four_quarter_sum']/price, 'future_earnings_per_nav':weight*c['first_four_quarter_eps_sum']/price})
+            a = c['annual_forecasts']
+            if len(a)>=3 and all(x['eps_mean'] is not None and x['eps_mean']>0 for x in a[:3]):
+                fy_sleeve.append({'symbol':c['symbol'], 'nav_weight':weight, 'periods':[x['period'] for x in a[:3]], 'ey0':weight*a[0]['eps_mean']/price, 'ey1':weight*a[1]['eps_mean']/price, 'ey2':weight*a[2]['eps_mean']/price, 'minimum_annual_estimate_count':min(x['estimate_count'] or 0 for x in a[:3])})
+        base = sum(x['base_earnings_per_nav'] for x in sleeve)
+        future = sum(x['future_earnings_per_nav'] for x in sleeve)
+        ey = [sum(x[f'ey{i}'] for x in fy_sleeve) for i in range(3)]
+        funds.append({'fund':fund, 'holdings_dates':sorted(set(x['date'] for x in rows)), 'first4_vs_last4_reference':{'type':'analyst_inference_partial_coverage_cross_provider_provisional', 'coverage_nav_weight':sum(x['nav_weight'] for x in sleeve), 'growth':growth(base,future), 'base_earnings_per_nav':base, 'future_earnings_per_nav':future, 'members':sleeve, 'auto_apply':False}, 'annual_fiscal_reference':{'type':'analyst_inference_partial_coverage_mixed_fiscal_years', 'coverage_nav_weight':sum(x['nav_weight'] for x in fy_sleeve), 'first_forecast_fy_to_second_growth':growth(ey[0],ey[1]), 'second_forecast_fy_to_third_growth':growth(ey[1],ey[2]), 'two_transition_cagr':(ey[2]/ey[0])**0.5-1 if ey[0]>0 and ey[2]>=0 else None, 'members':fy_sleeve, 'auto_apply':False}, 'not_full_etf_consensus':True, 'limitations':['Partial companies only; missing holdings are not assigned zero growth', 'Current holdings are fixed; rebalancing and substitution not forecast', 'Do not splice fiscal-year transitions into calendar next-12-month paths', 'Price snapshot and EPS providers have separate clocks; see each company', 'Unreconciled EPS basis means these are editable scenario references, not verified expected returns']})
+    evidence = read(ROOT/'v3'/'current_evidence.json')
+    company_guidance = [{'symbol':x['symbol'],'type':'management_guidance_not_consensus','period':x.get('guidance',{}).get('period'), 'guidance':x.get('guidance'), 'source_ids':x.get('source_ids'),'note':'Revenue guidance is not EPS growth. No annualizing a single quarter.'} for x in evidence['business'] if x.get('guidance')]
+    company_guidance.extend([{'symbol':'MU','type':'management_guidance_not_consensus','period':'FY27 Q1','currency':'USD','gaap_diluted_eps':37.84,'non_gaap_diluted_eps':38.15,'plus_minus_eps':1.0,'full_year_FY26_non_gaap_diluted_eps':75.52,'source':'https://investors.micron.com/news/press-release/2026/Micron-Technology-Inc--Reports-Record-Fiscal-Fourth-Quarter-and-Full-Year-2026-Results/default.aspx','published':'2026-09-30','checked_at':'2026-10-28T04:15:00Z','note':'Q1 forecast cannot be multiplied by four to stand in for FY27 consensus'}, {'symbol':'AVGO','type':'management_guidance_not_consensus','period':'FY26 Q4 ending 2026-11-01','revenue_USD_bn':34.8,'non_gaap_operating_margin':0.66,'source':'https://investors.broadcom.com/news-releases/news-release-details/broadcom-inc-announces-third-quarter-fiscal-year-2026-financial','published':'2026-09-02','note':'No direct EPS guidance in release. Interest, tax and diluted shares needed for EPS inference'}, {'symbol':'AMD','type':'management_guidance_not_consensus','period':'Q3 2026','revenue_USD_bn':13.0,'revenue_plus_minus_USD_bn':0.3,'source':'https://ir.amd.com/news-events/press-releases/detail/1295/amd-reports-second-quarter-2026-financial-results','published':'2026-08-04','note':'Revenue growth cannot be used directly as EPS growth'}, {'symbol':'005930.KS','type':'management_preliminary_guidance_not_consensus','period':'Q3 2026','currency':'KRW','revenue_trillion':195,'operating_income_trillion':107.4,'source':'https://news.samsung.com/global/samsung-electronics-announces-earnings-guidance-for-third-quarter-2026','published':'2026-10-08','eps':None,'eps_status':'unverified_no_usable_forecast','note':'Consolidated operating profit is not memory segment profit or shareholder EPS; full release pending Oct29'}])
+    result = {'schema':'v5.expectations_sources.v1','built_utc':datetime.now(timezone.utc).isoformat(),'information_cutoff':'2026-10-28T04:16:21Z','purpose':'Source-backed editable scenario references, never a bottom-date forecast or full ETF consensus','companies':companies,'funds':funds,'management_guidance':company_guidance,'primary_identity_checks':[{'symbol':'SKHY','url':'https://www.skhynix.com/ir/UI-FR-IR03/','published':None,'checked':'2026-10-28','fact':'NASDAQ ADR ticker SKHY; ordinary share:ADR=1:10; FY ends December31','status':'identity_verified_eps_conversion_unverified'}, {'symbol':'TSM','url':'https://pr.tsmc.com/schinese/news/3346','published':'2026-10-15','fact':'Q3 2026 diluted EPS NT$29.43 equals USD4.60 per ADR; not NT$29.43 per USD-priced ADR','status':'actual_ADR_unit_verified_forecast_assumptions_unverified'}], 'formulas':{'company_fy_growth':'EPS_mean(FY_n+1)/EPS_mean(FY_n)-1 with positive base; same company and fiscal end month','first4_vs_last4':'sum(next 4 unreported quarterly EPS forecasts)/sum(last 4 normalized quarterly EPS actuals)-1; cross-provider approximation, not GAAP-matched verified growth','sleeve_growth':'[sum(w_i*EPS_future_i/P_i)/sum(w_i*EPS_base_i/P_i)]-1 over identical eligible subset','coverage':'sum(current portfolio economic weights of included companies); never assign unknown holdings zero growth','dispersion':'High/low analyst forecasts are dispersion, not confidence bounds or scenario probabilities'},'global_limitations':['Nasdaq yearly/quarterly asOf null; refresh retrieval does not prove fresh estimate timestamps','Different fiscal years are displayed explicitly and never silently equated with calendar years','GAAP and normalized EPS are kept separate; GOOGL/AMZN annual transitions blocked from aggregate','No point-in-time historical consensus is available from these current snapshots; do not insert into historical backtest','DRAM Korean swap exposures require local currency/ADR conversion and normalized EPS data; MU cannot represent the whole fund','Quarterly EPS sums are approximations because diluted shares can vary; a reported annual EPS can differ','No automatic full-fund default or expected return is verified by these data']}
+    result['information_cutoff']=information_cutoff
+    result['annual_revenue_primary_anchors']=[{'symbol':'NVDA','type':'management_preliminary_annual_outlook','period':'FY2028 vs FY2027, fiscal years ending Jan2028 vs Jan2027','revenue_yoy_growth':0.70,'published':'2026-08-26','checked_at':'2026-10-28T04:16:21Z','source':'https://investor.nvidia.com/files/content_files/TRANSCRIPT_-NVIDIA-Corp-NVDA-US-Q2-2027-Earnings-Call-26-August-2026-5_00-PM-ET.pdf','page':3,'note':'Supply-constrained preliminary management outlook, not sell-side consensus and not calendar next12months'}, {'symbol':'TSM','type':'management_current_fiscal_year_outlook','period':'Calendar2026 vs Calendar2025','revenue_yoy_growth':0.44,'currency_basis':'USD','published':'2026-10-15','checked_at':'2026-10-28T04:16:21Z','source':'https://investor.tsmc.com/english/encrypt/files/encrypt_file/reports/2026-10/eba4fac72873bf546b669bd2b5d973df5c93215d/TSMC%203Q26%20Transcript.pdf','note':'Most of calendar2026 already elapsed; not a forecast for 2027 growth'}, {'symbol':'MSFT','type':'management_qualitative_annual_outlook','period':'FY2027 vs FY2026 ending June','revenue_yoy_growth':None,'management_text':'double-digit revenue and operating income growth','published':'2026-07-29','checked_at':'2026-10-28T04:16:21Z','source':'https://www.microsoft.com/en-us/investor/events/fy-2026/earnings-fy-2026-q4','note':'Do not convert double digit into an exact numerical market consensus'}]
+    OUT.mkdir(exist_ok=True)
+    (OUT/'expectations_sources.json').write_text(json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False),encoding='utf-8')
+    print(json.dumps({'companies':len(companies),'funds':[{'fund':f['fund'],'rolling_coverage':f['first4_vs_last4_reference']['coverage_nav_weight'],'annual_coverage':f['annual_fiscal_reference']['coverage_nav_weight'],'annual_first_transition':f['annual_fiscal_reference']['first_forecast_fy_to_second_growth'],'annual_second_transition':f['annual_fiscal_reference']['second_forecast_fy_to_third_growth']} for f in funds]},ensure_ascii=False))
+    return result
+
+if __name__=='__main__':
+    build()

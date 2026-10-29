@@ -1,0 +1,56 @@
+{
+  "release": "v7-c87c0745092b7c30",
+  "algorithm_version": "declared-earnings-periods-v7",
+  "main_source_sha256": "b3a085a05abacd581ac4d09391a1b51e0826974f368945087f2d8124efa4840a",
+  "hash_scope": "raw file bytes; UTF-8; preserve line endings",
+  "files": {
+    "model.js": {
+      "sha256": "485b02211349c167d63b3b72d9c0e31c785c41ebe41cf1c428d8633f7e7c2b28",
+      "bytes": 6548
+    },
+    "v6_calc.js": {
+      "sha256": "b3a085a05abacd581ac4d09391a1b51e0826974f368945087f2d8124efa4840a",
+      "bytes": 9812
+    },
+    "app.js": {
+      "sha256": "b625896b94d9d68d9061e368e7b90d415f9c585c2a74f9906e7e5aeb25d76a7d",
+      "bytes": 37166
+    },
+    "reproduce.py": {
+      "sha256": "389f292bbedb6a5699e6cd87f15de35a2c9348a0b8e3c9011787e6a402b28c60",
+      "bytes": 5466
+    },
+    "v7_episodes.py": {
+      "sha256": "6028f62e15cb3f9834aaaa97206b65e91835bbef7368da409bee344a52fdb467",
+      "bytes": 9380
+    },
+    "v7_episodes_tests.py": {
+      "sha256": "403741c2a4514820e5891066ab7698ffecebec7e68acaef4cdc15efbf42a5062",
+      "bytes": 4584
+    },
+    "v7_calendar_tilt.py": {
+      "sha256": "4f36ca73ddd702e39f256effd8368a9e7646176e3104ab1f913d4788893b6278",
+      "bytes": 16754
+    },
+    "v7_calendar_tilt_tests.py": {
+      "sha256": "d1c7f27053cdc7baa4572e38e945671fec275308a7103025a5779e60996ffb0a",
+      "bytes": 5743
+    },
+    "data/episodes_summary.json": {
+      "sha256": "3f4790ca4ebd6fc400708b9cc0aa0cf44fca5bfa4f55178206586401dce283e0",
+      "bytes": 797149
+    },
+    "data/calendar_tilt.json": {
+      "sha256": "39ff8af68f456906d2449d6f5e506f74b26ef0c9476ad5fa2c6b0dac25baa97c",
+      "bytes": 522715
+    },
+    "data/checks.json": {
+      "sha256": "7d4dc8123c8d192b00d7c5f3fb243ab14dbb5686ffd92283a07c6885fd2d3792",
+      "bytes": 2602
+    },
+    "V7_READ_FIRST.md": {
+      "sha256": "0012e85781eb225e572b5bf9fb3ba57e209ca960ed67462b4d3507168c8cdbc4",
+      "bytes": 1820
+    }
+  }
+}

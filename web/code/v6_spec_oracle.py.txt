@@ -1,0 +1,266 @@
+"""Independent arithmetic oracle, derived only from the written V6 specification.
+
+This module was written without reading the project's existing execution or
+JavaScript implementations. It is a specification cross-check, not a market
+forecast, source audit or proof that any earnings/multiple assumptions are valid.
+All FX inputs are SGD paid/received for one USD. Cash remaining after purchase
+and distributions is in USD until liquidation/conversion at the terminal date.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import math
+import unittest
+
+
+def _number(name, value):
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
+        raise ValueError(name + ' must be a finite number')
+    return float(value)
+
+
+def distribution_value_per_unit(annual_cash_usd, tax_rate, cash_rate, years):
+    """Net cash dividends carried to T, per unit held; no reinvestment in shares.
+
+    A whole-year dividend is paid on each holding anniversary. A fractional last
+    year is paid at T in proportion to its length. This timing is an explicit
+    convention, not a prediction of a particular ETF's ex-dividend calendar.
+    """
+    annual_cash_usd = _number('annual_cash_usd', annual_cash_usd)
+    tax_rate = _number('tax_rate', tax_rate)
+    cash_rate = _number('cash_rate', cash_rate)
+    years = _number('years', years)
+    if annual_cash_usd < 0 or not 0 <= tax_rate <= 1 or cash_rate <= -1 or years <= 0:
+        raise ValueError('Invalid distribution inputs')
+    whole = math.floor(years)
+    terminal_per_unit = sum(
+        annual_cash_usd * (1-tax_rate) * (1+cash_rate) ** (years-k)
+        for k in range(1, whole+1)
+    )
+    stub = years-whole
+    if stub > 1e-12:
+        terminal_per_unit += annual_cash_usd * stub * (1-tax_rate)
+    return terminal_per_unit
+
+
+def conditional_target(reference_usd, first_growth, later_growth, multiple_ratio,
+                       years, expense_rate=0.0, already_fund_net=False):
+    """A conditional exit-price assumption; no intrinsic-value inference.
+
+    The earnings denominator and its dates must be consistent across reference
+    and terminal multiples outside this function. If the supplied target already
+    represents the fund's net market price, expense must not be deducted again.
+    """
+    reference_usd = _number('reference_usd', reference_usd)
+    first_growth = _number('first_growth', first_growth)
+    later_growth = _number('later_growth', later_growth)
+    multiple_ratio = _number('multiple_ratio', multiple_ratio)
+    years = _number('years', years)
+    expense_rate = _number('expense_rate', expense_rate)
+    if reference_usd <= 0 or first_growth <= -1 or later_growth <= -1 or multiple_ratio <= 0 or years < 1 or not 0 <= expense_rate < 1:
+        raise ValueError('Invalid conditional price inputs')
+    earnings_factor = (1+first_growth) * (1+later_growth) ** (years-1)
+    gross = reference_usd * earnings_factor * multiple_ratio
+    expense_factor = 1.0 if already_fund_net else (1-expense_rate) ** years
+    return {
+        'earnings_factor': earnings_factor,
+        'gross_conditional_price_usd': gross,
+        'expense_factor': expense_factor,
+        'net_conditional_price_usd': gross * expense_factor,
+    }
+
+
+def execute(budget_sgd, entry_usd, target_net_usd, years, fx0_sgd_per_usd,
+            fxT_sgd_per_usd, fx_friction=0.0, trade_friction=0.0,
+            fixed_usd=0.0, cash_rate=0.0, annual_dividend_usd=0.0,
+            withholding_rate=0.0, integer=False):
+    """Execute the terminal cash-flow specification, independent of path plots."""
+    names = ('budget_sgd','entry_usd','target_net_usd','years','fx0_sgd_per_usd',
+             'fxT_sgd_per_usd','fx_friction','trade_friction','fixed_usd',
+             'cash_rate','annual_dividend_usd','withholding_rate')
+    values = [budget_sgd,entry_usd,target_net_usd,years,fx0_sgd_per_usd,
+              fxT_sgd_per_usd,fx_friction,trade_friction,fixed_usd,
+              cash_rate,annual_dividend_usd,withholding_rate]
+    v = dict(zip(names, (_number(n,x) for n,x in zip(names,values))))
+    if min(v[k] for k in names[:6]) <= 0 or not 0 <= fx_friction < 1 or not 0 <= trade_friction < 1 or fixed_usd < 0 or cash_rate <= -1 or annual_dividend_usd < 0 or not 0 <= withholding_rate <= 1:
+        raise ValueError('Invalid execution inputs')
+    dollars = budget_sgd * (1-fx_friction) / fx0_sgd_per_usd
+    buying_power = max(0.0, dollars-fixed_usd)
+    quantity = buying_power / (entry_usd * (1+trade_friction))
+    if integer:
+        quantity = math.floor(quantity)
+    purchase_fee = fixed_usd if quantity > 0 else 0.0
+    cash_usd = dollars - quantity*entry_usd*(1+trade_friction) - purchase_fee
+    if abs(cash_usd) < 1e-10:
+        cash_usd = 0.0
+    if cash_usd < 0:
+        raise ArithmeticError('Specification would overspend cash')
+    carried_cash = cash_usd * (1+cash_rate) ** years
+    dividend_per_unit = distribution_value_per_unit(
+        annual_dividend_usd, withholding_rate, cash_rate, years)
+    sale_fee = fixed_usd if quantity > 0 else 0.0
+    sale_before_fee = quantity * target_net_usd * (1-trade_friction)
+    terminal_usd = sale_before_fee - sale_fee + carried_cash + quantity*dividend_per_unit
+    terminal_sgd = terminal_usd * fxT_sgd_per_usd * (1-fx_friction)
+    return {
+        'units': quantity,
+        'converted_budget_usd': dollars,
+        'cash_usd': cash_usd,
+        'cash_at_T_usd': carried_cash,
+        'net_dividend_per_unit_at_T_usd': dividend_per_unit,
+        'purchase_fixed_fee_usd': purchase_fee,
+        'sale_fixed_fee_usd': sale_fee,
+        'terminal_usd': terminal_usd,
+        'terminal_sgd': terminal_sgd,
+        'annualized': (terminal_sgd/budget_sgd) ** (1/years)-1 if terminal_sgd>0 else None,
+        'sale_fee_exceeds_stock_proceeds': sale_fee > sale_before_fee,
+        'cash_currency': 'USD',
+    }
+
+
+def highest_fractional_entry(budget_sgd, target_net_usd, years,
+                             fx0_sgd_per_usd, fxT_sgd_per_usd, hurdle,
+                             fx_friction=0.0, trade_friction=0.0, fixed_usd=0.0,
+                             cash_rate=0.0, annual_dividend_usd=0.0,
+                             withholding_rate=0.0):
+    """Backsolve for full fractional deployment, rather than a cash/stock choice."""
+    hurdle = _number('hurdle',hurdle)
+    if hurdle <= -1:
+        raise ValueError('hurdle must exceed -100%')
+    # Use the executor only for validation/convention and the zero-share regime;
+    # derive the price bound directly from terminal cash-flow algebra below.
+    check = execute(budget_sgd,1.0,target_net_usd,years,fx0_sgd_per_usd,
+                    fxT_sgd_per_usd,fx_friction,trade_friction,fixed_usd,
+                    cash_rate,annual_dividend_usd,withholding_rate)
+    required_sgd = budget_sgd * (1+hurdle) ** years
+    if check['converted_budget_usd'] <= fixed_usd:
+        return {
+            'max_entry_usd': None,
+            'status': 'no_stock_purchase_affordable',
+            'cash_only_hurdle_met': check['terminal_sgd'] >= required_sgd,
+        }
+    required_usd = required_sgd / (fxT_sgd_per_usd*(1-fx_friction))
+    unit_payoff = target_net_usd*(1-trade_friction) + check['net_dividend_per_unit_at_T_usd']
+    required_units = (required_usd+fixed_usd) / unit_payoff
+    price = (check['converted_budget_usd']-fixed_usd) / ((1+trade_friction)*required_units)
+    return {
+        'max_entry_usd':price,
+        'required_units':required_units,
+        'status':'full_fractional_deployment_bound',
+        'required_terminal_sgd':required_sgd,
+    }
+
+
+def reverse_stress(budget_sgd, entry_usd, reference_usd, first_growth,
+                   later_growth, multiple_ratio, years, fx0_sgd_per_usd,
+                   fxT_sgd_per_usd, hurdle, fx_friction=0.0,
+                   trade_friction=0.0, fixed_usd=0.0, cash_rate=0.0,
+                   annual_dividend_usd=0.0, withholding_rate=0.0,
+                   expense_rate=0.0, already_fund_net=False, integer=False):
+    """Required price/growth/multiple under the same conditional cash-flow rules."""
+    hurdle = _number('hurdle',hurdle)
+    if hurdle <= -1:
+        raise ValueError('hurdle must exceed -100%')
+    assumption = conditional_target(reference_usd,first_growth,later_growth,
+                                    multiple_ratio,years,expense_rate,already_fund_net)
+    current = execute(budget_sgd,entry_usd,assumption['net_conditional_price_usd'],
+                      years,fx0_sgd_per_usd,fxT_sgd_per_usd,fx_friction,
+                      trade_friction,fixed_usd,cash_rate,annual_dividend_usd,
+                      withholding_rate,integer)
+    required_sgd = budget_sgd*(1+hurdle)**years
+    if current['units'] == 0:
+        return {'status':'no_stock_exposure','required_price_usd':None,
+                'cash_only_hurdle_met':current['terminal_sgd']>=required_sgd}
+    required_usd = required_sgd/(fxT_sgd_per_usd*(1-fx_friction))
+    q = current['units']
+    raw_price = (required_usd-current['cash_at_T_usd']
+                 -q*current['net_dividend_per_unit_at_T_usd']+fixed_usd)/(q*(1-trade_friction))
+    net_price = max(0.0,raw_price)
+    gross_price = net_price/assumption['expense_factor']
+    earnings_factor = gross_price/(reference_usd*multiple_ratio)
+    return {
+        'status':'conditional_breakpoint_not_forecast',
+        'required_net_exit_price_usd':net_price,
+        'required_gross_exit_price_usd':gross_price,
+        'income_and_cash_alone_cover_hurdle':raw_price<=0,
+        'required_earnings_factor':earnings_factor,
+        'required_uniform_earnings_cagr':earnings_factor**(1/years)-1,
+        'required_later_growth_given_first':(earnings_factor/(1+first_growth))**(1/(years-1))-1 if years>1 else None,
+        'required_multiple_ratio':gross_price/(reference_usd*assumption['earnings_factor']),
+    }
+
+
+def example_cases():
+    simple = execute(1000,100,120,3,2,2)
+    integer = execute(1000,100,120,3,2,2,fixed_usd=1,integer=True)
+    cash_only = execute(1000,100,120,3,2,2,fixed_usd=501,cash_rate=.05,integer=True)
+    dividends = execute(1000,100,100,3,1,1,cash_rate=.1,annual_dividend_usd=2,withholding_rate=.25)
+    stub = execute(1000,100,100,3.5,1,1,annual_dividend_usd=2)
+    defaults = []
+    fx = 1.2777899503707886
+    for symbol,price,g1,g in [('QQQM',293.26,.20,.12),('SMH',541.62,.35,.18),('SOXX',491.83,.30,.15),('DRAM',48.33,.15,-.05)]:
+        target = conditional_target(price,g1,g,.9,3)['net_conditional_price_usd']
+        actual = execute(3000,price,target,3,fx,fx,.001,.0005,1)
+        bound = highest_fractional_entry(3000,target,3,fx,fx,.10,.001,.0005,1)
+        defaults.append({'symbol':symbol,'target_over_reference':target/price,
+                         'net_capital_return_annualized':actual['annualized'],
+                         'max_entry_over_reference_at_10pct_hurdle':bound['max_entry_usd']/price})
+    return {'simple':simple,'integer_fixed_fee':integer,'zero_units_cash':cash_only,
+            'cash_dividends':dividends,'fractional_year_dividend':stub,
+            'expense_example':conditional_target(100,.2,.1,.9,3,.01),
+            'default_assumptions_price_only_no_fund_expense':defaults}
+
+
+class WrittenSpecificationChecks(unittest.TestCase):
+    def test_cash_currency_and_fx_units(self):
+        r=execute(1000,100,120,3,2,2)
+        self.assertEqual(r['units'],5);self.assertEqual(r['cash_currency'],'USD')
+        self.assertEqual(r['terminal_sgd'],1200)
+    def test_integer_residual_and_two_fixed_fees(self):
+        r=execute(1000,100,120,3,2,2,fixed_usd=1,integer=True)
+        self.assertEqual(r['units'],4);self.assertEqual(r['cash_usd'],99)
+        self.assertEqual(r['terminal_sgd'],1156)
+    def test_zero_units_do_not_pay_stock_fees(self):
+        r=execute(1000,100,120,3,2,2,fixed_usd=501,cash_rate=.05,integer=True)
+        self.assertEqual(r['units'],0);self.assertEqual(r['purchase_fixed_fee_usd'],0)
+        self.assertEqual(r['sale_fixed_fee_usd'],0);self.assertAlmostEqual(r['terminal_sgd'],1157.625)
+    def test_dividend_timing_and_withholding(self):
+        r=execute(1000,100,100,3,1,1,cash_rate=.1,annual_dividend_usd=2,withholding_rate=.25)
+        self.assertAlmostEqual(r['net_dividend_per_unit_at_T_usd'],4.965)
+        self.assertAlmostEqual(r['terminal_sgd'],1049.65)
+    def test_stub_year_is_not_a_whole_dividend(self):
+        r=execute(1000,100,100,3.5,1,1,annual_dividend_usd=2)
+        self.assertAlmostEqual(r['terminal_sgd'],1070)
+    def test_expense_deducted_once_only(self):
+        a=conditional_target(100,.2,.1,.9,3,.01)
+        self.assertAlmostEqual(a['gross_conditional_price_usd'],130.68)
+        self.assertAlmostEqual(a['net_conditional_price_usd'],126.79867332)
+        self.assertAlmostEqual(conditional_target(100,.2,.1,.9,3,.01,True)['net_conditional_price_usd'],130.68)
+    def test_fractional_price_bound_reaches_hurdle(self):
+        args=dict(budget_sgd=3000,target_net_usd=150,years=3.5,fx0_sgd_per_usd=1.28,fxT_sgd_per_usd=1.33,hurdle=.10,fx_friction=.001,trade_friction=.0005,fixed_usd=1,cash_rate=.03,annual_dividend_usd=2,withholding_rate=.3)
+        p=highest_fractional_entry(**args)['max_entry_usd'];r=execute(entry_usd=p,**{k:v for k,v in args.items()if k!='hurdle'})
+        self.assertAlmostEqual(r['annualized'],.10,places=12)
+    def test_required_exit_price_reaches_hurdle(self):
+        args=dict(budget_sgd=3000,entry_usd=100,reference_usd=100,first_growth=.2,later_growth=.1,multiple_ratio=.9,years=3,fx0_sgd_per_usd=1.28,fxT_sgd_per_usd=1.33,hurdle=.1,fx_friction=.001,trade_friction=.0005,fixed_usd=1,cash_rate=.02,annual_dividend_usd=2,withholding_rate=.3,expense_rate=.0035)
+        out=reverse_stress(**args);keys=['budget_sgd','entry_usd','years','fx0_sgd_per_usd','fxT_sgd_per_usd','fx_friction','trade_friction','fixed_usd','cash_rate','annual_dividend_usd','withholding_rate']
+        r=execute(target_net_usd=out['required_net_exit_price_usd'],**{k:args[k]for k in keys})
+        self.assertAlmostEqual(r['annualized'],.1,places=12)
+    def test_extreme_income_can_cover_hurdle_without_exit_price(self):
+        r=reverse_stress(1000,100,100,.1,.1,.9,3,1,1,.1,annual_dividend_usd=100)
+        self.assertTrue(r['income_and_cash_alone_cover_hurdle']);self.assertEqual(r['required_net_exit_price_usd'],0)
+    def test_huge_sale_fee_is_flagged_not_hidden(self):
+        r=execute(1000,100,1,3,1,1,fixed_usd=400)
+        self.assertTrue(r['sale_fee_exceeds_stock_proceeds']);self.assertIsNone(r['annualized'])
+    def test_same_wrong_fx_at_both_ends_does_not_imply_70pct_return_bias(self):
+        a=execute(1280,100,120,3,1.28,1.28);b=execute(1280,100,120,3,1/1.28,1/1.28)
+        self.assertNotEqual(a['units'],b['units']);self.assertAlmostEqual(a['terminal_sgd'],b['terminal_sgd'])
+
+
+if __name__=='__main__':
+    p=argparse.ArgumentParser();p.add_argument('--self-test',action='store_true');a=p.parse_args()
+    if a.self_test:
+        suite=unittest.defaultTestLoader.loadTestsFromTestCase(WrittenSpecificationChecks)
+        result=unittest.TextTestRunner(verbosity=2).run(suite)
+        raise SystemExit(0 if result.wasSuccessful()else 1)
+    print(json.dumps(example_cases(),ensure_ascii=False,indent=2,allow_nan=False))
