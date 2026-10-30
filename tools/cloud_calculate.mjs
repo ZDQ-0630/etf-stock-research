@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import crypto from 'node:crypto';
+import {validateClose} from './quote_guard.mjs';
 
 const [inputPath, outputPath] = process.argv.slice(2);
 if (!inputPath || !outputPath) throw Error('Provide input and new output paths');
@@ -12,7 +13,7 @@ const read = p => JSON.parse(fs.readFileSync(p, 'utf8'));
 const hash = p => crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
 const root = process.cwd();
 const input = read(inputPath);
-if (!input.run_id || !input.quotes?.retrieved_at || !Array.isArray(input.quotes.raw) || !input.baseline_stocks?.companies) throw Error('Missing run, quote timestamp or declared stock scenarios');
+if (!input.run_id || !input.baseline_stocks?.companies) throw Error('Missing run or declared stock scenarios');
 const context = vm.createContext({window:{ResearchMath:{}},document:{getElementById:()=>null}});
 const coreDir=fs.existsSync(path.join(root,'sites/etf-research/src/model.js'))?'sites/etf-research/src':'web';
 const files = ['model.js','v6_calc.js','stocks.js'].map(n => path.join(root,coreDir,n));
@@ -20,33 +21,32 @@ for (const file of files) vm.runInContext(fs.readFileSync(file,'utf8'),context);
 const S=context.window.StockResearchMath;
 const results=[];
 for (const company of input.baseline_stocks.companies) {
-  const quote=input.quotes.raw.find(q=>q.symbol===company.symbol+'.US');
-  if (!quote?.timestamp || !Number.isFinite(Date.parse(quote.timestamp)) || !Number.isFinite(Number(quote.last_done)) || Number(quote.last_done)<=0) {
-    results.push({symbol:company.symbol,status:'blocked',reason:'missing dated regular-session price'}); continue;
-  }
+  const quote=validateClose(company.symbol+'.US',input.quotes,input.calendar);
+  if (!quote.ok) {results.push({symbol:company.symbol,status:'blocked',reason:quote.reason});continue;}
   const before=company.quote?.price;
   if (!Number.isFinite(before)||before<=0) {results.push({symbol:company.symbol,status:'blocked',reason:'missing baseline price'});continue;}
   const rows=[];
   for(const s of company.scenarios??[]) for(const hurdle of [.08,.10,.12]) {
     try {
       const common={eps:s.terminal_eps,pe:s.terminal_pe,years:s.years,hurdle};
-      const old=S.calculate({...common,price:before}), current=S.calculate({...common,price:Number(quote.last_done)});
+      const old=S.calculate({...common,price:before}), current=S.calculate({...common,price:quote.price});
       rows.push({scenario_id:s.id,hurdle,terminal_eps:s.terminal_eps,terminal_pe:s.terminal_pe,years:s.years,old,current,
-        required_pe:Number(quote.last_done)*(1+hurdle)**s.years/s.terminal_eps,
+        required_pe:quote.price*(1+hurdle)**s.years/s.terminal_eps,
         price_only_annualized_delta:current.annualized-old.annualized,
-        conditional_entry_gap:current.max_entry/Number(quote.last_done)-1});
+        conditional_entry_gap:current.max_entry/quote.price-1});
     } catch(e) {rows.push({scenario_id:s.id,hurdle,status:'blocked',reason:e.message});}
   }
   results.push({symbol:company.symbol,status:rows.some(r=>r.current)?'computed':'blocked',old_price:before,old_timestamp:company.quote.timestamp,
-    price:Number(quote.last_done),price_timestamp:quote.timestamp,quote_session:'regular_close',rows});
+    price:quote.price,price_timestamp:quote.timestamp,quote_session:'provisionally_checked_regular_close',quote_evidence:quote,baseline_note:'Previous close and basis are as supplied; independently verify before interpretation',rows});
 }
 const result={schema:'etf.cloud_migration.partial_calculation.v1',run_id:input.run_id,computed_at:new Date().toISOString(),
   input_sha256:hash(inputPath),calculator_sha256:hash(import.meta.filename),algorithm_version:context.window.ResearchMath.SCENARIO_VERSION,
+  quote_guard_sha256:hash(path.join(path.dirname(import.meta.filename),'quote_guard.mjs')),
   core_sha256:Object.fromEntries(files.map(f=>[path.basename(f),hash(f)])),
   comparison:'same existing public EPS/PE scenarios, different regular closes; USD gross price return',
   data_freshness:'quote timestamp is market timestamp; retrieval timestamp is not forecast formation time',
   assumptions:'scenarios and hurdle values are illustrations, not validated forecasts or user targets',
-  quote_retrieved_at:input.quotes.retrieved_at,results,
+  results,
   blocked:['automated source acquisition and cross-check','ETF historical risk refresh','company operating and forecast review','ETF valuation','cost and FX','holdings overlap','persistent cloud storage','website publication','reliable entry conclusion'],
   overall_status:'partial_not_a_complete_market_review'};
 fs.writeFileSync(outputPath,JSON.stringify(result,null,2),{flag:'wx'});

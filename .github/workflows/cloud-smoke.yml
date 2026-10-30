@@ -1,0 +1,21 @@
+name: Partial migration smoke test (no market monitoring)
+on:
+  push:
+    branches: [cloud-monitor-migration-20261030]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Node version
+        run: node --version
+      - name: Test quote gate and immutable output using synthetic inputs
+        run: node tools/cloud_calculate_test.mjs
+      - name: Check existing core math
+        run: node tools/core_check.mjs
+      - name: Explain coverage
+        run: echo 'Partial synthetic smoke test only; no sources, full model, site publishing, schedule, or investment validity verified.'
