@@ -1,0 +1,69 @@
+{
+  "schema": "etf.cloud_validation.public_audit.v1",
+  "run_id": "41010115947",
+  "run_attempt": "1",
+  "source_commit": "b0f38701139a5098db7dfa7face4e30bc0c00570",
+  "recorded_at": "2026-10-30T05:45:23.809756+00:00",
+  "snapshot_sha256": "32a18819f8fbd674450c7ae509b8e4e8a558d96a363f1320e0067de80961473a",
+  "scope": "partial research snapshot, not a complete model review",
+  "snapshot_status": "partial_no_entry_conclusion",
+  "latest_scheduled_session": "2026-10-29",
+  "prices_checked": 11,
+  "price_pair_agreements": 11,
+  "forecast_snapshots": 7,
+  "macro_status": {
+    "DGS10": "blocked",
+    "DFII10": "blocked",
+    "BAMLH0A0HYM2": "blocked",
+    "treasury_nominal": "retrieved_requires_review",
+    "treasury_real": "retrieved_requires_review"
+  },
+  "failed_sources": [
+    {
+      "name": "fred_DGS10",
+      "error": "TimeoutError: The read operation timed out"
+    },
+    {
+      "name": "fred_DFII10",
+      "error": "TimeoutError: The read operation timed out"
+    },
+    {
+      "name": "fred_BAMLH0A0HYM2",
+      "error": "TimeoutError: The read operation timed out"
+    }
+  ],
+  "blocked": [
+    "independent close timestamps and source rights",
+    "company results and management guidance content review",
+    "ETF absolute valuation and full model risk review",
+    "cost, FX and exposures",
+    "persisted previous run comparison",
+    "website sync and notifications"
+  ],
+  "entry_conclusion": "unavailable",
+  "research_only_scenario_count": 7,
+  "research_only_risk_count": 4,
+  "research_only_sha256": "5c017b3d63974deb7b2a80e4ee18fc4570cb52bbcb4c50494fee7d694f55c533",
+  "research_only_scope": "USD gross price-return scenario, excludes fees, tax, dividends and FX; input scenarios are not consensus or forecasts.",
+  "forecast_change_review_needed": [
+    "META"
+  ],
+  "fundamental_review_sha256": "889d087b46dbc6fa897448a964119e7d2fa67712028b4633e9e1f1a4dbbe087c",
+  "fundamental_review_status": "partial_review_no_entry_conclusion",
+  "comparison_status": "partial_comparison_only",
+  "comparison_reason": "Same calculation and scenarios; close-time, provider independence, company financial review and investment validity remain unverified",
+  "comparison_sha256": "90ad5211bdad45f593d33d7f65a228f8eb23439f10bc1d637918eb12cb6c7f97",
+  "issuer_feed_status": {
+    "NVDA": "retrieved_candidates_unreviewed",
+    "META": "retrieved_candidates_unreviewed"
+  },
+  "issuer_comparison_status": {
+    "NVDA": "compared_with_previous_feed",
+    "META": "compared_with_previous_feed"
+  },
+  "unreviewed_candidate_count": 0,
+  "issuer_feed_sha256": "ecd73ef943f5d40a57acf500dcd19e2461f5f77da84707b98fa459f542e9fe39",
+  "etf_conditional_scenario_count": 0,
+  "etf_scenarios_blocked_count": 4,
+  "etf_scenarios_sha256": "2c3d93736cf05f47000957ad844218e2e1b5ede856773d42aa9c41640f4a0cf9"
+}
