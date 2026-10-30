@@ -73,7 +73,8 @@ def main():
   assetclass='etf' if s in SYMS[:4] else 'stocks'
   jobs += [('nasdaq_'+s,'https://api.nasdaq.com/api/quote/'+s+'/historical?assetclass='+assetclass+'&fromdate='+start+'&todate='+end+'&limit=50'),('yahoo_'+s,'https://query1.finance.yahoo.com/v8/finance/chart/'+s+'?range=1mo&interval=1d')]
  jobs += [('forecast_'+s,'https://api.nasdaq.com/api/analyst/'+s+'/earnings-forecast') for s in STOCKS]
- jobs += [('fred_'+s,'https://fred.stlouisfed.org/graph/fredgraph.csv?id='+s) for s in FRED]
+ fred_start=(started.date()-timedelta(days=45)).isoformat()
+ jobs += [('fred_'+s,'https://fred.stlouisfed.org/graph/fredgraph.csv?id='+s+'&cosd='+fred_start) for s in FRED]
  with ThreadPoolExecutor(max_workers=6) as pool:responses=list(pool.map(get,jobs))
  records={r['key']:r for r,b in responses};bodies={r['key']:b for r,b in responses if b is not None}
  for key in list(bodies):

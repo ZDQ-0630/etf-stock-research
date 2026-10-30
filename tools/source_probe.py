@@ -1,6 +1,6 @@
 """Check selected public source endpoints in cloud; not a market-data adapter."""
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime,timezone
+from datetime import datetime,timezone,timedelta
 from pathlib import Path
 from urllib.request import Request,urlopen
 from urllib.error import HTTPError
@@ -8,7 +8,7 @@ import hashlib,json,sys
 
 def now(): return datetime.now(timezone.utc).isoformat()
 jobs=[('nasdaq_'+s,'https://api.nasdaq.com/api/analyst/'+s+'/earnings-forecast','json') for s in ['NVDA','MSFT','GOOGL','AMZN','META','TSM','MU']]
-jobs += [('fred_10y','https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10','csv'),('nyse_calendar','https://www.nyse.com/trade/hours-calendars','html')]
+jobs += [('fred_10y','https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10&cosd='+(datetime.now(timezone.utc).date()-timedelta(days=45)).isoformat(),'csv'),('nyse_calendar','https://www.nyse.com/trade/hours-calendars','html')]
 def probe(job):
  name,url,kind=job;out={'name':name,'url':url,'attempted_at':now(),'ok':False,'scope':'endpoint accessibility and limited shape only; no data validation or model run'}
  try:
