@@ -1,0 +1,5113 @@
+{
+  "schema": "etf.model_monitor.v1",
+  "run_id": "6545c11c97f4485e9d681819f9ef69b4",
+  "computed_at": "2026-10-29T09:50:49.215Z",
+  "algorithm_version": "absolute-earnings-periods-v8",
+  "monitor_calculation_sha256": "83f7310dad6b5b822525f472ceaa75c5b10087bbe0f8079d2daaebf806b2d82d",
+  "core_sha256": {
+    "model.js": "485b02211349c167d63b3b72d9c0e31c785c41ebe41cf1c428d8633f7e7c2b28",
+    "v6_calc.js": "3513ffe1ead974a5a508ce0b0bdac1c7008493587325844cbb7e245a2d8a1bb0",
+    "stocks.js": "50852b41721341c01c8adf903967a655493445daa19bda81e9fb3862141c5a80"
+  },
+  "input_sha256": "08865ebe33ac5857ea4d75bfad95d547199ec8409f926a846cbd6b4490e30050",
+  "baseline": "Published public stock scenarios; no earlier scheduled model run exists",
+  "stocks": [
+    {
+      "symbol": "NVDA",
+      "previous_other_sessions": {
+        "last_done": "213.925",
+        "timestamp": "1793231998",
+        "volume": "6338603",
+        "turnover": "1363069359.241",
+        "high": "216.2",
+        "low": "212.68",
+        "prev_close": "215.38"
+      },
+      "session_comparison_note": "Premarket versus prior regular close is a session change; compare prior postmarket separately before treating the difference as newly occurring.",
+      "source_basis": "USD gross capital-price return; no costs dividends taxes or FX",
+      "previous_quote_date": "2026-10-28",
+      "results": [
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 13.092,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 215.38,
+          "previous_price": 215.38,
+          "previous": {
+            "terminal": 157.104,
+            "annualized": -0.09982428980006508,
+            "max_entry": 124.71422039323274,
+            "required_eps": 22.60973088
+          },
+          "current": {
+            "terminal": 157.104,
+            "annualized": -0.09982428980006508,
+            "max_entry": 124.71422039323274,
+            "required_eps": 22.60973088
+          },
+          "required_pe": 20.72385965169569,
+          "conditional_entry_gap": -0.42095728297319746,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 13.092,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:21.000Z",
+          "price": 213.75,
+          "previous_price": 215.38,
+          "previous": {
+            "terminal": 157.104,
+            "annualized": -0.09982428980006508,
+            "max_entry": 124.71422039323274,
+            "required_eps": 22.60973088
+          },
+          "current": {
+            "terminal": 157.104,
+            "annualized": -0.09754191565854908,
+            "max_entry": 124.71422039323274,
+            "required_eps": 22.438620000000004
+          },
+          "required_pe": 20.567021081576538,
+          "conditional_entry_gap": -0.4165416589790282,
+          "price_only_annualized_delta": 0.002282374141515997,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 13.092,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 215.38,
+          "previous_price": 215.38,
+          "previous": {
+            "terminal": 157.104,
+            "annualized": -0.09982428980006508,
+            "max_entry": 118.03456048084145,
+            "required_eps": 23.889231666666674
+          },
+          "current": {
+            "terminal": 157.104,
+            "annualized": -0.09982428980006508,
+            "max_entry": 118.03456048084145,
+            "required_eps": 23.889231666666674
+          },
+          "required_pe": 21.896637641307674,
+          "conditional_entry_gap": -0.45197065428154215,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 13.092,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:21.000Z",
+          "price": 213.75,
+          "previous_price": 215.38,
+          "previous": {
+            "terminal": 157.104,
+            "annualized": -0.09982428980006508,
+            "max_entry": 118.03456048084145,
+            "required_eps": 23.889231666666674
+          },
+          "current": {
+            "terminal": 157.104,
+            "annualized": -0.09754191565854908,
+            "max_entry": 118.03456048084145,
+            "required_eps": 23.708437500000006
+          },
+          "required_pe": 21.730923464711278,
+          "conditional_entry_gap": -0.447791529914192,
+          "price_only_annualized_delta": 0.002282374141515997,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 13.092,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 215.38,
+          "previous_price": 215.38,
+          "previous": {
+            "terminal": 157.104,
+            "annualized": -0.09982428980006508,
+            "max_entry": 111.8235240524781,
+            "required_eps": 25.21611605333334
+          },
+          "current": {
+            "terminal": 157.104,
+            "annualized": -0.09982428980006508,
+            "max_entry": 111.8235240524781,
+            "required_eps": 25.21611605333334
+          },
+          "required_pe": 23.11284697830737,
+          "conditional_entry_gap": -0.4808082270755033,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 13.092,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:21.000Z",
+          "price": 213.75,
+          "previous_price": 215.38,
+          "previous": {
+            "terminal": 157.104,
+            "annualized": -0.09982428980006508,
+            "max_entry": 111.8235240524781,
+            "required_eps": 25.21611605333334
+          },
+          "current": {
+            "terminal": 157.104,
+            "annualized": -0.09754191565854908,
+            "max_entry": 111.8235240524781,
+            "required_eps": 25.02528000000001
+          },
+          "required_pe": 22.937928505957846,
+          "conditional_entry_gap": -0.4768490102808042,
+          "price_only_annualized_delta": 0.002282374141515997,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 21.82,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 215.38,
+          "previous_price": 215.38,
+          "previous": {
+            "terminal": 392.76,
+            "annualized": 0.22172640289876733,
+            "max_entry": 311.7855509830818,
+            "required_eps": 15.073153920000001
+          },
+          "current": {
+            "terminal": 392.76,
+            "annualized": 0.22172640289876733,
+            "max_entry": 311.7855509830818,
+            "required_eps": 15.073153920000001
+          },
+          "required_pe": 12.434315791017415,
+          "conditional_entry_gap": 0.4476067925670062,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 21.82,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:21.000Z",
+          "price": 213.75,
+          "previous_price": 215.38,
+          "previous": {
+            "terminal": 392.76,
+            "annualized": 0.22172640289876733,
+            "max_entry": 311.7855509830818,
+            "required_eps": 15.073153920000001
+          },
+          "current": {
+            "terminal": 392.76,
+            "annualized": 0.22482406118746323,
+            "max_entry": 311.7855509830818,
+            "required_eps": 14.959080000000004
+          },
+          "required_pe": 12.340212648945924,
+          "conditional_entry_gap": 0.4586458525524295,
+          "price_only_annualized_delta": 0.0030976582886959037,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 21.82,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 215.38,
+          "previous_price": 215.38,
+          "previous": {
+            "terminal": 392.76,
+            "annualized": 0.22172640289876733,
+            "max_entry": 295.08640120210356,
+            "required_eps": 15.92615444444445
+          },
+          "current": {
+            "terminal": 392.76,
+            "annualized": 0.22172640289876733,
+            "max_entry": 295.08640120210356,
+            "required_eps": 15.92615444444445
+          },
+          "required_pe": 13.137982584784606,
+          "conditional_entry_gap": 0.37007336429614424,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 21.82,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:21.000Z",
+          "price": 213.75,
+          "previous_price": 215.38,
+          "previous": {
+            "terminal": 392.76,
+            "annualized": 0.22172640289876733,
+            "max_entry": 295.08640120210356,
+            "required_eps": 15.92615444444445
+          },
+          "current": {
+            "terminal": 392.76,
+            "annualized": 0.22482406118746323,
+            "max_entry": 295.08640120210356,
+            "required_eps": 15.805625000000004
+          },
+          "required_pe": 13.038554078826769,
+          "conditional_entry_gap": 0.38052117521451967,
+          "price_only_annualized_delta": 0.0030976582886959037,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 21.82,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 215.38,
+          "previous_price": 215.38,
+          "previous": {
+            "terminal": 392.76,
+            "annualized": 0.22172640289876733,
+            "max_entry": 279.55881013119523,
+            "required_eps": 16.81074403555556
+          },
+          "current": {
+            "terminal": 392.76,
+            "annualized": 0.22172640289876733,
+            "max_entry": 279.55881013119523,
+            "required_eps": 16.81074403555556
+          },
+          "required_pe": 13.867708186984423,
+          "conditional_entry_gap": 0.2979794323112417,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 21.82,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:21.000Z",
+          "price": 213.75,
+          "previous_price": 215.38,
+          "previous": {
+            "terminal": 392.76,
+            "annualized": 0.22172640289876733,
+            "max_entry": 279.55881013119523,
+            "required_eps": 16.81074403555556
+          },
+          "current": {
+            "terminal": 392.76,
+            "annualized": 0.22482406118746323,
+            "max_entry": 279.55881013119523,
+            "required_eps": 16.683520000000005
+          },
+          "required_pe": 13.762757103574707,
+          "conditional_entry_gap": 0.3078774742979893,
+          "price_only_annualized_delta": 0.0030976582886959037,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 25.093,
+          "terminal_pe": 25,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 215.38,
+          "previous_price": 215.38,
+          "previous": {
+            "terminal": 627.325,
+            "annualized": 0.4281124575216786,
+            "max_entry": 497.99081059797794,
+            "required_eps": 10.8526708224
+          },
+          "current": {
+            "terminal": 627.325,
+            "annualized": 0.4281124575216786,
+            "max_entry": 497.99081059797794,
+            "required_eps": 10.8526708224
+          },
+          "required_pe": 10.812448513928187,
+          "conditional_entry_gap": 1.3121497381278577,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 25.093,
+          "terminal_pe": 25,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:21.000Z",
+          "price": 213.75,
+          "previous_price": 215.38,
+          "previous": {
+            "terminal": 627.325,
+            "annualized": 0.4281124575216786,
+            "max_entry": 497.99081059797794,
+            "required_eps": 10.8526708224
+          },
+          "current": {
+            "terminal": 627.325,
+            "annualized": 0.4317334027519164,
+            "max_entry": 497.99081059797794,
+            "required_eps": 10.770537600000003
+          },
+          "required_pe": 10.730619694735585,
+          "conditional_entry_gap": 1.3297815700490196,
+          "price_only_annualized_delta": 0.0036209452302378153,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 25.093,
+          "terminal_pe": 25,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 215.38,
+          "previous_price": 215.38,
+          "previous": {
+            "terminal": 627.325,
+            "annualized": 0.4281124575216786,
+            "max_entry": 471.31855747558217,
+            "required_eps": 11.466831200000003
+          },
+          "current": {
+            "terminal": 627.325,
+            "annualized": 0.4281124575216786,
+            "max_entry": 471.31855747558217,
+            "required_eps": 11.466831200000003
+          },
+          "required_pe": 11.424332682421396,
+          "conditional_entry_gap": 1.1883116235285645,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 25.093,
+          "terminal_pe": 25,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:21.000Z",
+          "price": 213.75,
+          "previous_price": 215.38,
+          "previous": {
+            "terminal": 627.325,
+            "annualized": 0.4281124575216786,
+            "max_entry": 471.31855747558217,
+            "required_eps": 11.466831200000003
+          },
+          "current": {
+            "terminal": 627.325,
+            "annualized": 0.4317334027519164,
+            "max_entry": 471.31855747558217,
+            "required_eps": 11.380050000000004
+          },
+          "required_pe": 11.337873112023276,
+          "conditional_entry_gap": 1.2049990993009692,
+          "price_only_annualized_delta": 0.0036209452302378153,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 25.093,
+          "terminal_pe": 25,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 215.38,
+          "previous_price": 215.38,
+          "previous": {
+            "terminal": 627.325,
+            "annualized": 0.4281124575216786,
+            "max_entry": 446.517543959548,
+            "required_eps": 12.103735705600004
+          },
+          "current": {
+            "terminal": 627.325,
+            "annualized": 0.4281124575216786,
+            "max_entry": 446.517543959548,
+            "required_eps": 12.103735705600004
+          },
+          "required_pe": 12.058876684334281,
+          "conditional_entry_gap": 1.0731615932749001,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 25.093,
+          "terminal_pe": 25,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:21.000Z",
+          "price": 213.75,
+          "previous_price": 215.38,
+          "previous": {
+            "terminal": 627.325,
+            "annualized": 0.4281124575216786,
+            "max_entry": 446.517543959548,
+            "required_eps": 12.103735705600004
+          },
+          "current": {
+            "terminal": 627.325,
+            "annualized": 0.4317334027519164,
+            "max_entry": 446.517543959548,
+            "required_eps": 12.012134400000004
+          },
+          "required_pe": 11.967614872673659,
+          "conditional_entry_gap": 1.088970965892622,
+          "price_only_annualized_delta": 0.0036209452302378153,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        }
+      ]
+    },
+    {
+      "symbol": "MSFT",
+      "previous_other_sessions": {
+        "last_done": "546.389",
+        "timestamp": "1793231999",
+        "volume": "4600807",
+        "turnover": "2514105656.347",
+        "high": "568.03",
+        "low": "529.5",
+        "prev_close": "531.01"
+      },
+      "session_comparison_note": "Premarket versus prior regular close is a session change; compare prior postmarket separately before treating the difference as newly occurring.",
+      "source_basis": "USD gross capital-price return; no costs dividends taxes or FX",
+      "previous_quote_date": "2026-10-28",
+      "results": [
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 16.974,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 531.01,
+          "previous_price": 531.01,
+          "previous": {
+            "terminal": 305.532,
+            "annualized": -0.16826559288235843,
+            "max_entry": 242.54115226337444,
+            "required_eps": 37.162203840000004
+          },
+          "current": {
+            "terminal": 305.532,
+            "annualized": -0.16826559288235843,
+            "max_entry": 242.54115226337444,
+            "required_eps": 37.162203840000004
+          },
+          "required_pe": 39.40848763520679,
+          "conditional_entry_gap": -0.5432456031649603,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 16.974,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:26.000Z",
+          "price": 549.271,
+          "previous_price": 531.01,
+          "previous": {
+            "terminal": 305.532,
+            "annualized": -0.16826559288235843,
+            "max_entry": 242.54115226337444,
+            "required_eps": 37.162203840000004
+          },
+          "current": {
+            "terminal": 305.532,
+            "annualized": -0.17758691611552468,
+            "max_entry": 242.54115226337444,
+            "required_eps": 38.440181664
+          },
+          "required_pe": 40.763713323435844,
+          "conditional_entry_gap": -0.5584308068997372,
+          "price_only_annualized_delta": -0.009321323233166257,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 16.974,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 531.01,
+          "previous_price": 531.01,
+          "previous": {
+            "terminal": 305.532,
+            "annualized": -0.16826559288235843,
+            "max_entry": 229.55071374906078,
+            "required_eps": 39.26523944444446
+          },
+          "current": {
+            "terminal": 305.532,
+            "annualized": -0.16826559288235843,
+            "max_entry": 229.55071374906078,
+            "required_eps": 39.26523944444446
+          },
+          "required_pe": 41.63864204076825,
+          "conditional_entry_gap": -0.5677092451195631,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 16.974,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:26.000Z",
+          "price": 549.271,
+          "previous_price": 531.01,
+          "previous": {
+            "terminal": 305.532,
+            "annualized": -0.16826559288235843,
+            "max_entry": 229.55071374906078,
+            "required_eps": 39.26523944444446
+          },
+          "current": {
+            "terminal": 305.532,
+            "annualized": -0.17758691611552468,
+            "max_entry": 229.55071374906078,
+            "required_eps": 40.61553894444445
+          },
+          "required_pe": 43.07056091669613,
+          "conditional_entry_gap": -0.582081133449498,
+          "price_only_annualized_delta": -0.009321323233166257,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 16.974,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 531.01,
+          "previous_price": 531.01,
+          "previous": {
+            "terminal": 305.532,
+            "annualized": -0.16826559288235843,
+            "max_entry": 217.47164267492704,
+            "required_eps": 41.446156515555565
+          },
+          "current": {
+            "terminal": 305.532,
+            "annualized": -0.16826559288235843,
+            "max_entry": 217.47164267492704,
+            "required_eps": 41.446156515555565
+          },
+          "required_pe": 43.951385488394024,
+          "conditional_entry_gap": -0.5904565965331594,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 16.974,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:26.000Z",
+          "price": 549.271,
+          "previous_price": 531.01,
+          "previous": {
+            "terminal": 305.532,
+            "annualized": -0.16826559288235843,
+            "max_entry": 217.47164267492704,
+            "required_eps": 41.446156515555565
+          },
+          "current": {
+            "terminal": 305.532,
+            "annualized": -0.17758691611552468,
+            "max_entry": 217.47164267492704,
+            "required_eps": 42.87145597155556
+          },
+          "required_pe": 45.462837721692004,
+          "conditional_entry_gap": -0.6040722290546432,
+          "price_only_annualized_delta": -0.009321323233166257,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 28.29,
+          "terminal_pe": 24,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 531.01,
+          "previous_price": 531.01,
+          "previous": {
+            "terminal": 678.96,
+            "annualized": 0.08537670549054166,
+            "max_entry": 538.9803383630543,
+            "required_eps": 27.871652880000003
+          },
+          "current": {
+            "terminal": 678.96,
+            "annualized": 0.08537670549054166,
+            "max_entry": 538.9803383630543,
+            "required_eps": 27.871652880000003
+          },
+          "required_pe": 23.645092581124075,
+          "conditional_entry_gap": 0.015009770744532691,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 28.29,
+          "terminal_pe": 24,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:26.000Z",
+          "price": 549.271,
+          "previous_price": 531.01,
+          "previous": {
+            "terminal": 678.96,
+            "annualized": 0.08537670549054166,
+            "max_entry": 538.9803383630543,
+            "required_eps": 27.871652880000003
+          },
+          "current": {
+            "terminal": 678.96,
+            "annualized": 0.07321278992440883,
+            "max_entry": 538.9803383630543,
+            "required_eps": 28.830136248000002
+          },
+          "required_pe": 24.45822799406151,
+          "conditional_entry_gap": -0.018735126443860328,
+          "price_only_annualized_delta": -0.012163915566132832,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 28.29,
+          "terminal_pe": 24,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 531.01,
+          "previous_price": 531.01,
+          "previous": {
+            "terminal": 678.96,
+            "annualized": 0.08537670549054166,
+            "max_entry": 510.1126972201351,
+            "required_eps": 29.448929583333342
+          },
+          "current": {
+            "terminal": 678.96,
+            "annualized": 0.08537670549054166,
+            "max_entry": 510.1126972201351,
+            "required_eps": 29.448929583333342
+          },
+          "required_pe": 24.98318522446095,
+          "conditional_entry_gap": -0.03935387804347357,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 28.29,
+          "terminal_pe": 24,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:26.000Z",
+          "price": 549.271,
+          "previous_price": 531.01,
+          "previous": {
+            "terminal": 678.96,
+            "annualized": 0.08537670549054166,
+            "max_entry": 510.1126972201351,
+            "required_eps": 29.448929583333342
+          },
+          "current": {
+            "terminal": 678.96,
+            "annualized": 0.07321278992440883,
+            "max_entry": 510.1126972201351,
+            "required_eps": 30.46165420833334
+          },
+          "required_pe": 25.842336550017677,
+          "conditional_entry_gap": -0.07129140766555098,
+          "price_only_annualized_delta": -0.012163915566132832,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 28.29,
+          "terminal_pe": 24,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 531.01,
+          "previous_price": 531.01,
+          "previous": {
+            "terminal": 678.96,
+            "annualized": 0.08537670549054166,
+            "max_entry": 483.2703170553935,
+            "required_eps": 31.084617386666675
+          },
+          "current": {
+            "terminal": 678.96,
+            "annualized": 0.08537670549054166,
+            "max_entry": 483.2703170553935,
+            "required_eps": 31.084617386666675
+          },
+          "required_pe": 26.370831293036417,
+          "conditional_entry_gap": -0.08990354785146515,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 28.29,
+          "terminal_pe": 24,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:26.000Z",
+          "price": 549.271,
+          "previous_price": 531.01,
+          "previous": {
+            "terminal": 678.96,
+            "annualized": 0.08537670549054166,
+            "max_entry": 483.2703170553935,
+            "required_eps": 31.084617386666675
+          },
+          "current": {
+            "terminal": 678.96,
+            "annualized": 0.07321278992440883,
+            "max_entry": 483.2703170553935,
+            "required_eps": 32.153591978666675
+          },
+          "required_pe": 27.277702633015206,
+          "conditional_entry_gap": -0.12016050901031816,
+          "price_only_annualized_delta": -0.012163915566132832,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 32.5335,
+          "terminal_pe": 30,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 531.01,
+          "previous_price": 531.01,
+          "previous": {
+            "terminal": 976.0049999999999,
+            "annualized": 0.22494460018037543,
+            "max_entry": 774.7842363968905,
+            "required_eps": 22.297322304
+          },
+          "current": {
+            "terminal": 976.0049999999999,
+            "annualized": 0.22494460018037543,
+            "max_entry": 774.7842363968905,
+            "required_eps": 22.297322304
+          },
+          "required_pe": 20.560950070542678,
+          "conditional_entry_gap": 0.45907654544526566,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 32.5335,
+          "terminal_pe": 30,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:26.000Z",
+          "price": 549.271,
+          "previous_price": 531.01,
+          "previous": {
+            "terminal": 976.0049999999999,
+            "annualized": 0.22494460018037543,
+            "max_entry": 774.7842363968905,
+            "required_eps": 22.297322304
+          },
+          "current": {
+            "terminal": 976.0049999999999,
+            "annualized": 0.211216534510263,
+            "max_entry": 774.7842363968905,
+            "required_eps": 23.064108998400002
+          },
+          "required_pe": 21.268024342662184,
+          "conditional_entry_gap": 0.41056825573695055,
+          "price_only_annualized_delta": -0.013728065670112422,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 32.5335,
+          "terminal_pe": 30,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 531.01,
+          "previous_price": 531.01,
+          "previous": {
+            "terminal": 976.0049999999999,
+            "annualized": 0.22494460018037543,
+            "max_entry": 733.2870022539441,
+            "required_eps": 23.559143666666674
+          },
+          "current": {
+            "terminal": 976.0049999999999,
+            "annualized": 0.22494460018037543,
+            "max_entry": 733.2870022539441,
+            "required_eps": 23.559143666666674
+          },
+          "required_pe": 21.72450889083561,
+          "conditional_entry_gap": 0.38092880031250664,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 32.5335,
+          "terminal_pe": 30,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:26.000Z",
+          "price": 549.271,
+          "previous_price": 531.01,
+          "previous": {
+            "terminal": 976.0049999999999,
+            "annualized": 0.22494460018037543,
+            "max_entry": 733.2870022539441,
+            "required_eps": 23.559143666666674
+          },
+          "current": {
+            "terminal": 976.0049999999999,
+            "annualized": 0.211216534510263,
+            "max_entry": 733.2870022539441,
+            "required_eps": 24.36932336666667
+          },
+          "required_pe": 22.471597000015375,
+          "conditional_entry_gap": 0.33501860148077034,
+          "price_only_annualized_delta": -0.013728065670112422,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 32.5335,
+          "terminal_pe": 30,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 531.01,
+          "previous_price": 531.01,
+          "previous": {
+            "terminal": 976.0049999999999,
+            "annualized": 0.22494460018037543,
+            "max_entry": 694.701080767128,
+            "required_eps": 24.86769390933334
+          },
+          "current": {
+            "terminal": 976.0049999999999,
+            "annualized": 0.22494460018037543,
+            "max_entry": 694.701080767128,
+            "required_eps": 24.86769390933334
+          },
+          "required_pe": 22.931157646118624,
+          "conditional_entry_gap": 0.30826364996351874,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 32.5335,
+          "terminal_pe": 30,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:26.000Z",
+          "price": 549.271,
+          "previous_price": 531.01,
+          "previous": {
+            "terminal": 976.0049999999999,
+            "annualized": 0.22494460018037543,
+            "max_entry": 694.701080767128,
+            "required_eps": 24.86769390933334
+          },
+          "current": {
+            "terminal": 976.0049999999999,
+            "annualized": 0.211216534510263,
+            "max_entry": 694.701080767128,
+            "required_eps": 25.72287358293334
+          },
+          "required_pe": 23.719741420013225,
+          "conditional_entry_gap": 0.26476926829766745,
+          "price_only_annualized_delta": -0.013728065670112422,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        }
+      ]
+    },
+    {
+      "symbol": "GOOGL",
+      "previous_other_sessions": {
+        "last_done": "292.5",
+        "timestamp": "1793231999",
+        "volume": "13793885",
+        "turnover": "4119006646.937",
+        "high": "327.65",
+        "low": "287.33",
+        "prev_close": "324.89"
+      },
+      "session_comparison_note": "Premarket versus prior regular close is a session change; compare prior postmarket separately before treating the difference as newly occurring.",
+      "source_basis": "USD gross capital-price return; no costs dividends taxes or FX",
+      "previous_quote_date": "2026-10-28",
+      "results": [
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 11.034,
+          "terminal_pe": 15,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 324.89,
+          "previous_price": 324.89,
+          "previous": {
+            "terminal": 165.51000000000002,
+            "annualized": -0.20133871694165084,
+            "max_entry": 131.3871742112483,
+            "required_eps": 27.284522112
+          },
+          "current": {
+            "terminal": 165.51000000000002,
+            "annualized": -0.20133871694165084,
+            "max_entry": 131.3871742112483,
+            "required_eps": 27.284522112
+          },
+          "required_pe": 37.09152,
+          "conditional_entry_gap": -0.5955948960840645,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 11.034,
+          "terminal_pe": 15,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:25.000Z",
+          "price": 291.46,
+          "previous_price": 324.89,
+          "previous": {
+            "terminal": 165.51000000000002,
+            "annualized": -0.20133871694165084,
+            "max_entry": 131.3871742112483,
+            "required_eps": 27.284522112
+          },
+          "current": {
+            "terminal": 165.51000000000002,
+            "annualized": -0.1719019549556502,
+            "max_entry": 131.3871742112483,
+            "required_eps": 24.477043968
+          },
+          "required_pe": 33.27493742251224,
+          "conditional_entry_gap": -0.5492102716968081,
+          "price_only_annualized_delta": 0.029436761986000648,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 11.034,
+          "terminal_pe": 15,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 324.89,
+          "previous_price": 324.89,
+          "previous": {
+            "terminal": 165.51000000000002,
+            "annualized": -0.20133871694165084,
+            "max_entry": 124.35011269722011,
+            "required_eps": 28.828572666666673
+          },
+          "current": {
+            "terminal": 165.51000000000002,
+            "annualized": -0.20133871694165084,
+            "max_entry": 124.35011269722011,
+            "required_eps": 28.828572666666673
+          },
+          "required_pe": 39.19055555555556,
+          "conditional_entry_gap": -0.6172547240690076,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 11.034,
+          "terminal_pe": 15,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:25.000Z",
+          "price": 291.46,
+          "previous_price": 324.89,
+          "previous": {
+            "terminal": 165.51000000000002,
+            "annualized": -0.20133871694165084,
+            "max_entry": 124.35011269722011,
+            "required_eps": 28.828572666666673
+          },
+          "current": {
+            "terminal": 165.51000000000002,
+            "annualized": -0.1719019549556502,
+            "max_entry": 124.35011269722011,
+            "required_eps": 25.862217333333337
+          },
+          "required_pe": 35.157989849555925,
+          "conditional_entry_gap": -0.5733544476181289,
+          "price_only_annualized_delta": 0.029436761986000648,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 11.034,
+          "terminal_pe": 15,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 324.89,
+          "previous_price": 324.89,
+          "previous": {
+            "terminal": 165.51000000000002,
+            "annualized": -0.20133871694165084,
+            "max_entry": 117.80674881559764,
+            "required_eps": 30.429803861333344
+          },
+          "current": {
+            "terminal": 165.51000000000002,
+            "annualized": -0.20133871694165084,
+            "max_entry": 117.80674881559764,
+            "required_eps": 30.429803861333344
+          },
+          "required_pe": 41.367324444444456,
+          "conditional_entry_gap": -0.6373949680950548,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 11.034,
+          "terminal_pe": 15,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:25.000Z",
+          "price": 291.46,
+          "previous_price": 324.89,
+          "previous": {
+            "terminal": 165.51000000000002,
+            "annualized": -0.20133871694165084,
+            "max_entry": 117.80674881559764,
+            "required_eps": 30.429803861333344
+          },
+          "current": {
+            "terminal": 165.51000000000002,
+            "annualized": -0.1719019549556502,
+            "max_entry": 117.80674881559764,
+            "required_eps": 27.298687658666672
+          },
+          "required_pe": 37.11077713249955,
+          "conditional_entry_gap": -0.5958047457091963,
+          "price_only_annualized_delta": 0.029436761986000648,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 18.39,
+          "terminal_pe": 20,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 324.89,
+          "previous_price": 324.89,
+          "previous": {
+            "terminal": 367.8,
+            "annualized": 0.0422177377665125,
+            "max_entry": 291.9714982472184,
+            "required_eps": 20.463391584
+          },
+          "current": {
+            "terminal": 367.8,
+            "annualized": 0.0422177377665125,
+            "max_entry": 291.9714982472184,
+            "required_eps": 20.463391584
+          },
+          "required_pe": 22.254912,
+          "conditional_entry_gap": -0.10132199129792108,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 18.39,
+          "terminal_pe": 20,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:25.000Z",
+          "price": 291.46,
+          "previous_price": 324.89,
+          "previous": {
+            "terminal": 367.8,
+            "annualized": 0.0422177377665125,
+            "max_entry": 291.9714982472184,
+            "required_eps": 20.463391584
+          },
+          "current": {
+            "terminal": 367.8,
+            "annualized": 0.08063141341977365,
+            "max_entry": 291.9714982472184,
+            "required_eps": 18.357782976000003
+          },
+          "required_pe": 19.964962453507344,
+          "conditional_entry_gap": 0.0017549517848707286,
+          "price_only_annualized_delta": 0.03841367565326115,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 18.39,
+          "terminal_pe": 20,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 324.89,
+          "previous_price": 324.89,
+          "previous": {
+            "terminal": 367.8,
+            "annualized": 0.0422177377665125,
+            "max_entry": 276.3335837716002,
+            "required_eps": 21.621429500000005
+          },
+          "current": {
+            "terminal": 367.8,
+            "annualized": 0.0422177377665125,
+            "max_entry": 276.3335837716002,
+            "required_eps": 21.621429500000005
+          },
+          "required_pe": 23.514333333333337,
+          "conditional_entry_gap": -0.14945494237557255,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 18.39,
+          "terminal_pe": 20,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:25.000Z",
+          "price": 291.46,
+          "previous_price": 324.89,
+          "previous": {
+            "terminal": 367.8,
+            "annualized": 0.0422177377665125,
+            "max_entry": 276.3335837716002,
+            "required_eps": 21.621429500000005
+          },
+          "current": {
+            "terminal": 367.8,
+            "annualized": 0.08063141341977365,
+            "max_entry": 276.3335837716002,
+            "required_eps": 19.396663000000004
+          },
+          "required_pe": 21.094793909733554,
+          "conditional_entry_gap": -0.05189877248473118,
+          "price_only_annualized_delta": 0.03841367565326115,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 18.39,
+          "terminal_pe": 20,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 324.89,
+          "previous_price": 324.89,
+          "previous": {
+            "terminal": 367.8,
+            "annualized": 0.0422177377665125,
+            "max_entry": 261.7927751457725,
+            "required_eps": 22.822352896000005
+          },
+          "current": {
+            "terminal": 367.8,
+            "annualized": 0.0422177377665125,
+            "max_entry": 261.7927751457725,
+            "required_eps": 22.822352896000005
+          },
+          "required_pe": 24.820394666666672,
+          "conditional_entry_gap": -0.19421104021123292,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 18.39,
+          "terminal_pe": 20,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:25.000Z",
+          "price": 291.46,
+          "previous_price": 324.89,
+          "previous": {
+            "terminal": 367.8,
+            "annualized": 0.0422177377665125,
+            "max_entry": 261.7927751457725,
+            "required_eps": 22.822352896000005
+          },
+          "current": {
+            "terminal": 367.8,
+            "annualized": 0.08063141341977365,
+            "max_entry": 261.7927751457725,
+            "required_eps": 20.474015744000006
+          },
+          "required_pe": 22.26646627949973,
+          "conditional_entry_gap": -0.10178832379821412,
+          "price_only_annualized_delta": 0.03841367565326115,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 21.1485,
+          "terminal_pe": 25,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 324.89,
+          "previous_price": 324.89,
+          "previous": {
+            "terminal": 528.7125,
+            "annualized": 0.17623584846728702,
+            "max_entry": 419.7090287303764,
+            "required_eps": 16.370713267200003
+          },
+          "current": {
+            "terminal": 528.7125,
+            "annualized": 0.17623584846728702,
+            "max_entry": 419.7090287303764,
+            "required_eps": 16.370713267200003
+          },
+          "required_pe": 19.35209739130435,
+          "conditional_entry_gap": 0.2918496375092383,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 21.1485,
+          "terminal_pe": 25,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:25.000Z",
+          "price": 291.46,
+          "previous_price": 324.89,
+          "previous": {
+            "terminal": 528.7125,
+            "annualized": 0.17623584846728702,
+            "max_entry": 419.7090287303764,
+            "required_eps": 16.370713267200003
+          },
+          "current": {
+            "terminal": 528.7125,
+            "annualized": 0.2195891140445836,
+            "max_entry": 419.7090287303764,
+            "required_eps": 14.6862263808
+          },
+          "required_pe": 17.360836916093344,
+          "conditional_entry_gap": 0.4400227431907515,
+          "price_only_annualized_delta": 0.043353265577296574,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 21.1485,
+          "terminal_pe": 25,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 324.89,
+          "previous_price": 324.89,
+          "previous": {
+            "terminal": 528.7125,
+            "annualized": 0.17623584846728702,
+            "max_entry": 397.2295266716753,
+            "required_eps": 17.297143600000005
+          },
+          "current": {
+            "terminal": 528.7125,
+            "annualized": 0.17623584846728702,
+            "max_entry": 397.2295266716753,
+            "required_eps": 17.297143600000005
+          },
+          "required_pe": 20.4472463768116,
+          "conditional_entry_gap": 0.22265852033511435,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 21.1485,
+          "terminal_pe": 25,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:25.000Z",
+          "price": 291.46,
+          "previous_price": 324.89,
+          "previous": {
+            "terminal": 528.7125,
+            "annualized": 0.17623584846728702,
+            "max_entry": 397.2295266716753,
+            "required_eps": 17.297143600000005
+          },
+          "current": {
+            "terminal": 528.7125,
+            "annualized": 0.2195891140445836,
+            "max_entry": 397.2295266716753,
+            "required_eps": 15.517330400000002
+          },
+          "required_pe": 18.34329905194222,
+          "conditional_entry_gap": 0.3628955145531987,
+          "price_only_annualized_delta": 0.043353265577296574,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 21.1485,
+          "terminal_pe": 25,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 324.89,
+          "previous_price": 324.89,
+          "previous": {
+            "terminal": 528.7125,
+            "annualized": 0.17623584846728702,
+            "max_entry": 376.327114272048,
+            "required_eps": 18.257882316800007
+          },
+          "current": {
+            "terminal": 528.7125,
+            "annualized": 0.17623584846728702,
+            "max_entry": 376.327114272048,
+            "required_eps": 18.257882316800007
+          },
+          "required_pe": 21.58295188405798,
+          "conditional_entry_gap": 0.15832162969635255,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 21.1485,
+          "terminal_pe": 25,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:25.000Z",
+          "price": 291.46,
+          "previous_price": 324.89,
+          "previous": {
+            "terminal": 528.7125,
+            "annualized": 0.17623584846728702,
+            "max_entry": 376.327114272048,
+            "required_eps": 18.257882316800007
+          },
+          "current": {
+            "terminal": 528.7125,
+            "annualized": 0.2195891140445836,
+            "max_entry": 376.327114272048,
+            "required_eps": 16.379212595200002
+          },
+          "required_pe": 19.362144590869335,
+          "conditional_entry_gap": 0.29117928454006736,
+          "price_only_annualized_delta": 0.043353265577296574,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        }
+      ]
+    },
+    {
+      "symbol": "AMZN",
+      "previous_other_sessions": {
+        "last_done": "253.582",
+        "timestamp": "1793231995",
+        "volume": "2391634",
+        "turnover": "608452671.629",
+        "high": "257.35",
+        "low": "251.75",
+        "prev_close": "254.6"
+      },
+      "session_comparison_note": "Premarket versus prior regular close is a session change; compare prior postmarket separately before treating the difference as newly occurring.",
+      "source_basis": "USD gross capital-price return; no costs dividends taxes or FX",
+      "previous_quote_date": "2026-10-28",
+      "results": [
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 8.436,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 254.6,
+          "previous_price": 254.6,
+          "previous": {
+            "terminal": 151.848,
+            "annualized": -0.15824915903177705,
+            "max_entry": 120.54183813443072,
+            "required_eps": 17.8179264
+          },
+          "current": {
+            "terminal": 151.848,
+            "annualized": -0.15824915903177705,
+            "max_entry": 120.54183813443072,
+            "required_eps": 17.8179264
+          },
+          "required_pe": 38.01833513513514,
+          "conditional_entry_gap": -0.5265442335646868,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 8.436,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:26.000Z",
+          "price": 251.5,
+          "previous_price": 254.6,
+          "previous": {
+            "terminal": 151.848,
+            "annualized": -0.15824915903177705,
+            "max_entry": 120.54183813443072,
+            "required_eps": 17.8179264
+          },
+          "current": {
+            "terminal": 151.848,
+            "annualized": -0.15480478644036855,
+            "max_entry": 120.54183813443072,
+            "required_eps": 17.600976000000003
+          },
+          "required_pe": 37.555425320056905,
+          "conditional_entry_gap": -0.5207083970797983,
+          "price_only_annualized_delta": 0.0034443725914085066,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 8.436,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 254.6,
+          "previous_price": 254.6,
+          "previous": {
+            "terminal": 151.848,
+            "annualized": -0.15824915903177705,
+            "max_entry": 114.08564988730275,
+            "required_eps": 18.826255555555562
+          },
+          "current": {
+            "terminal": 151.848,
+            "annualized": -0.15824915903177705,
+            "max_entry": 114.08564988730275,
+            "required_eps": 18.826255555555562
+          },
+          "required_pe": 40.16981981981983,
+          "conditional_entry_gap": -0.5519023963578054,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 8.436,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:26.000Z",
+          "price": 251.5,
+          "previous_price": 254.6,
+          "previous": {
+            "terminal": 151.848,
+            "annualized": -0.15824915903177705,
+            "max_entry": 114.08564988730275,
+            "required_eps": 18.826255555555562
+          },
+          "current": {
+            "terminal": 151.848,
+            "annualized": -0.15480478644036855,
+            "max_entry": 114.08564988730275,
+            "required_eps": 18.597027777777782
+          },
+          "required_pe": 39.6807136083452,
+          "conditional_entry_gap": -0.5463791256966093,
+          "price_only_annualized_delta": 0.0034443725914085066,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 8.436,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 254.6,
+          "previous_price": 254.6,
+          "previous": {
+            "terminal": 151.848,
+            "annualized": -0.15824915903177705,
+            "max_entry": 108.08240706997083,
+            "required_eps": 19.87192604444445
+          },
+          "current": {
+            "terminal": 151.848,
+            "annualized": -0.15824915903177705,
+            "max_entry": 108.08240706997083,
+            "required_eps": 19.87192604444445
+          },
+          "required_pe": 42.40098018018019,
+          "conditional_entry_gap": -0.5754815119011358,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 8.436,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:26.000Z",
+          "price": 251.5,
+          "previous_price": 254.6,
+          "previous": {
+            "terminal": 151.848,
+            "annualized": -0.15824915903177705,
+            "max_entry": 108.08240706997083,
+            "required_eps": 19.87192604444445
+          },
+          "current": {
+            "terminal": 151.848,
+            "annualized": -0.15480478644036855,
+            "max_entry": 108.08240706997083,
+            "required_eps": 19.629966222222226
+          },
+          "required_pe": 41.884707444286406,
+          "conditional_entry_gap": -0.5702488784494202,
+          "price_only_annualized_delta": 0.0034443725914085066,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 14.06,
+          "terminal_pe": 25,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 254.6,
+          "previous_price": 254.6,
+          "previous": {
+            "terminal": 351.5,
+            "annualized": 0.11349680870672807,
+            "max_entry": 279.0320327185896,
+            "required_eps": 12.828907008000002
+          },
+          "current": {
+            "terminal": 351.5,
+            "annualized": 0.11349680870672807,
+            "max_entry": 279.0320327185896,
+            "required_eps": 12.828907008000002
+          },
+          "required_pe": 22.81100108108108,
+          "conditional_entry_gap": 0.09596242230396546,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 14.06,
+          "terminal_pe": 25,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:26.000Z",
+          "price": 251.5,
+          "previous_price": 254.6,
+          "previous": {
+            "terminal": 351.5,
+            "annualized": 0.11349680870672807,
+            "max_entry": 279.0320327185896,
+            "required_eps": 12.828907008000002
+          },
+          "current": {
+            "terminal": 351.5,
+            "annualized": 0.11805314260253819,
+            "max_entry": 279.0320327185896,
+            "required_eps": 12.672702720000002
+          },
+          "required_pe": 22.533255192034144,
+          "conditional_entry_gap": 0.10947130305602237,
+          "price_only_annualized_delta": 0.004556333895810116,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 14.06,
+          "terminal_pe": 25,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 254.6,
+          "previous_price": 254.6,
+          "previous": {
+            "terminal": 351.5,
+            "annualized": 0.11349680870672807,
+            "max_entry": 264.0871525169045,
+            "required_eps": 13.554904000000004
+          },
+          "current": {
+            "terminal": 351.5,
+            "annualized": 0.11349680870672807,
+            "max_entry": 264.0871525169045,
+            "required_eps": 13.554904000000004
+          },
+          "required_pe": 24.1018918918919,
+          "conditional_entry_gap": 0.03726297139396895,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 14.06,
+          "terminal_pe": 25,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:26.000Z",
+          "price": 251.5,
+          "previous_price": 254.6,
+          "previous": {
+            "terminal": 351.5,
+            "annualized": 0.11349680870672807,
+            "max_entry": 264.0871525169045,
+            "required_eps": 13.554904000000004
+          },
+          "current": {
+            "terminal": 351.5,
+            "annualized": 0.11805314260253819,
+            "max_entry": 264.0871525169045,
+            "required_eps": 13.389860000000004
+          },
+          "required_pe": 23.80842816500712,
+          "conditional_entry_gap": 0.05004832014673766,
+          "price_only_annualized_delta": 0.004556333895810116,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 14.06,
+          "terminal_pe": 25,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 254.6,
+          "previous_price": 254.6,
+          "previous": {
+            "terminal": 351.5,
+            "annualized": 0.11349680870672807,
+            "max_entry": 250.1907571064139,
+            "required_eps": 14.307786752000004
+          },
+          "current": {
+            "terminal": 351.5,
+            "annualized": 0.11349680870672807,
+            "max_entry": 250.1907571064139,
+            "required_eps": 14.307786752000004
+          },
+          "required_pe": 25.440588108108116,
+          "conditional_entry_gap": -0.01731831458596267,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 14.06,
+          "terminal_pe": 25,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:26.000Z",
+          "price": 251.5,
+          "previous_price": 254.6,
+          "previous": {
+            "terminal": 351.5,
+            "annualized": 0.11349680870672807,
+            "max_entry": 250.1907571064139,
+            "required_eps": 14.307786752000004
+          },
+          "current": {
+            "terminal": 351.5,
+            "annualized": 0.11805314260253819,
+            "max_entry": 250.1907571064139,
+            "required_eps": 14.133575680000003
+          },
+          "required_pe": 25.13082446657184,
+          "conditional_entry_gap": -0.005205737151435685,
+          "price_only_annualized_delta": 0.004556333895810116,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 16.169,
+          "terminal_pe": 32,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 254.6,
+          "previous_price": 254.6,
+          "previous": {
+            "terminal": 517.408,
+            "annualized": 0.2666547225804634,
+            "max_entry": 410.7351521617639,
+            "required_eps": 10.0225836
+          },
+          "current": {
+            "terminal": 517.408,
+            "annualized": 0.2666547225804634,
+            "max_entry": 410.7351521617639,
+            "required_eps": 10.0225836
+          },
+          "required_pe": 19.83565311398355,
+          "conditional_entry_gap": 0.6132566856314372,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 16.169,
+          "terminal_pe": 32,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:26.000Z",
+          "price": 251.5,
+          "previous_price": 254.6,
+          "previous": {
+            "terminal": 517.408,
+            "annualized": 0.2666547225804634,
+            "max_entry": 410.7351521617639,
+            "required_eps": 10.0225836
+          },
+          "current": {
+            "terminal": 517.408,
+            "annualized": 0.27183776558665285,
+            "max_entry": 410.7351521617639,
+            "required_eps": 9.900549000000002
+          },
+          "required_pe": 19.594134949594906,
+          "conditional_entry_gap": 0.6331417580984648,
+          "price_only_annualized_delta": 0.005183043006189436,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 16.169,
+          "terminal_pe": 32,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 254.6,
+          "previous_price": 254.6,
+          "previous": {
+            "terminal": 517.408,
+            "annualized": 0.2666547225804634,
+            "max_entry": 388.7362885048834,
+            "required_eps": 10.589768750000003
+          },
+          "current": {
+            "terminal": 517.408,
+            "annualized": 0.2666547225804634,
+            "max_entry": 388.7362885048834,
+            "required_eps": 10.589768750000003
+          },
+          "required_pe": 20.958166862514695,
+          "conditional_entry_gap": 0.5268510938919224,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 16.169,
+          "terminal_pe": 32,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:26.000Z",
+          "price": 251.5,
+          "previous_price": 254.6,
+          "previous": {
+            "terminal": 517.408,
+            "annualized": 0.2666547225804634,
+            "max_entry": 388.7362885048834,
+            "required_eps": 10.589768750000003
+          },
+          "current": {
+            "terminal": 517.408,
+            "annualized": 0.27183776558665285,
+            "max_entry": 388.7362885048834,
+            "required_eps": 10.460828125000003
+          },
+          "required_pe": 20.70298101304967,
+          "conditional_entry_gap": 0.5456711272559978,
+          "price_only_annualized_delta": 0.005183043006189436,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 16.169,
+          "terminal_pe": 32,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 254.6,
+          "previous_price": 254.6,
+          "previous": {
+            "terminal": 517.408,
+            "annualized": 0.2666547225804634,
+            "max_entry": 368.2807944606413,
+            "required_eps": 11.177958400000003
+          },
+          "current": {
+            "terminal": 517.408,
+            "annualized": 0.2666547225804634,
+            "max_entry": 368.2807944606413,
+            "required_eps": 11.177958400000003
+          },
+          "required_pe": 22.122250528789664,
+          "conditional_entry_gap": 0.44650744092946315,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 16.169,
+          "terminal_pe": 32,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:26.000Z",
+          "price": 251.5,
+          "previous_price": 254.6,
+          "previous": {
+            "terminal": 517.408,
+            "annualized": 0.2666547225804634,
+            "max_entry": 368.2807944606413,
+            "required_eps": 11.177958400000003
+          },
+          "current": {
+            "terminal": 517.408,
+            "annualized": 0.27183776558665285,
+            "max_entry": 368.2807944606413,
+            "required_eps": 11.041856000000003
+          },
+          "required_pe": 21.852890840497253,
+          "conditional_entry_gap": 0.4643371549130866,
+          "price_only_annualized_delta": 0.005183043006189436,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        }
+      ]
+    },
+    {
+      "symbol": "META",
+      "previous_other_sessions": {
+        "last_done": "616.189",
+        "timestamp": "1793231997",
+        "volume": "5480352",
+        "turnover": "3360227240.595",
+        "high": "620.5",
+        "low": "612.49",
+        "prev_close": "612.49"
+      },
+      "session_comparison_note": "Premarket versus prior regular close is a session change; compare prior postmarket separately before treating the difference as newly occurring.",
+      "source_basis": "USD gross capital-price return; no costs dividends taxes or FX",
+      "previous_quote_date": "2026-10-28",
+      "results": [
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 23.814,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 612.49,
+          "previous_price": 612.49,
+          "previous": {
+            "terminal": 285.76800000000003,
+            "annualized": -0.22439929060930885,
+            "max_entry": 226.85185185185185,
+            "required_eps": 64.29675024000001
+          },
+          "current": {
+            "terminal": 285.76800000000003,
+            "annualized": -0.22439929060930885,
+            "max_entry": 226.85185185185185,
+            "required_eps": 64.29675024000001
+          },
+          "required_pe": 32.39947102040817,
+          "conditional_entry_gap": -0.629623582667714,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 23.814,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:23.000Z",
+          "price": 619.6,
+          "previous_price": 612.49,
+          "previous": {
+            "terminal": 285.76800000000003,
+            "annualized": -0.22439929060930885,
+            "max_entry": 226.85185185185185,
+            "required_eps": 64.29675024000001
+          },
+          "current": {
+            "terminal": 285.76800000000003,
+            "annualized": -0.22737742158777496,
+            "max_entry": 226.85185185185185,
+            "required_eps": 65.04312960000001
+          },
+          "required_pe": 32.77557551020409,
+          "conditional_entry_gap": -0.6338737058556296,
+          "price_only_annualized_delta": -0.002978130978466109,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 23.814,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 612.49,
+          "previous_price": 612.49,
+          "previous": {
+            "terminal": 285.76800000000003,
+            "annualized": -0.22439929060930885,
+            "max_entry": 214.70172802404204,
+            "required_eps": 67.93534916666668
+          },
+          "current": {
+            "terminal": 285.76800000000003,
+            "annualized": -0.22439929060930885,
+            "max_entry": 214.70172802404204,
+            "required_eps": 67.93534916666668
+          },
+          "required_pe": 34.23298017972622,
+          "conditional_entry_gap": -0.649460843403089,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 23.814,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:23.000Z",
+          "price": 619.6,
+          "previous_price": 612.49,
+          "previous": {
+            "terminal": 285.76800000000003,
+            "annualized": -0.22439929060930885,
+            "max_entry": 214.70172802404204,
+            "required_eps": 67.93534916666668
+          },
+          "current": {
+            "terminal": 285.76800000000003,
+            "annualized": -0.22737742158777496,
+            "max_entry": 214.70172802404204,
+            "required_eps": 68.7239666666667
+          },
+          "required_pe": 34.63036869068616,
+          "conditional_entry_gap": -0.6534833311426049,
+          "price_only_annualized_delta": -0.002978130978466109,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 23.814,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 612.49,
+          "previous_price": 612.49,
+          "previous": {
+            "terminal": 285.76800000000003,
+            "annualized": -0.22439929060930885,
+            "max_entry": 203.40401785714283,
+            "required_eps": 71.70869589333336
+          },
+          "current": {
+            "terminal": 285.76800000000003,
+            "annualized": -0.22439929060930885,
+            "max_entry": 203.40401785714283,
+            "required_eps": 71.70869589333336
+          },
+          "required_pe": 36.13438946502059,
+          "conditional_entry_gap": -0.667906385643614,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 23.814,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:23.000Z",
+          "price": 619.6,
+          "previous_price": 612.49,
+          "previous": {
+            "terminal": 285.76800000000003,
+            "annualized": -0.22439929060930885,
+            "max_entry": 203.40401785714283,
+            "required_eps": 71.70869589333336
+          },
+          "current": {
+            "terminal": 285.76800000000003,
+            "annualized": -0.22737742158777496,
+            "max_entry": 203.40401785714283,
+            "required_eps": 72.54111573333336
+          },
+          "required_pe": 36.55385020576133,
+          "conditional_entry_gap": -0.6717172081066126,
+          "price_only_annualized_delta": -0.002978130978466109,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 39.69,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 612.49,
+          "previous_price": 612.49,
+          "previous": {
+            "terminal": 714.42,
+            "annualized": 0.0526521145067993,
+            "max_entry": 567.1296296296296,
+            "required_eps": 42.864500160000006
+          },
+          "current": {
+            "terminal": 714.42,
+            "annualized": 0.0526521145067993,
+            "max_entry": 567.1296296296296,
+            "required_eps": 42.864500160000006
+          },
+          "required_pe": 19.4396826122449,
+          "conditional_entry_gap": -0.07405895666928508,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 39.69,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:23.000Z",
+          "price": 619.6,
+          "previous_price": 612.49,
+          "previous": {
+            "terminal": 714.42,
+            "annualized": 0.0526521145067993,
+            "max_entry": 567.1296296296296,
+            "required_eps": 42.864500160000006
+          },
+          "current": {
+            "terminal": 714.42,
+            "annualized": 0.04861016891056158,
+            "max_entry": 567.1296296296296,
+            "required_eps": 43.36208640000001
+          },
+          "required_pe": 19.665345306122454,
+          "conditional_entry_gap": -0.0846842646390743,
+          "price_only_annualized_delta": -0.004041945596237717,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 39.69,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 612.49,
+          "previous_price": 612.49,
+          "previous": {
+            "terminal": 714.42,
+            "annualized": 0.0526521145067993,
+            "max_entry": 536.754320060105,
+            "required_eps": 45.29023277777779
+          },
+          "current": {
+            "terminal": 714.42,
+            "annualized": 0.0526521145067993,
+            "max_entry": 536.754320060105,
+            "required_eps": 45.29023277777779
+          },
+          "required_pe": 20.539788107835733,
+          "conditional_entry_gap": -0.12365210850772257,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 39.69,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:23.000Z",
+          "price": 619.6,
+          "previous_price": 612.49,
+          "previous": {
+            "terminal": 714.42,
+            "annualized": 0.0526521145067993,
+            "max_entry": 536.754320060105,
+            "required_eps": 45.29023277777779
+          },
+          "current": {
+            "terminal": 714.42,
+            "annualized": 0.04861016891056158,
+            "max_entry": 536.754320060105,
+            "required_eps": 45.815977777777796
+          },
+          "required_pe": 20.7782212144117,
+          "conditional_entry_gap": -0.13370832785651232,
+          "price_only_annualized_delta": -0.004041945596237717,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 39.69,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 612.49,
+          "previous_price": 612.49,
+          "previous": {
+            "terminal": 714.42,
+            "annualized": 0.0526521145067993,
+            "max_entry": 508.510044642857,
+            "required_eps": 47.805797262222235
+          },
+          "current": {
+            "terminal": 714.42,
+            "annualized": 0.0526521145067993,
+            "max_entry": 508.510044642857,
+            "required_eps": 47.805797262222235
+          },
+          "required_pe": 21.680633679012352,
+          "conditional_entry_gap": -0.16976596410903522,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 39.69,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:23.000Z",
+          "price": 619.6,
+          "previous_price": 612.49,
+          "previous": {
+            "terminal": 714.42,
+            "annualized": 0.0526521145067993,
+            "max_entry": 508.510044642857,
+            "required_eps": 47.805797262222235
+          },
+          "current": {
+            "terminal": 714.42,
+            "annualized": 0.04861016891056158,
+            "max_entry": 508.510044642857,
+            "required_eps": 48.36074382222224
+          },
+          "required_pe": 21.932310123456798,
+          "conditional_entry_gap": -0.1792930202665317,
+          "price_only_annualized_delta": -0.004041945596237717,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 45.6435,
+          "terminal_pe": 24,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 612.49,
+          "previous_price": 612.49,
+          "previous": {
+            "terminal": 1095.444,
+            "annualized": 0.21384637634195425,
+            "max_entry": 869.5987654320986,
+            "required_eps": 32.148375120000004
+          },
+          "current": {
+            "terminal": 1095.444,
+            "annualized": 0.21384637634195425,
+            "max_entry": 869.5987654320986,
+            "required_eps": 32.148375120000004
+          },
+          "required_pe": 16.904071836734698,
+          "conditional_entry_gap": 0.4197762664404294,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 45.6435,
+          "terminal_pe": 24,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:23.000Z",
+          "price": 619.6,
+          "previous_price": 612.49,
+          "previous": {
+            "terminal": 1095.444,
+            "annualized": 0.21384637634195425,
+            "max_entry": 869.5987654320986,
+            "required_eps": 32.148375120000004
+          },
+          "current": {
+            "terminal": 1095.444,
+            "annualized": 0.20918548130574077,
+            "max_entry": 869.5987654320986,
+            "required_eps": 32.52156480000001
+          },
+          "required_pe": 17.100300266193436,
+          "conditional_entry_gap": 0.40348412755341934,
+          "price_only_annualized_delta": -0.004660895036213475,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 45.6435,
+          "terminal_pe": 24,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 612.49,
+          "previous_price": 612.49,
+          "previous": {
+            "terminal": 1095.444,
+            "annualized": 0.21384637634195425,
+            "max_entry": 823.0232907588277,
+            "required_eps": 33.96767458333334
+          },
+          "current": {
+            "terminal": 1095.444,
+            "annualized": 0.21384637634195425,
+            "max_entry": 823.0232907588277,
+            "required_eps": 33.96767458333334
+          },
+          "required_pe": 17.860685311161507,
+          "conditional_entry_gap": 0.3437334336214921,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 45.6435,
+          "terminal_pe": 24,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:23.000Z",
+          "price": 619.6,
+          "previous_price": 612.49,
+          "previous": {
+            "terminal": 1095.444,
+            "annualized": 0.21384637634195425,
+            "max_entry": 823.0232907588277,
+            "required_eps": 33.96767458333334
+          },
+          "current": {
+            "terminal": 1095.444,
+            "annualized": 0.20918548130574077,
+            "max_entry": 823.0232907588277,
+            "required_eps": 34.36198333333335
+          },
+          "required_pe": 18.06801844731452,
+          "conditional_entry_gap": 0.32831389728668126,
+          "price_only_annualized_delta": -0.004660895036213475,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 45.6435,
+          "terminal_pe": 24,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 612.49,
+          "previous_price": 612.49,
+          "previous": {
+            "terminal": 1095.444,
+            "annualized": 0.21384637634195425,
+            "max_entry": 779.715401785714,
+            "required_eps": 35.85434794666668
+          },
+          "current": {
+            "terminal": 1095.444,
+            "annualized": 0.21384637634195425,
+            "max_entry": 779.715401785714,
+            "required_eps": 35.85434794666668
+          },
+          "required_pe": 18.85272493827161,
+          "conditional_entry_gap": 0.27302552169947925,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 45.6435,
+          "terminal_pe": 24,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:23.000Z",
+          "price": 619.6,
+          "previous_price": 612.49,
+          "previous": {
+            "terminal": 1095.444,
+            "annualized": 0.21384637634195425,
+            "max_entry": 779.715401785714,
+            "required_eps": 35.85434794666668
+          },
+          "current": {
+            "terminal": 1095.444,
+            "annualized": 0.20918548130574077,
+            "max_entry": 779.715401785714,
+            "required_eps": 36.27055786666668
+          },
+          "required_pe": 19.071574020397215,
+          "conditional_entry_gap": 0.2584173689246514,
+          "price_only_annualized_delta": -0.004660895036213475,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        }
+      ]
+    },
+    {
+      "symbol": "TSM",
+      "previous_other_sessions": {
+        "last_done": "431.09",
+        "timestamp": "1793231997",
+        "volume": "211969",
+        "turnover": "92376410.495",
+        "high": "440.92",
+        "low": "427.5",
+        "prev_close": "439.51"
+      },
+      "session_comparison_note": "Premarket versus prior regular close is a session change; compare prior postmarket separately before treating the difference as newly occurring.",
+      "source_basis": "USD gross capital-price return; no costs dividends taxes or FX",
+      "previous_quote_date": "2026-10-28",
+      "results": [
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 16.014,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 439.51,
+          "previous_price": 439.51,
+          "previous": {
+            "terminal": 192.168,
+            "annualized": -0.24100758383874588,
+            "max_entry": 152.54915409236395,
+            "required_eps": 46.13800176000001
+          },
+          "current": {
+            "terminal": 192.168,
+            "annualized": -0.24100758383874588,
+            "max_entry": 152.54915409236395,
+            "required_eps": 46.13800176000001
+          },
+          "required_pe": 34.57324972648933,
+          "conditional_entry_gap": -0.6529108459594459,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 16.014,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:33:50.000Z",
+          "price": 429.87,
+          "previous_price": 439.51,
+          "previous": {
+            "terminal": 192.168,
+            "annualized": -0.24100758383874588,
+            "max_entry": 152.54915409236395,
+            "required_eps": 46.13800176000001
+          },
+          "current": {
+            "terminal": 192.168,
+            "annualized": -0.23537590829748634,
+            "max_entry": 152.54915409236395,
+            "required_eps": 45.12603312000001
+          },
+          "required_pe": 33.81493677032597,
+          "conditional_entry_gap": -0.6451272382525788,
+          "price_only_annualized_delta": 0.00563167554125954,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 16.014,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 439.51,
+          "previous_price": 439.51,
+          "previous": {
+            "terminal": 192.168,
+            "annualized": -0.24100758383874588,
+            "max_entry": 144.37866265965437,
+            "required_eps": 48.74898416666668
+          },
+          "current": {
+            "terminal": 192.168,
+            "annualized": -0.24100758383874588,
+            "max_entry": 144.37866265965437,
+            "required_eps": 48.74898416666668
+          },
+          "required_pe": 36.529774572249295,
+          "conditional_entry_gap": -0.6715008471714992,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 16.014,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:33:50.000Z",
+          "price": 429.87,
+          "previous_price": 439.51,
+          "previous": {
+            "terminal": 192.168,
+            "annualized": -0.24100758383874588,
+            "max_entry": 144.37866265965437,
+            "required_eps": 48.74898416666668
+          },
+          "current": {
+            "terminal": 192.168,
+            "annualized": -0.23537590829748634,
+            "max_entry": 144.37866265965437,
+            "required_eps": 47.67974750000002
+          },
+          "required_pe": 35.72854814537281,
+          "conditional_entry_gap": -0.6641341273881537,
+          "price_only_annualized_delta": 0.00563167554125954,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 16.014,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 439.51,
+          "previous_price": 439.51,
+          "previous": {
+            "terminal": 192.168,
+            "annualized": -0.24100758383874588,
+            "max_entry": 136.78138666180755,
+            "required_eps": 51.456658773333345
+          },
+          "current": {
+            "terminal": 192.168,
+            "annualized": -0.24100758383874588,
+            "max_entry": 136.78138666180755,
+            "required_eps": 51.456658773333345
+          },
+          "required_pe": 38.558755169226934,
+          "conditional_entry_gap": -0.6887866336105947,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 16.014,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:33:50.000Z",
+          "price": 429.87,
+          "previous_price": 439.51,
+          "previous": {
+            "terminal": 192.168,
+            "annualized": -0.24100758383874588,
+            "max_entry": 136.78138666180755,
+            "required_eps": 51.456658773333345
+          },
+          "current": {
+            "terminal": 192.168,
+            "annualized": -0.23537590829748634,
+            "max_entry": 136.78138666180755,
+            "required_eps": 50.32803328000002
+          },
+          "required_pe": 37.713026062195596,
+          "conditional_entry_gap": -0.6818075542331228,
+          "price_only_annualized_delta": 0.00563167554125954,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 26.69,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 439.51,
+          "previous_price": 439.51,
+          "previous": {
+            "terminal": 480.42,
+            "annualized": 0.03011119264502038,
+            "max_entry": 381.3728852309099,
+            "required_eps": 30.758667840000005
+          },
+          "current": {
+            "terminal": 480.42,
+            "annualized": 0.03011119264502038,
+            "max_entry": 381.3728852309099,
+            "required_eps": 30.758667840000005
+          },
+          "required_pe": 20.743949835893595,
+          "conditional_entry_gap": -0.1322771148986146,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 26.69,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:33:50.000Z",
+          "price": 429.87,
+          "previous_price": 439.51,
+          "previous": {
+            "terminal": 480.42,
+            "annualized": 0.03011119264502038,
+            "max_entry": 381.3728852309099,
+            "required_eps": 30.758667840000005
+          },
+          "current": {
+            "terminal": 480.42,
+            "annualized": 0.03775455229509106,
+            "max_entry": 381.3728852309099,
+            "required_eps": 30.084022080000004
+          },
+          "required_pe": 20.28896206219558,
+          "conditional_entry_gap": -0.11281809563144696,
+          "price_only_annualized_delta": 0.00764335965007068,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 26.69,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 439.51,
+          "previous_price": 439.51,
+          "previous": {
+            "terminal": 480.42,
+            "annualized": 0.03011119264502038,
+            "max_entry": 360.9466566491359,
+            "required_eps": 32.49932277777779
+          },
+          "current": {
+            "terminal": 480.42,
+            "annualized": 0.03011119264502038,
+            "max_entry": 360.9466566491359,
+            "required_eps": 32.49932277777779
+          },
+          "required_pe": 21.917864743349575,
+          "conditional_entry_gap": -0.17875211792874812,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 26.69,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:33:50.000Z",
+          "price": 429.87,
+          "previous_price": 439.51,
+          "previous": {
+            "terminal": 480.42,
+            "annualized": 0.03011119264502038,
+            "max_entry": 360.9466566491359,
+            "required_eps": 32.49932277777779
+          },
+          "current": {
+            "terminal": 480.42,
+            "annualized": 0.03775455229509106,
+            "max_entry": 360.9466566491359,
+            "required_eps": 31.786498333333345
+          },
+          "required_pe": 21.437128887223686,
+          "conditional_entry_gap": -0.1603353184703843,
+          "price_only_annualized_delta": 0.00764335965007068,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 26.69,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 439.51,
+          "previous_price": 439.51,
+          "previous": {
+            "terminal": 480.42,
+            "annualized": 0.03011119264502038,
+            "max_entry": 341.9534666545189,
+            "required_eps": 34.30443918222223
+          },
+          "current": {
+            "terminal": 480.42,
+            "annualized": 0.03011119264502038,
+            "max_entry": 341.9534666545189,
+            "required_eps": 34.30443918222223
+          },
+          "required_pe": 23.13525310153616,
+          "conditional_entry_gap": -0.2219665840264866,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 26.69,
+          "terminal_pe": 18,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:33:50.000Z",
+          "price": 429.87,
+          "previous_price": 439.51,
+          "previous": {
+            "terminal": 480.42,
+            "annualized": 0.03011119264502038,
+            "max_entry": 341.9534666545189,
+            "required_eps": 34.30443918222223
+          },
+          "current": {
+            "terminal": 480.42,
+            "annualized": 0.03775455229509106,
+            "max_entry": 341.9534666545189,
+            "required_eps": 33.552022186666676
+          },
+          "required_pe": 22.627815637317354,
+          "conditional_entry_gap": -0.20451888558280673,
+          "price_only_annualized_delta": 0.00764335965007068,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 30.6935,
+          "terminal_pe": 24,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 439.51,
+          "previous_price": 439.51,
+          "previous": {
+            "terminal": 736.644,
+            "annualized": 0.18785372792159083,
+            "max_entry": 584.7717573540618,
+            "required_eps": 23.069000880000004
+          },
+          "current": {
+            "terminal": 736.644,
+            "annualized": 0.18785372792159083,
+            "max_entry": 584.7717573540618,
+            "required_eps": 23.069000880000004
+          },
+          "required_pe": 18.03821724860313,
+          "conditional_entry_gap": 0.3305084238221243,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 30.6935,
+          "terminal_pe": 24,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:33:50.000Z",
+          "price": 429.87,
+          "previous_price": 439.51,
+          "previous": {
+            "terminal": 736.644,
+            "annualized": 0.18785372792159083,
+            "max_entry": 584.7717573540618,
+            "required_eps": 23.069000880000004
+          },
+          "current": {
+            "terminal": 736.644,
+            "annualized": 0.19666752716870817,
+            "max_entry": 584.7717573540618,
+            "required_eps": 22.563016560000005
+          },
+          "required_pe": 17.642575706257027,
+          "conditional_entry_gap": 0.36034558669844796,
+          "price_only_annualized_delta": 0.008813799247117338,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 30.6935,
+          "terminal_pe": 24,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 439.51,
+          "previous_price": 439.51,
+          "previous": {
+            "terminal": 736.644,
+            "annualized": 0.18785372792159083,
+            "max_entry": 553.4515401953416,
+            "required_eps": 24.37449208333334
+          },
+          "current": {
+            "terminal": 736.644,
+            "annualized": 0.18785372792159083,
+            "max_entry": 553.4515401953416,
+            "required_eps": 24.37449208333334
+          },
+          "required_pe": 19.05901282030398,
+          "conditional_entry_gap": 0.2592467525092528,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 30.6935,
+          "terminal_pe": 24,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:33:50.000Z",
+          "price": 429.87,
+          "previous_price": 439.51,
+          "previous": {
+            "terminal": 736.644,
+            "annualized": 0.18785372792159083,
+            "max_entry": 553.4515401953416,
+            "required_eps": 24.37449208333334
+          },
+          "current": {
+            "terminal": 736.644,
+            "annualized": 0.19666752716870817,
+            "max_entry": 553.4515401953416,
+            "required_eps": 23.83987375000001
+          },
+          "required_pe": 18.640981641064077,
+          "conditional_entry_gap": 0.2874858450120772,
+          "price_only_annualized_delta": 0.008813799247117338,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 30.6935,
+          "terminal_pe": 24,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:00Z",
+          "price": 439.51,
+          "previous_price": 439.51,
+          "previous": {
+            "terminal": 736.644,
+            "annualized": 0.18785372792159083,
+            "max_entry": 524.3286488702622,
+            "required_eps": 25.728329386666672
+          },
+          "current": {
+            "terminal": 736.644,
+            "annualized": 0.18785372792159083,
+            "max_entry": 524.3286488702622,
+            "required_eps": 25.728329386666672
+          },
+          "required_pe": 20.11761139264014,
+          "conditional_entry_gap": 0.19298457115938716,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 30.6935,
+          "terminal_pe": 24,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:33:50.000Z",
+          "price": 429.87,
+          "previous_price": 439.51,
+          "previous": {
+            "terminal": 736.644,
+            "annualized": 0.18785372792159083,
+            "max_entry": 524.3286488702622,
+            "required_eps": 25.728329386666672
+          },
+          "current": {
+            "terminal": 736.644,
+            "annualized": 0.19666752716870817,
+            "max_entry": 524.3286488702622,
+            "required_eps": 25.16401664000001
+          },
+          "required_pe": 19.676361423754223,
+          "conditional_entry_gap": 0.21973770877302945,
+          "price_only_annualized_delta": 0.008813799247117338,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        }
+      ]
+    },
+    {
+      "symbol": "MU",
+      "previous_other_sessions": {
+        "last_done": "958.875",
+        "timestamp": "1793231995",
+        "volume": "1235675",
+        "turnover": "1200771303.67",
+        "high": "989.971",
+        "low": "955.67",
+        "prev_close": "983.23"
+      },
+      "session_comparison_note": "Premarket versus prior regular close is a session change; compare prior postmarket separately before treating the difference as newly occurring.",
+      "source_basis": "USD gross capital-price return; no costs dividends taxes or FX",
+      "previous_quote_date": "2026-10-28",
+      "results": [
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 109.842,
+          "terminal_pe": 5,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 983.23,
+          "previous_price": 983.23,
+          "previous": {
+            "terminal": 549.21,
+            "annualized": -0.176441529499495,
+            "max_entry": 435.9806050906874,
+            "required_eps": 247.71732595200007
+          },
+          "current": {
+            "terminal": 549.21,
+            "annualized": -0.176441529499495,
+            "max_entry": 435.9806050906874,
+            "required_eps": 247.71732595200007
+          },
+          "required_pe": 11.276074996449449,
+          "conditional_entry_gap": -0.5565832967965915,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 109.842,
+          "terminal_pe": 5,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:19.000Z",
+          "price": 950.51,
+          "previous_price": 983.23,
+          "previous": {
+            "terminal": 549.21,
+            "annualized": -0.176441529499495,
+            "max_entry": 435.9806050906874,
+            "required_eps": 247.71732595200007
+          },
+          "current": {
+            "terminal": 549.21,
+            "annualized": -0.16709798007571164,
+            "max_entry": 435.9806050906874,
+            "required_eps": 239.473770624
+          },
+          "required_pe": 10.900828946304692,
+          "conditional_entry_gap": -0.5413192863928971,
+          "price_only_annualized_delta": 0.009343549423783348,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 109.842,
+          "terminal_pe": 5,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 983.23,
+          "previous_price": 983.23,
+          "previous": {
+            "terminal": 549.21,
+            "annualized": -0.176441529499495,
+            "max_entry": 412.6296018031554,
+            "required_eps": 261.7358260000001
+          },
+          "current": {
+            "terminal": 549.21,
+            "annualized": -0.176441529499495,
+            "max_entry": 412.6296018031554,
+            "required_eps": 261.7358260000001
+          },
+          "required_pe": 11.914196118060492,
+          "conditional_entry_gap": -0.5803325754877746,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 109.842,
+          "terminal_pe": 5,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:19.000Z",
+          "price": 950.51,
+          "previous_price": 983.23,
+          "previous": {
+            "terminal": 549.21,
+            "annualized": -0.176441529499495,
+            "max_entry": 412.6296018031554,
+            "required_eps": 261.7358260000001
+          },
+          "current": {
+            "terminal": 549.21,
+            "annualized": -0.16709798007571164,
+            "max_entry": 412.6296018031554,
+            "required_eps": 253.02576200000007
+          },
+          "required_pe": 11.51771462646347,
+          "conditional_entry_gap": -0.5658861013527944,
+          "price_only_annualized_delta": 0.009343549423783348,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 109.842,
+          "terminal_pe": 5,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 983.23,
+          "previous_price": 983.23,
+          "previous": {
+            "terminal": 549.21,
+            "annualized": -0.176441529499495,
+            "max_entry": 390.9168299016034,
+            "required_eps": 276.2734714880001
+          },
+          "current": {
+            "terminal": 549.21,
+            "annualized": -0.176441529499495,
+            "max_entry": 390.9168299016034,
+            "required_eps": 276.2734714880001
+          },
+          "required_pe": 12.575948703046198,
+          "conditional_entry_gap": -0.6024156810699395,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "stress",
+          "label": "经营受压",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 109.842,
+          "terminal_pe": 5,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:19.000Z",
+          "price": 950.51,
+          "previous_price": 983.23,
+          "previous": {
+            "terminal": 549.21,
+            "annualized": -0.176441529499495,
+            "max_entry": 390.9168299016034,
+            "required_eps": 276.2734714880001
+          },
+          "current": {
+            "terminal": 549.21,
+            "annualized": -0.16709798007571164,
+            "max_entry": 390.9168299016034,
+            "required_eps": 267.0796226560001
+          },
+          "required_pe": 12.157445360426799,
+          "conditional_entry_gap": -0.5887293874850308,
+          "price_only_annualized_delta": 0.009343549423783348,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": false,
+          "previous_threshold_passed": false,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 183.07,
+          "terminal_pe": 8,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 983.23,
+          "previous_price": 983.23,
+          "previous": {
+            "terminal": 1464.56,
+            "annualized": 0.1420471012169795,
+            "max_entry": 1162.6149469084996,
+            "required_eps": 154.82332872000003
+          },
+          "current": {
+            "terminal": 1464.56,
+            "annualized": 0.1420471012169795,
+            "max_entry": 1162.6149469084996,
+            "required_eps": 154.82332872000003
+          },
+          "required_pe": 6.7656449978696696,
+          "conditional_entry_gap": 0.1824445418757561,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 183.07,
+          "terminal_pe": 8,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:19.000Z",
+          "price": 950.51,
+          "previous_price": 983.23,
+          "previous": {
+            "terminal": 1464.56,
+            "annualized": 0.1420471012169795,
+            "max_entry": 1162.6149469084996,
+            "required_eps": 154.82332872000003
+          },
+          "current": {
+            "terminal": 1464.56,
+            "annualized": 0.15500401188784463,
+            "max_entry": 1162.6149469084996,
+            "required_eps": 149.67110664
+          },
+          "required_pe": 6.540497367782816,
+          "conditional_entry_gap": 0.22314856961894103,
+          "price_only_annualized_delta": 0.01295691067086513,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 183.07,
+          "terminal_pe": 8,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 983.23,
+          "previous_price": 983.23,
+          "previous": {
+            "terminal": 1464.56,
+            "annualized": 0.1420471012169795,
+            "max_entry": 1100.3456048084142,
+            "required_eps": 163.58489125000006
+          },
+          "current": {
+            "terminal": 1464.56,
+            "annualized": 0.1420471012169795,
+            "max_entry": 1100.3456048084142,
+            "required_eps": 163.58489125000006
+          },
+          "required_pe": 7.148517670836295,
+          "conditional_entry_gap": 0.11911313203260088,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 183.07,
+          "terminal_pe": 8,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:19.000Z",
+          "price": 950.51,
+          "previous_price": 983.23,
+          "previous": {
+            "terminal": 1464.56,
+            "annualized": 0.1420471012169795,
+            "max_entry": 1100.3456048084142,
+            "required_eps": 163.58489125000006
+          },
+          "current": {
+            "terminal": 1464.56,
+            "annualized": 0.15500401188784463,
+            "max_entry": 1100.3456048084142,
+            "required_eps": 158.14110125000005
+          },
+          "required_pe": 6.910628775878082,
+          "conditional_entry_gap": 0.15763706305921477,
+          "price_only_annualized_delta": 0.01295691067086513,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 183.07,
+          "terminal_pe": 8,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 983.23,
+          "previous_price": 983.23,
+          "previous": {
+            "terminal": 1464.56,
+            "annualized": 0.1420471012169795,
+            "max_entry": 1042.444879737609,
+            "required_eps": 172.67091968000005
+          },
+          "current": {
+            "terminal": 1464.56,
+            "annualized": 0.1420471012169795,
+            "max_entry": 1042.444879737609,
+            "required_eps": 172.67091968000005
+          },
+          "required_pe": 7.545569221827718,
+          "conditional_entry_gap": 0.06022485048016124,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "reference",
+          "label": "预测锚持平",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 183.07,
+          "terminal_pe": 8,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:19.000Z",
+          "price": 950.51,
+          "previous_price": 983.23,
+          "previous": {
+            "terminal": 1464.56,
+            "annualized": 0.1420471012169795,
+            "max_entry": 1042.444879737609,
+            "required_eps": 172.67091968000005
+          },
+          "current": {
+            "terminal": 1464.56,
+            "annualized": 0.15500401188784463,
+            "max_entry": 1042.444879737609,
+            "required_eps": 166.92476416000005
+          },
+          "required_pe": 7.29446721625608,
+          "conditional_entry_gap": 0.09672163337325124,
+          "price_only_annualized_delta": 0.01295691067086513,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 210.5305,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 983.23,
+          "previous_price": 983.23,
+          "previous": {
+            "terminal": 2526.366,
+            "annualized": 0.3696629737893393,
+            "max_entry": 2005.5107834171617,
+            "required_eps": 103.21555248000003
+          },
+          "current": {
+            "terminal": 2526.366,
+            "annualized": 0.3696629737893393,
+            "max_entry": 2005.5107834171617,
+            "required_eps": 103.21555248000003
+          },
+          "required_pe": 5.8831695633649295,
+          "conditional_entry_gap": 1.039716834735679,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.08,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 210.5305,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:19.000Z",
+          "price": 950.51,
+          "previous_price": 983.23,
+          "previous": {
+            "terminal": 2526.366,
+            "annualized": 0.3696629737893393,
+            "max_entry": 2005.5107834171617,
+            "required_eps": 103.21555248000003
+          },
+          "current": {
+            "terminal": 2526.366,
+            "annualized": 0.3852022635276251,
+            "max_entry": 2005.5107834171617,
+            "required_eps": 99.78073776000001
+          },
+          "required_pe": 5.687389015463318,
+          "conditional_entry_gap": 1.1099312825926733,
+          "price_only_annualized_delta": 0.015539289738285778,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 210.5305,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 983.23,
+          "previous_price": 983.23,
+          "previous": {
+            "terminal": 2526.366,
+            "annualized": 0.3696629737893393,
+            "max_entry": 1898.0961682945149,
+            "required_eps": 109.0565941666667
+          },
+          "current": {
+            "terminal": 2526.366,
+            "annualized": 0.3696629737893393,
+            "max_entry": 1898.0961682945149,
+            "required_eps": 109.0565941666667
+          },
+          "required_pe": 6.216102322466344,
+          "conditional_entry_gap": 0.9304701527562369,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.1,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 210.5305,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:19.000Z",
+          "price": 950.51,
+          "previous_price": 983.23,
+          "previous": {
+            "terminal": 2526.366,
+            "annualized": 0.3696629737893393,
+            "max_entry": 1898.0961682945149,
+            "required_eps": 109.0565941666667
+          },
+          "current": {
+            "terminal": 2526.366,
+            "annualized": 0.3852022635276251,
+            "max_entry": 1898.0961682945149,
+            "required_eps": 105.42740083333337
+          },
+          "required_pe": 6.009242413807027,
+          "conditional_entry_gap": 0.9969239337771458,
+          "price_only_annualized_delta": 0.015539289738285778,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 210.5305,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "regular_close",
+          "timestamp": "2026-10-28T20:00:01Z",
+          "price": 983.23,
+          "previous_price": 983.23,
+          "previous": {
+            "terminal": 2526.366,
+            "annualized": 0.3696629737893393,
+            "max_entry": 1798.2174175473756,
+            "required_eps": 115.11394645333337
+          },
+          "current": {
+            "terminal": 2526.366,
+            "annualized": 0.3696629737893393,
+            "max_entry": 1798.2174175473756,
+            "required_eps": 115.11394645333337
+          },
+          "required_pe": 6.561364540719755,
+          "conditional_entry_gap": 0.8288878670782782,
+          "price_only_annualized_delta": 0,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        },
+        {
+          "scenario_id": "upside",
+          "label": "盈利高于锚",
+          "assumption_status": "existing_public_analysis_sensitivity_not_verified_forecast",
+          "hurdle": 0.12,
+          "hurdle_status": "illustrative_sensitivity_not_user_target",
+          "earnings_source_asof": null,
+          "terminal_eps": 210.5305,
+          "terminal_pe": 12,
+          "years": 3,
+          "session": "pre_market",
+          "timestamp": "2026-10-29T09:34:19.000Z",
+          "price": 950.51,
+          "previous_price": 983.23,
+          "previous": {
+            "terminal": 2526.366,
+            "annualized": 0.3696629737893393,
+            "max_entry": 1798.2174175473756,
+            "required_eps": 115.11394645333337
+          },
+          "current": {
+            "terminal": 2526.366,
+            "annualized": 0.3852022635276251,
+            "max_entry": 1798.2174175473756,
+            "required_eps": 111.2831761066667
+          },
+          "required_pe": 6.34301497065746,
+          "conditional_entry_gap": 0.8918448175688585,
+          "price_only_annualized_delta": 0.015539289738285778,
+          "terminal_eps_delta": 0,
+          "terminal_pe_delta": 0,
+          "threshold_passed": true,
+          "previous_threshold_passed": true,
+          "interpretation": "Fixed scenario; a price effect only. Not evidence that earnings or PE are valid."
+        }
+      ]
+    }
+  ],
+  "risk": [
+    {
+      "symbol": "QQQM",
+      "frozen_cutoff": "2026-10-26",
+      "series_input_sha256": "0145dfea406e64e106f0bbc99bd1646f90d0a22938e3f71fa860ce9addd7fc1d",
+      "basis_check": "overlapping raw closes matched within 0.01% or 2 cents; independent monitoring copy; frozen research unchanged",
+      "previous": {
+        "date": "2026-10-26",
+        "close": 293.260009765625,
+        "dd": -0.06234812441211024,
+        "peak": 312.760009765625,
+        "ma200": 279.0573514556885,
+        "bin": "5–10%"
+      },
+      "current": {
+        "date": "2026-10-28",
+        "close": 298.71,
+        "dd": -0.044922654197874445,
+        "peak": 312.760009765625,
+        "ma200": 279.45445145568846,
+        "bin": "0–5%"
+      },
+      "new_observations": 2,
+      "full_fund_valuation": {
+        "status": "blocked",
+        "reason": "Comparable fund-level base and terminal EPS unavailable; no constituent EPS substitution"
+      },
+      "historical_three_year_nonoverlap_reference": 1
+    },
+    {
+      "symbol": "SMH",
+      "frozen_cutoff": "2026-10-26",
+      "series_input_sha256": "3420d1c13b1e8c1d07e485cdc4ca16fb0dc92ff09efcd3db2560bc2050ca5b3c",
+      "basis_check": "overlapping raw closes matched within 0.01% or 2 cents; independent monitoring copy; frozen research unchanged",
+      "previous": {
+        "date": "2026-10-26",
+        "close": 541.6199951171875,
+        "dd": -0.1902946332657537,
+        "peak": 668.9099731445312,
+        "ma200": 516.2507008361816,
+        "bin": "15–20%"
+      },
+      "current": {
+        "date": "2026-10-28",
+        "close": 567.67,
+        "dd": -0.15135067080642317,
+        "peak": 668.9099731445312,
+        "ma200": 517.9795508117676,
+        "bin": "15–20%"
+      },
+      "new_observations": 2,
+      "full_fund_valuation": {
+        "status": "blocked",
+        "reason": "Comparable fund-level base and terminal EPS unavailable; no constituent EPS substitution"
+      },
+      "historical_three_year_nonoverlap_reference": 4
+    },
+    {
+      "symbol": "SOXX",
+      "frozen_cutoff": "2026-10-26",
+      "series_input_sha256": "3d3ffccfc6212ce4f327b4f3dc7468f886519e8555be73ce80ad85d98f226482",
+      "basis_check": "overlapping raw closes matched within 0.01% or 2 cents; independent monitoring copy; frozen research unchanged",
+      "previous": {
+        "date": "2026-10-26",
+        "close": 491.8299865722656,
+        "dd": -0.2491259992373983,
+        "peak": 655.010009765625,
+        "ma200": 472.89640182495117,
+        "bin": "20%+"
+      },
+      "current": {
+        "date": "2026-10-28",
+        "close": 521.94,
+        "dd": -0.20315721558704103,
+        "peak": 655.010009765625,
+        "ma200": 474.7657518005371,
+        "bin": "20%+"
+      },
+      "new_observations": 2,
+      "full_fund_valuation": {
+        "status": "blocked",
+        "reason": "Comparable fund-level base and terminal EPS unavailable; no constituent EPS substitution"
+      },
+      "historical_three_year_nonoverlap_reference": 7
+    },
+    {
+      "symbol": "DRAM",
+      "frozen_cutoff": "2026-10-26",
+      "series_input_sha256": "57fde6c07cbdde98bebcabda2d838de2e9b2b9a88fc2f2b19f19e738d517b9f1",
+      "basis_check": "overlapping raw closes matched within 0.01% or 2 cents; independent monitoring copy; frozen research unchanged",
+      "previous": {
+        "date": "2026-10-26",
+        "close": 48.33000183105469,
+        "dd": -0.40126361372429,
+        "peak": 80.72000122070312,
+        "ma200": null,
+        "bin": "20%+"
+      },
+      "current": {
+        "date": "2026-10-28",
+        "close": 54.12,
+        "dd": -0.3295342024088168,
+        "peak": 80.72000122070312,
+        "ma200": null,
+        "bin": "20%+"
+      },
+      "new_observations": 2,
+      "full_fund_valuation": {
+        "status": "blocked",
+        "reason": "Comparable fund-level base and terminal EPS unavailable; no constituent EPS substitution"
+      },
+      "historical_three_year_nonoverlap_reference": 0
+    }
+  ],
+  "reported_google": {
+    "source": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000080/googexhibit991q32026.htm",
+    "period": "Q3 2026",
+    "quarter_eps_tieout": 2.115944372574386,
+    "eps_reported": 2.12,
+    "quarter_fcf": -9.064999999999998,
+    "quarter_capex_to_cfo": 1.2143532750059116,
+    "operating_margin": 0.31805105936022954,
+    "cloud_margin": 0.3621413917743984,
+    "fcf_change_vs_previous_quarter": -3.2099999999999973,
+    "ttm_fcf": 19.747,
+    "annual_projection_status": "not_inferred_from_quarter; legacy forecast asOf unknown"
+  },
+  "macro_sensitivity": {
+    "rf_before_pct": 5,
+    "rf_after_pct": 4.99,
+    "observation_date": "2026-10-27",
+    "erp_assumption": 0.05,
+    "perpetual_growth_assumption": 0.03,
+    "payout_assumption": 0.5,
+    "basis": "NTM steady-state illustrative sensitivity only",
+    "pe_before": 7.142857142857142,
+    "pe_after": 7.153075822603719,
+    "relative_change": 0.0014306151645206988
+  },
+  "forecast_comparison": [
+    {
+      "symbol": "NVDA",
+      "retrieval_ok": true,
+      "old": [
+        [
+          "Jan 2027",
+          9.3,
+          17
+        ],
+        [
+          "Jan 2028",
+          15.74,
+          15
+        ],
+        [
+          "Jan 2029",
+          21.82,
+          9
+        ],
+        [
+          "Jan 2030",
+          26.64,
+          3
+        ]
+      ],
+      "new": [
+        [
+          "Jan 2027",
+          9.3,
+          17
+        ],
+        [
+          "Jan 2028",
+          15.74,
+          15
+        ],
+        [
+          "Jan 2029",
+          21.82,
+          9
+        ],
+        [
+          "Jan 2030",
+          26.64,
+          3
+        ]
+      ],
+      "unchanged_values": true,
+      "asof": null,
+      "forward_revision_confirmed": false
+    },
+    {
+      "symbol": "MSFT",
+      "retrieval_ok": true,
+      "old": [
+        [
+          "Jun 2027",
+          19.66,
+          21
+        ],
+        [
+          "Jun 2028",
+          23.29,
+          18
+        ],
+        [
+          "Jun 2029",
+          28.29,
+          8
+        ],
+        [
+          "Jun 2030",
+          33.49,
+          4
+        ]
+      ],
+      "new": [
+        [
+          "Jun 2027",
+          19.66,
+          21
+        ],
+        [
+          "Jun 2028",
+          23.29,
+          18
+        ],
+        [
+          "Jun 2029",
+          28.29,
+          8
+        ],
+        [
+          "Jun 2030",
+          33.49,
+          4
+        ]
+      ],
+      "unchanged_values": true,
+      "asof": null,
+      "forward_revision_confirmed": false
+    },
+    {
+      "symbol": "GOOGL",
+      "retrieval_ok": true,
+      "old": [
+        [
+          "Dec 2026",
+          20.6,
+          18
+        ],
+        [
+          "Dec 2027",
+          15.03,
+          18
+        ],
+        [
+          "Dec 2028",
+          18.39,
+          11
+        ],
+        [
+          "Dec 2029",
+          21.92,
+          2
+        ]
+      ],
+      "new": [
+        [
+          "Dec 2026",
+          20.6,
+          18
+        ],
+        [
+          "Dec 2027",
+          15.03,
+          18
+        ],
+        [
+          "Dec 2028",
+          18.39,
+          11
+        ],
+        [
+          "Dec 2029",
+          21.92,
+          2
+        ]
+      ],
+      "unchanged_values": true,
+      "asof": null,
+      "forward_revision_confirmed": false
+    },
+    {
+      "symbol": "AMZN",
+      "retrieval_ok": true,
+      "old": [
+        [
+          "Dec 2026",
+          8,
+          12
+        ],
+        [
+          "Dec 2027",
+          10.65,
+          17
+        ],
+        [
+          "Dec 2028",
+          14.06,
+          9
+        ],
+        [
+          "Dec 2029",
+          15.71,
+          3
+        ]
+      ],
+      "new": [
+        [
+          "Dec 2026",
+          8,
+          12
+        ],
+        [
+          "Dec 2027",
+          10.65,
+          17
+        ],
+        [
+          "Dec 2028",
+          14.06,
+          9
+        ],
+        [
+          "Dec 2029",
+          15.71,
+          3
+        ]
+      ],
+      "unchanged_values": true,
+      "asof": null,
+      "forward_revision_confirmed": false
+    },
+    {
+      "symbol": "META",
+      "retrieval_ok": true,
+      "old": [
+        [
+          "Dec 2026",
+          28.98,
+          10
+        ],
+        [
+          "Dec 2027",
+          33.98,
+          17
+        ],
+        [
+          "Dec 2028",
+          39.69,
+          10
+        ],
+        [
+          "Dec 2029",
+          52.4,
+          4
+        ]
+      ],
+      "new": [
+        [
+          "Dec 2026",
+          28.98,
+          10
+        ],
+        [
+          "Dec 2027",
+          33.98,
+          17
+        ],
+        [
+          "Dec 2028",
+          39.69,
+          10
+        ],
+        [
+          "Dec 2029",
+          52.4,
+          4
+        ]
+      ],
+      "unchanged_values": true,
+      "asof": null,
+      "forward_revision_confirmed": false
+    },
+    {
+      "symbol": "TSM",
+      "retrieval_ok": true,
+      "old": [
+        [
+          "Dec 2026",
+          17.07,
+          9
+        ],
+        [
+          "Dec 2027",
+          22.44,
+          9
+        ],
+        [
+          "Dec 2028",
+          26.69,
+          3
+        ],
+        [
+          "Dec 2029",
+          24.08,
+          1
+        ]
+      ],
+      "new": [
+        [
+          "Dec 2026",
+          17.07,
+          9
+        ],
+        [
+          "Dec 2027",
+          22.44,
+          9
+        ],
+        [
+          "Dec 2028",
+          26.69,
+          3
+        ],
+        [
+          "Dec 2029",
+          24.08,
+          1
+        ]
+      ],
+      "unchanged_values": true,
+      "asof": null,
+      "forward_revision_confirmed": false
+    },
+    {
+      "symbol": "MU",
+      "retrieval_ok": true,
+      "old": [
+        [
+          "Aug 2027",
+          177.03,
+          14
+        ],
+        [
+          "Aug 2028",
+          207.57,
+          9
+        ],
+        [
+          "Aug 2029",
+          183.07,
+          3
+        ],
+        [
+          "Aug 2030",
+          149.79,
+          1
+        ]
+      ],
+      "new": [
+        [
+          "Aug 2027",
+          177.03,
+          14
+        ],
+        [
+          "Aug 2028",
+          207.57,
+          9
+        ],
+        [
+          "Aug 2029",
+          183.07,
+          3
+        ],
+        [
+          "Aug 2030",
+          149.79,
+          1
+        ]
+      ],
+      "unchanged_values": true,
+      "asof": null,
+      "forward_revision_confirmed": false
+    }
+  ],
+  "coverage": [
+    {
+      "name": "Longbridge regular/pre/post quotes",
+      "url": "https://longbridge.com",
+      "ok": true,
+      "content_checked": true
+    },
+    {
+      "name": "Seven Nasdaq annual estimate snapshots",
+      "url": "https://api.nasdaq.com/api/analyst/GOOGL/earnings-forecast",
+      "ok": true,
+      "content_checked": true
+    },
+    {
+      "name": "Alphabet Q3 official SEC exhibit",
+      "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000080/googexhibit991q32026.htm",
+      "ok": true,
+      "content_checked": true
+    },
+    {
+      "name": "Samsung Q3 official release",
+      "url": "https://news.samsung.com/global/samsung-electronics-announces-third-quarter-2026-results",
+      "ok": true,
+      "content_checked": true
+    },
+    {
+      "name": "FRED nominal/real rates and HY latest observations",
+      "url": "https://fred.stlouisfed.org/series/DGS10",
+      "ok": true,
+      "content_checked": true
+    },
+    {
+      "name": "BEA/BLS release calendars; today releases still future at check",
+      "url": "https://www.bea.gov/news/schedule/full",
+      "ok": true,
+      "content_checked": true
+    },
+    {
+      "name": "QQQM/SOXX/DRAM issuer holdings",
+      "url": "https://www.roundhillinvestments.com/etf/dram/",
+      "ok": true,
+      "content_checked": true
+    },
+    {
+      "name": "SMH holdings refresh",
+      "url": "https://www.vaneck.com/us/en/investments/semiconductor-etf-smh/downloads/holdings/",
+      "ok": false,
+      "error": "Not refreshed this run; retain dated 10/27 issuer snapshot."
+    },
+    {
+      "name": "Micron dynamic latest results index",
+      "url": "https://investors.micron.com/financials/quarterly-results/",
+      "ok": false,
+      "error": "Index returned navigation only; no new results content reviewed."
+    }
+  ],
+  "thesis_status": "AI demand supported; Alphabet cash-conversion thesis weakened; comparable forward earnings still unverified",
+  "entry_conclusion": "No reliable bottom or current ETF fair-value conclusion. Google price-only conditional return improves, without validating the unchanged terminal EPS/PE.",
+  "materiality_reason": "Previously unincorporated Alphabet Q3 primary filing shows negative FCF and lower earnings; premarket price differs materially from the regular close. Samsung full results now replace preliminary guidance.",
+  "publication_status": "generated_for_current_release; check published_site metadata for deployment verification",
+  "alert_reason": "new_verified_earnings_and_material_price_scenario_effect",
+  "previous_run": null,
+  "source_to_model_treatment": {
+    "reported_financials": "safe_update_reported_period_only",
+    "annual_forecasts": "reference_only_same_values_unknown_asof",
+    "terminal_eps_pe": "unchanged_explicit_analysis_assumptions",
+    "full_fund_eps": "missing_model_inputs_blocked",
+    "fx": "assumption_sensitivity_not_live_rate"
+  },
+  "price_comparison_warning": "The 324.89 to 291.46 difference compares the published model regular close with current premarket. Previous public postmarket was already292.50; current premarket differs from that by about−0.36%, not a new10% fall this scan."
+}
