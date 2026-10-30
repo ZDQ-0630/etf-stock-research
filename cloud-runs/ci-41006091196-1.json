@@ -1,0 +1,37 @@
+{
+  "schema": "etf.cloud_validation.public_audit.v1",
+  "run_id": "41006091196",
+  "run_attempt": "1",
+  "source_commit": "b4f0c849fc0ae28892c83cd13c91879ae2fde134",
+  "recorded_at": "2026-10-30T05:02:01.444215+00:00",
+  "snapshot_sha256": "052fc440057643cd915ec6dbe46cb4f7dd4b1803f868e6b762b9366dbdb1bf1f",
+  "scope": "partial research snapshot, not a complete model review",
+  "snapshot_status": "partial_no_entry_conclusion",
+  "latest_scheduled_session": "2026-10-29",
+  "prices_checked": 11,
+  "price_pair_agreements": 11,
+  "forecast_snapshots": 7,
+  "failed_sources": [
+    {
+      "name": "fred_DGS10",
+      "error": "TimeoutError: The read operation timed out"
+    },
+    {
+      "name": "fred_DFII10",
+      "error": "TimeoutError: The read operation timed out"
+    },
+    {
+      "name": "fred_BAMLH0A0HYM2",
+      "error": "TimeoutError: The read operation timed out"
+    }
+  ],
+  "blocked": [
+    "independent close timestamps and source rights",
+    "company results and management guidance content review",
+    "ETF and stock model risk/valuation refresh",
+    "cost, FX and exposures",
+    "persisted previous run comparison",
+    "website sync and notifications"
+  ],
+  "entry_conclusion": "unavailable"
+}
