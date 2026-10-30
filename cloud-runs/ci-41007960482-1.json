@@ -1,0 +1,48 @@
+{
+  "schema": "etf.cloud_validation.public_audit.v1",
+  "run_id": "41007960482",
+  "run_attempt": "1",
+  "source_commit": "2e41a300e5bbd8c288da85afd8af06a8b50c225e",
+  "recorded_at": "2026-10-30T05:21:50.229930+00:00",
+  "snapshot_sha256": "5d8567e719a2e23b15c1d537326c5838d89e45ba42adcd5d44f8b51c63259a98",
+  "scope": "partial research snapshot, not a complete model review",
+  "snapshot_status": "partial_no_entry_conclusion",
+  "latest_scheduled_session": "2026-10-29",
+  "prices_checked": 11,
+  "price_pair_agreements": 11,
+  "forecast_snapshots": 7,
+  "macro_status": {
+    "DGS10": "blocked",
+    "DFII10": "blocked",
+    "BAMLH0A0HYM2": "blocked",
+    "treasury_nominal": "retrieved_requires_review",
+    "treasury_real": "retrieved_requires_review"
+  },
+  "failed_sources": [
+    {
+      "name": "fred_DGS10",
+      "error": "TimeoutError: The read operation timed out"
+    },
+    {
+      "name": "fred_DFII10",
+      "error": "TimeoutError: The read operation timed out"
+    },
+    {
+      "name": "fred_BAMLH0A0HYM2",
+      "error": "TimeoutError: The read operation timed out"
+    }
+  ],
+  "blocked": [
+    "independent close timestamps and source rights",
+    "company results and management guidance content review",
+    "ETF absolute valuation and full model risk review",
+    "cost, FX and exposures",
+    "persisted previous run comparison",
+    "website sync and notifications"
+  ],
+  "entry_conclusion": "unavailable",
+  "research_only_scenario_count": 7,
+  "research_only_risk_count": 4,
+  "research_only_sha256": "ca1002f6771e4004b9c0eef277ed287291309507b92e0eadf644b3ed2783a2c6",
+  "research_only_scope": "USD gross price-return scenario, excludes fees, tax, dividends and FX; input scenarios are not consensus or forecasts."
+}
