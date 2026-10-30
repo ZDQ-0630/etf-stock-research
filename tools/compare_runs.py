@@ -17,14 +17,21 @@ try:
   if b and b['status']==n['status']=='computed_for_research_only':
    one=lambda v:next((x for x in v['scenarios'] if x.get('id')=='reference' and x.get('hurdle')==.1 and x.get('current')),None)
    x,y=one(b),one(n)
-   if x and y and all(x.get(k)==y.get(k) for k in ['terminal_eps','terminal_pe','years','hurdle']):
-    row.update(status='comparable_price_only',previous_date=b['date'],current_date=n['date'],previous_price=b['price'],current_price=n['price'],previous_annualized=x['current']['annualized'],current_annualized=y['current']['annualized'],previous_conditional_cap=x['current']['max_entry'],current_conditional_cap=y['current']['max_entry'])
+   if x and y and n.get('date','')>=b.get('date','') and all(x.get(k)==y.get(k) for k in ['terminal_eps','terminal_pe','years','hurdle']):
+    row.update(status='comparable_price_only',previous_date=b['date'],current_date=n['date'],different_trading_date=n['date']!=b['date'],previous_price=b['price'],current_price=n['price'],previous_annualized=x['current']['annualized'],current_annualized=y['current']['annualized'],previous_conditional_cap=x['current']['max_entry'],current_conditional_cap=y['current']['max_entry'])
   out['stocks'].append(row)
  if c.get('history_core_sha256')==p.get('history_core_sha256') and c.get('risk_script_sha256')==p.get('risk_script_sha256') and c.get('frozen_history_sha256')==p.get('frozen_history_sha256'):
   prior={x['symbol']:x for x in p.get('risk',[])}
   for n in c.get('risk',[]):
    b=prior.get(n['symbol'])
-   if b and b['status']==n['status']=='computed_for_research_only':out['risk'].append({'symbol':n['symbol'],'previous_date':b['current']['date'],'current_date':n['current']['date'],'previous_dd':b['current']['dd'],'current_dd':n['current']['dd']})
+   if b and b['status']==n['status']=='computed_for_research_only' and n['current']['date']>=b['current']['date']:
+    dist={}
+    for horizon in ['126','252','3y']:
+     x=b.get('distribution',{}).get(horizon);y=n.get('distribution',{}).get(horizon)
+     if not x or not y:dist[horizon]={'status':'blocked_missing_distribution'};continue
+     if x.get('bin')!=y.get('bin'):dist[horizon]={'status':'different_drawdown_buckets_not_directly_comparable','previous_bin':x.get('bin'),'current_bin':y.get('bin')};continue
+     dist[horizon]={'status':'descriptive_only_overlapping_samples','bin':x.get('bin'),'previous':{k:x.get(k) for k in ['n','nonoverlap','censored','downside','returns']},'current':{k:y.get(k) for k in ['n','nonoverlap','censored','downside','returns']}}
+    out['risk'].append({'symbol':n['symbol'],'previous_date':b['current']['date'],'current_date':n['current']['date'],'different_trading_date':n['current']['date']!=b['current']['date'],'previous_dd':b['current']['dd'],'current_dd':n['current']['dd'],'distribution':dist})
  for symbol,n in cs.get('forecasts',{}).items():
   before={x.get('fiscal_end'):x for x in ps.get('forecasts',{}).get(symbol,{}).get('rows',[])}
   for row in n.get('rows',[]):
