@@ -20,6 +20,10 @@ jobs:
         run: node tools/cloud_calculate_test.mjs
       - name: Test date and source parsers with synthetic inputs
         run: python tools/cloud_snapshot_test.py
+      - name: Test research-only date-level calculations
+        run: node tools/research_daily_test.mjs
+      - name: Test frozen-history overlap and risk states
+        run: node tools/etf_risk_test.mjs
       - name: Check existing core math
         run: node tools/core_check.mjs
       - name: Probe public endpoints (availability only)
@@ -28,8 +32,10 @@ jobs:
         run: python tools/cloud_snapshot.py partial-run
       - name: Run quote-gated stock model (blocked inputs remain blocked)
         run: node tools/cloud_calculate.mjs partial-run/model-input.json partial-run/partial-model-result.json
+      - name: Run explicitly provisional date-level scenarios
+        run: node tools/research_daily.mjs partial-run/snapshot.json partial-run/research-only.json
       - name: Hash and verify generated files
-        run: cd partial-run && sha256sum snapshot.json model-input.json partial-model-result.json > SHA256.txt && sha256sum -c SHA256.txt
+        run: cd partial-run && sha256sum snapshot.json model-input.json partial-model-result.json research-only.json > SHA256.txt && sha256sum -c SHA256.txt
       - name: Preserve source-probe metadata
         uses: actions/upload-artifact@v4
         with:

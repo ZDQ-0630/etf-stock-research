@@ -1,0 +1,8 @@
+import fs from 'node:fs';import vm from 'node:vm';import assert from 'node:assert/strict';import{riskFor}from'./etf_risk.mjs';
+const ctx=vm.createContext({window:{}});vm.runInContext(fs.readFileSync('web/model.js','utf8'),ctx);const M=ctx.window.ResearchMath;
+const history={price_cutoff:'2026-10-21',series:{QQQM:[['2026-10-20',100],['2026-10-21',95]]}},tail=[['2026-10-20',100],['2026-10-21',95],['2026-10-22',94],['2026-10-23',96],['2026-10-26',93],['2026-10-27',92],['2026-10-28',91],['2026-10-29',90]].map(([date,v])=>({date,nasdaq:v,yahoo:v,agreement:true}));
+const snap={started_at:'2026-10-30T04:00:00Z',latest_scheduled_session:'2026-10-29',history_tail:{QQQM:tail},prices:[{symbol:'QQQM',session_date:'2026-10-29',agreement:true,sources:{nasdaq:{sha256:'x'},yahoo:{sha256:'y'}}}]};
+let r=riskFor('QQQM',snap,history,M);assert.equal(r.status,'computed_for_research_only');assert.equal(r.current.close,90);assert.ok(Math.abs(r.current.dd+.1)<1e-12);assert.equal(history.series.QQQM.length,2);
+const missing=structuredClone(snap);missing.history_tail.QQQM=tail.filter(x=>x.date!=='2026-10-27');assert.equal(riskFor('QQQM',missing,history,M).status,'blocked');
+const mismatch=structuredClone(snap);mismatch.history_tail.QQQM[0].nasdaq=80;assert.equal(riskFor('QQQM',mismatch,history,M).status,'blocked');
+assert.equal(riskFor('QQQM',{...snap,latest_scheduled_session:'2026-10-28'},history,M).status,'blocked');console.log('ETF paired-source overlap, missing sessions and immutable frozen history passed');

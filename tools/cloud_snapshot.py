@@ -1,6 +1,7 @@
 """Create immutable partial snapshot. External data is unverified; no execution or trading."""
-import csv,hashlib,io,json,math,sys,urllib.parse
+import csv,hashlib,io,json,math,sys,urllib.parse,time
 import xml.etree.ElementTree as ET
+from urllib.error import HTTPError,URLError
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime,timezone,timedelta
 from pathlib import Path
@@ -20,17 +21,25 @@ def latest_date(clock):
  while True:
   if day.year!=2026:raise ValueError('calendar outside reviewed year')
   s=day.isoformat();close=13 if s in EARLY else 16
-  if day.weekday()<5 and s not in HOLIDAYS and (day!=d.date() or d.hour>=close):return s
+  if day.weekday()<5 and s not in HOLIDAYS and (day!=d.date() or d.hour*60+d.minute>=close*60+15):return s
   day-=timedelta(days=1)
-def get(job):
- key,url=job;rec={'key':key,'source_url':url,'started_at':utc().isoformat(),'ok':False}
- try:
-  req=Request(url,headers={'User-Agent':'Mozilla/5.0','Accept':'application/json,text/csv,*/*','Origin':'https://www.nasdaq.com'})
-  with urlopen(req,timeout=20) as r:b=r.read(3_000_001);rec.update(http_status=r.status,content_type=r.headers.get('content-type'))
-  if not b or len(b)>3_000_000:raise ValueError('empty or oversized response')
-  rec.update(source_sha256=hashlib.sha256(b).hexdigest(),retrieved_at=utc().isoformat(),ok=True)
-  return rec,b
- except Exception as e:rec.update(error=type(e).__name__+': '+str(e)[:150],retrieved_at=utc().isoformat());return rec,None
+def get(job, opener=urlopen, pause=time.sleep):
+ key,url=job;rec={'key':key,'source_url':url,'started_at':utc().isoformat(),'ok':False,'attempts':[]}
+ for attempt in range(1,4 if key.startswith('fred_') else 2):
+  started=utc().isoformat()
+  try:
+   req=Request(url,headers={'User-Agent':'Mozilla/5.0','Accept':'application/json,text/csv,*/*','Origin':'https://www.nasdaq.com'})
+   with opener(req,timeout=8 if key.startswith('fred_') else 20) as r:b=r.read(3_000_001);rec.update(http_status=r.status,content_type=r.headers.get('content-type'))
+   if not b or len(b)>3_000_000:raise ValueError('empty or oversized response')
+   rec['attempts'].append({'attempt':attempt,'started_at':started,'completed_at':utc().isoformat(),'outcome':'success'})
+   rec.update(source_sha256=hashlib.sha256(b).hexdigest(),retrieved_at=utc().isoformat(),ok=True)
+   return rec,b
+  except Exception as e:
+   message=type(e).__name__+': '+str(e)[:150];rec['attempts'].append({'attempt':attempt,'started_at':started,'completed_at':utc().isoformat(),'outcome':'failure','error':message})
+   retryable=isinstance(e,(TimeoutError,URLError)) and (not isinstance(e,HTTPError) or e.code==429 or e.code>=500)
+   if not retryable or attempt>=3 or not key.startswith('fred_'):break
+   pause(attempt)
+ rec.update(error=message,retrieved_at=utc().isoformat());return rec,None
 def number(v):
  try:
   n=float(str(v).replace('$','').replace(',','').strip())
@@ -105,6 +114,17 @@ def main():
   row['reason']='Date-only upstream data cannot establish official close timestamps or extraordinary closures; requires independent source and calendar review.'
   prices.append(row)
  estimates={}
+ history_tail={}
+ for s in SYMS[:4]:
+  pairs=[];day=datetime.fromisoformat(start).date();last=datetime.fromisoformat(date).date()
+  while day<=last:
+   iso=day.isoformat()
+   if day.weekday()<5 and iso not in HOLIDAYS:
+    try:a=parse_nasdaq(bodies['nasdaq_'+s],s,iso);b=parse_yahoo(bodies['yahoo_'+s],s,iso)
+    except Exception:a=b=None
+    if a is not None and b is not None and a>0 and b>0:pairs.append({'date':iso,'nasdaq':a,'yahoo':b,'agreement':abs(a-b)<=max(.01,a*.001)})
+   day+=timedelta(days=1)
+  history_tail[s]=pairs
  for s in STOCKS:
   try:estimates[s]=forecasts(bodies['forecast_'+s],s,base[s])
   except Exception as e:estimates[s]={'status':'blocked','reason':type(e).__name__}
@@ -118,7 +138,7 @@ def main():
    obs=treasury(bodies[key],field)
    macro[key]={'observations':obs,'source':records[key]['source_url'],'status':'retrieved_requires_review' if obs else 'blocked','basis':'Treasury daily 10-year par yield; independent fallback; not a replacement for missing credit spreads'}
   except Exception as e:macro[key]={'status':'blocked','reason':type(e).__name__}
- result={'schema':'etf.cloud.partial_snapshot.v1','started_at':started.isoformat(),'completed_at':utc().isoformat(),'latest_scheduled_session':date,'baseline_sha256':hashlib.sha256(Path('web/stock-data-monitor-20261029.json').read_bytes()).hexdigest(),'calendar_note':'Scheduled US exchange calendar only; unplanned closures not independently verified.','prices':prices,'forecasts':estimates,'macro':macro,'sources':list(records.values()),'blocked':['independent close timestamps and source rights','company results and management guidance content review','ETF and stock model risk/valuation refresh','cost, FX and exposures','persisted previous run comparison','website sync and notifications'],'status':'partial_no_entry_conclusion','scope':'Data retrieval and vendor snapshot comparison only; not a complete model run or buy signal.'}
+ result={'schema':'etf.cloud.partial_snapshot.v1','started_at':started.isoformat(),'completed_at':utc().isoformat(),'latest_scheduled_session':date,'baseline_sha256':hashlib.sha256(Path('web/stock-data-monitor-20261029.json').read_bytes()).hexdigest(),'calendar_note':'Scheduled US exchange calendar only; unplanned closures not independently verified.','prices':prices,'history_tail':history_tail,'forecasts':estimates,'macro':macro,'sources':list(records.values()),'blocked':['independent close timestamps and source rights','company results and management guidance content review','ETF absolute valuation and full model risk review','cost, FX and exposures','persisted previous run comparison','website sync and notifications'],'status':'partial_no_entry_conclusion','scope':'Data retrieval and vendor snapshot comparison only; not a complete model run or buy signal.'}
  file=dest/'snapshot.json'
  with file.open('x',encoding='utf8') as f:json.dump(result,f,ensure_ascii=False,indent=2,allow_nan=False)
  # Do not relabel date-only observations as timestamped official closes. The core gate blocks them.

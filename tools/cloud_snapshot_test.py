@@ -4,7 +4,8 @@ import cloud_snapshot as c
 class SnapshotTests(unittest.TestCase):
  def test_completed_session_and_early_close(self):
   self.assertEqual(c.latest_date(datetime.fromisoformat('2026-11-27T17:59:00+00:00')),'2026-11-25')
-  self.assertEqual(c.latest_date(datetime.fromisoformat('2026-11-27T18:00:00+00:00')),'2026-11-27')
+  self.assertEqual(c.latest_date(datetime.fromisoformat('2026-11-27T18:00:00+00:00')),'2026-11-25')
+  self.assertEqual(c.latest_date(datetime.fromisoformat('2026-11-27T18:15:00+00:00')),'2026-11-27')
   with self.assertRaises(ValueError):c.latest_date(datetime.fromisoformat('2027-01-05T12:00:00+00:00'))
  def test_nasdaq_fiscal_data_and_missing(self):
   raw=json.dumps({'data':{'symbol':'AAA','tradesTable':{'rows':[{'date':'10/29/2026','close':'$1,234.56'}]}}}).encode()
@@ -23,4 +24,11 @@ class SnapshotTests(unittest.TestCase):
  def test_treasury_real_and_missing(self):
   raw=b'<feed xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"><entry><updated>2026-10-29T19:00:00Z</updated><d:NEW_DATE>2026-10-29T00:00:00</d:NEW_DATE><d:TC_10YEAR>2.63</d:TC_10YEAR></entry></feed>'
   self.assertEqual(c.treasury(raw,'TC_10YEAR')[0]['value_pct'],2.63);self.assertEqual(c.treasury(raw,'BC_10YEAR'),[])
+ def test_fred_retry_and_missing_remain_blocked(self):
+  calls=[]
+  def fail(*args,**kwargs):calls.append(1);raise TimeoutError('test timeout')
+  record,body=c.get(('fred_DGS10','https://example.com'),opener=fail,pause=lambda n:None)
+  self.assertFalse(record['ok']);self.assertIsNone(body);self.assertEqual(len(calls),3);self.assertEqual(len(record['attempts']),3)
+  calls.clear();record,body=c.get(('yahoo_AAA','https://example.com'),opener=fail,pause=lambda n:None)
+  self.assertEqual(len(calls),1)
 if __name__=='__main__':unittest.main()
