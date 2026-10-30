@@ -17,5 +17,13 @@ jobs:
         run: node tools/cloud_calculate_test.mjs
       - name: Check existing core math
         run: node tools/core_check.mjs
+      - name: Probe public endpoints (availability only)
+        run: python tools/source_probe.py source-probe.json
+      - name: Preserve source-probe metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-probe-metadata
+          path: source-probe.json
+          if-no-files-found: error
       - name: Explain coverage
-        run: echo 'Partial synthetic smoke test only; no sources, full model, site publishing, schedule, or investment validity verified.'
+        run: echo 'Partial synthetic smoke and source accessibility only; no full model, site publishing, schedule, or investment validity verified.'
