@@ -4,7 +4,10 @@ on:
     branches: [cloud-monitor-migration-20261030]
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
+concurrency:
+  group: cloud-validation-state
+  cancel-in-progress: false
 jobs:
   smoke:
     runs-on: ubuntu-latest
@@ -46,5 +49,25 @@ jobs:
           path: readback/
       - name: Check downloaded snapshot hash
         run: cd readback && sha256sum -c SHA256.txt
+      - name: Check out isolated validation-record branch
+        uses: actions/checkout@v4
+        with:
+          ref: cloud-validation-state
+          path: validation-state
+      - name: Write minimal dated validation record
+        run: python tools/public_run_record.py partial-run/snapshot.json "validation-state/cloud-runs/ci-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}.json"
+      - name: Commit, push and read back validation record
+        working-directory: validation-state
+        run: |
+          record="cloud-runs/ci-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}.json"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$record"
+          git commit -m "Record partial cloud validation ${GITHUB_RUN_ID}"
+          git push origin HEAD:refs/heads/cloud-validation-state
+          git fetch origin cloud-validation-state
+          git show "origin/cloud-validation-state:$record" > readback-record.json
+          test "$(sha256sum "$record" | cut -d' ' -f1)" = "$(sha256sum readback-record.json | cut -d' ' -f1)"
+          echo 'Public minimal validation record saved and read back with matching hash.'
       - name: Explain coverage
         run: echo 'Partial synthetic smoke and source accessibility only; no full model, site publishing, schedule, or investment validity verified.'
