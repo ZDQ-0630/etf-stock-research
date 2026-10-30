@@ -1,5 +1,6 @@
 """Create immutable partial snapshot. External data is unverified; no execution or trading."""
 import csv,hashlib,io,json,math,sys,urllib.parse
+import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime,timezone,timedelta
 from pathlib import Path
@@ -58,13 +59,21 @@ def forecasts(raw,symbol,baseline):
  for r in rows:
   period=r.get('fiscalEnd');before=old.get(period);value=number(r.get('consensusEPSForecast'));count=number(r.get('noOfEstimates'))
   out.append({'fiscal_end':period,'vendor_eps':value,'analyst_count':count,'vendor_asof':fy.get('asOf'),'previous_vendor_eps':before.get('eps_mean') if before else None,'difference':value-before['eps_mean'] if value is not None and before and isinstance(before.get('eps_mean'),(int,float)) else None,'comparability':'fiscal labels match; GAAP/adjusted basis and forecast formation time unverified'})
- return {'status':'retrieved_unverified','rows':out,'scenario_updates':'none; no automatic adoption'}
+ return {'status':'retrieved_unverified' if out else 'blocked_empty_forecasts','rows':out,'scenario_updates':'none; no automatic adoption'}
 def fred(raw,series):
  rows=list(csv.DictReader(io.StringIO(raw.decode('utf-8-sig'))));out=[]
  for r in rows:
   v=number(r.get(series));d=r.get('observation_date') or r.get('DATE')
   if v is not None and d:out.append({'date':d,'value_pct':v})
  return out[-2:]
+def treasury(raw,field):
+ root=ET.fromstring(raw);ns={'atom':'http://www.w3.org/2005/Atom','d':'http://schemas.microsoft.com/ado/2007/08/dataservices'};out=[]
+ for entry in root.findall('atom:entry',ns):
+  date=entry.find('.//d:NEW_DATE',ns);rate=entry.find('.//d:'+field,ns);updated=entry.find('atom:updated',ns)
+  if date is None or rate is None or not date.text:continue
+  v=number(rate.text)
+  if v is not None:out.append({'date':date.text[:10],'value_pct':v,'published_or_updated_at':updated.text if updated is not None else None})
+ return sorted(out,key=lambda x:x['date'])[-2:]
 def main():
  if len(sys.argv)!=2:raise SystemExit('usage: python tools/cloud_snapshot.py <new-output-dir>')
  dest=Path(sys.argv[1]);dest.mkdir(parents=True,exist_ok=False);started=utc();date=latest_date(started);end=started.date().isoformat();start=(started.date()-timedelta(days=16)).isoformat()
@@ -75,6 +84,8 @@ def main():
  jobs += [('forecast_'+s,'https://api.nasdaq.com/api/analyst/'+s+'/earnings-forecast') for s in STOCKS]
  fred_start=(started.date()-timedelta(days=45)).isoformat()
  jobs += [('fred_'+s,'https://fred.stlouisfed.org/graph/fredgraph.csv?id='+s+'&cosd='+fred_start) for s in FRED]
+ month=started.strftime('%Y%m');treasury_base='https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data='
+ jobs += [('treasury_nominal',treasury_base+'daily_treasury_yield_curve&field_tdr_date_value_month='+month),('treasury_real',treasury_base+'daily_treasury_real_yield_curve&field_tdr_date_value_month='+month)]
  with ThreadPoolExecutor(max_workers=6) as pool:responses=list(pool.map(get,jobs))
  records={r['key']:r for r,b in responses};bodies={r['key']:b for r,b in responses if b is not None}
  for key in list(bodies):
@@ -99,8 +110,14 @@ def main():
   except Exception as e:estimates[s]={'status':'blocked','reason':type(e).__name__}
  macro={}
  for s in FRED:
-  try:macro[s]={'observations':fred(bodies['fred_'+s],s),'source':records['fred_'+s]['source_url'],'status':'retrieved_requires_review'}
+  try:
+   obs=fred(bodies['fred_'+s],s);macro[s]={'observations':obs,'source':records['fred_'+s]['source_url'],'status':'retrieved_requires_review' if obs else 'blocked'}
   except Exception as e:macro[s]={'status':'blocked','reason':type(e).__name__}
+ for key,field in [('treasury_nominal','BC_10YEAR'),('treasury_real','TC_10YEAR')]:
+  try:
+   obs=treasury(bodies[key],field)
+   macro[key]={'observations':obs,'source':records[key]['source_url'],'status':'retrieved_requires_review' if obs else 'blocked','basis':'Treasury daily 10-year par yield; independent fallback; not a replacement for missing credit spreads'}
+  except Exception as e:macro[key]={'status':'blocked','reason':type(e).__name__}
  result={'schema':'etf.cloud.partial_snapshot.v1','started_at':started.isoformat(),'completed_at':utc().isoformat(),'latest_scheduled_session':date,'baseline_sha256':hashlib.sha256(Path('web/stock-data-monitor-20261029.json').read_bytes()).hexdigest(),'calendar_note':'Scheduled US exchange calendar only; unplanned closures not independently verified.','prices':prices,'forecasts':estimates,'macro':macro,'sources':list(records.values()),'blocked':['independent close timestamps and source rights','company results and management guidance content review','ETF and stock model risk/valuation refresh','cost, FX and exposures','persisted previous run comparison','website sync and notifications'],'status':'partial_no_entry_conclusion','scope':'Data retrieval and vendor snapshot comparison only; not a complete model run or buy signal.'}
  file=dest/'snapshot.json'
  with file.open('x',encoding='utf8') as f:json.dump(result,f,ensure_ascii=False,indent=2,allow_nan=False)

@@ -20,4 +20,7 @@ class SnapshotTests(unittest.TestCase):
   raw=json.dumps({'data':{'symbol':'aaa','yearlyForecast':{'asOf':None,'rows':[{'fiscalEnd':'Dec 2028','consensusEPSForecast':5,'noOfEstimates':3}]}}}).encode()
   r=c.forecasts(raw,'AAA',{'forecasts':[{'end':'Dec 2028','eps_mean':4}]})
   self.assertIsNone(r['rows'][0]['vendor_asof']);self.assertEqual(r['rows'][0]['difference'],1);self.assertEqual(r['scenario_updates'],'none; no automatic adoption')
+ def test_treasury_real_and_missing(self):
+  raw=b'<feed xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"><entry><updated>2026-10-29T19:00:00Z</updated><d:NEW_DATE>2026-10-29T00:00:00</d:NEW_DATE><d:TC_10YEAR>2.63</d:TC_10YEAR></entry></feed>'
+  self.assertEqual(c.treasury(raw,'TC_10YEAR')[0]['value_pct'],2.63);self.assertEqual(c.treasury(raw,'BC_10YEAR'),[])
 if __name__=='__main__':unittest.main()
