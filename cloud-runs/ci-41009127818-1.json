@@ -1,0 +1,56 @@
+{
+  "schema": "etf.cloud_validation.public_audit.v1",
+  "run_id": "41009127818",
+  "run_attempt": "1",
+  "source_commit": "4de0eb3ed855cb817dd3df67fc6e8452c27ec6aa",
+  "recorded_at": "2026-10-30T05:34:41.843298+00:00",
+  "snapshot_sha256": "fe5b622e0b666974a486e7bfe1747014fca51ee1122988ad0284d89175dcf3d3",
+  "scope": "partial research snapshot, not a complete model review",
+  "snapshot_status": "partial_no_entry_conclusion",
+  "latest_scheduled_session": "2026-10-29",
+  "prices_checked": 11,
+  "price_pair_agreements": 11,
+  "forecast_snapshots": 7,
+  "macro_status": {
+    "DGS10": "blocked",
+    "DFII10": "blocked",
+    "BAMLH0A0HYM2": "blocked",
+    "treasury_nominal": "retrieved_requires_review",
+    "treasury_real": "retrieved_requires_review"
+  },
+  "failed_sources": [
+    {
+      "name": "fred_DGS10",
+      "error": "TimeoutError: The read operation timed out"
+    },
+    {
+      "name": "fred_DFII10",
+      "error": "TimeoutError: The read operation timed out"
+    },
+    {
+      "name": "fred_BAMLH0A0HYM2",
+      "error": "TimeoutError: The read operation timed out"
+    }
+  ],
+  "blocked": [
+    "independent close timestamps and source rights",
+    "company results and management guidance content review",
+    "ETF absolute valuation and full model risk review",
+    "cost, FX and exposures",
+    "persisted previous run comparison",
+    "website sync and notifications"
+  ],
+  "entry_conclusion": "unavailable",
+  "research_only_scenario_count": 7,
+  "research_only_risk_count": 4,
+  "research_only_sha256": "10699c7e8861f77171fa92d23e4a4960584b6e0b3751648d843febece7d39dd8",
+  "research_only_scope": "USD gross price-return scenario, excludes fees, tax, dividends and FX; input scenarios are not consensus or forecasts.",
+  "forecast_change_review_needed": [
+    "META"
+  ],
+  "fundamental_review_sha256": "525cea7e16372849de682780e748a4d0884be0149c099d6c38789577fc0e929e",
+  "fundamental_review_status": "partial_review_no_entry_conclusion",
+  "comparison_status": "blocked",
+  "comparison_reason": "ValueError: calculation code changed; replay a common input before comparison",
+  "comparison_sha256": "5783d6434cc0bb4cae453e6763b85f591d4b40268fba67ae854552178e9a03f0"
+}
