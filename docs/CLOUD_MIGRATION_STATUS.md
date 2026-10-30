@@ -25,4 +25,6 @@ Each new test run attempts to download and hash-check the immediately preceding 
 
 The NVDA and META issuer RSS feeds are checked for candidate announcements only; metadata is compared to the previous available feed without treating a first observation as new. Five other companies, full press-release interpretation, financial statement updates and management guidance are not covered by this feed module. No candidate changes scenarios automatically.
 
+`tools/etf_scenarios.mjs` invokes the existing V8 `scenarioAbsolute` only for explicitly declared, sourced full-fund per-share earnings assumptions and explicit cost/FX inputs. A declaration is not independent verification. The deployed test input has no fund-level scenarios, so all four ETFs must return blocked; constituent EPS is not substituted.
+
 The research-only daily-history adapter requests data back to the frozen-history overlap, and its scheduled US calendar covers 2026–2027; extraordinary closures still require separate review. The stricter official-close gate remains limited to 2026 and requires additional source attestations. These date-level research results are not eligible as live entry signals.

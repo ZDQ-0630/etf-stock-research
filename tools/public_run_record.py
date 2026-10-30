@@ -18,7 +18,10 @@ if comparison.exists():
  cr=json.loads(comparison.read_text(encoding='utf8'));r['comparison_status']=cr['status'];r['comparison_reason']=cr['reason'];r['comparison_sha256']=hashlib.sha256(comparison.read_bytes()).hexdigest()
 issuer=src.parent/'issuer-feed.json'
 if issuer.exists():
- ir=json.loads(issuer.read_text(encoding='utf8'));r['issuer_feed_status']={f['issuer']:f['status'] for f in ir['feeds']};r['unreviewed_candidate_count']=sum(i['previously_seen'] is False for f in ir['feeds'] for i in f['items']);r['issuer_feed_sha256']=hashlib.sha256(issuer.read_bytes()).hexdigest()
+ ir=json.loads(issuer.read_text(encoding='utf8'));r['issuer_feed_status']={f['issuer']:f['status'] for f in ir['feeds']};r['issuer_comparison_status']={f['issuer']:f.get('comparison_status','baseline_unavailable') for f in ir['feeds']};r['unreviewed_candidate_count']=sum(i['previously_seen'] is False for f in ir['feeds'] for i in f['items']) if all(f.get('comparison_status')=='compared_with_previous_feed' for f in ir['feeds']) else None;r['issuer_feed_sha256']=hashlib.sha256(issuer.read_bytes()).hexdigest()
+etf=src.parent/'etf-scenarios.json'
+if etf.exists():
+ er=json.loads(etf.read_text(encoding='utf8'));r['etf_conditional_scenario_count']=sum(x['status']=='conditional_scenario_only' for x in er['results']);r['etf_scenarios_blocked_count']=sum(x['status']=='blocked' for x in er['results']);r['etf_scenarios_sha256']=hashlib.sha256(etf.read_bytes()).hexdigest()
 dst.parent.mkdir(parents=True,exist_ok=True)
 with dst.open('x',encoding='utf8') as f:json.dump(r,f,ensure_ascii=False,indent=2,allow_nan=False)
 print(json.dumps({'record':dst.as_posix(),'failed_sources':r['failed_sources'],'snapshot_status':r['snapshot_status']}))

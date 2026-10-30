@@ -38,8 +38,9 @@ def main():
  with ThreadPoolExecutor(max_workers=2) as pool:feeds=list(pool.map(fetch,FEEDS.items()))
  for f in feeds:
   old=previous.get(f['issuer'])
+  f['comparison_status']='compared_with_previous_feed' if old is not None and f['status']=='retrieved_candidates_unreviewed' else 'baseline_unavailable'
   for item in f['items']:item['previously_seen']=item['id_sha256'] in old if old is not None else None
  output={'schema':'etf.cloud.issuer_feed.v1','checked_at':clock(),'feeds':feeds,'uncovered':['MSFT','GOOGL','AMZN','TSM','MU','other industry and macro sources'],'scope':'Issuer feed metadata discovery only. New or changed items require full original-source, period and accounting review; no scenario update and no signal.'}
  with dest.open('x',encoding='utf8') as f:json.dump(output,f,ensure_ascii=False,indent=2,allow_nan=False)
- print(json.dumps({'feeds_checked':len(feeds),'feeds_retrieved':sum(f['status']=='retrieved_candidates_unreviewed' for f in feeds),'new_unreviewed_candidates':sum(item['previously_seen'] is False for f in feeds for item in f['items'])}))
+ print(json.dumps({'feeds_checked':len(feeds),'feeds_retrieved':sum(f['status']=='retrieved_candidates_unreviewed' for f in feeds),'feeds_compared':sum(f['comparison_status']=='compared_with_previous_feed' for f in feeds),'new_unreviewed_candidates':sum(item['previously_seen'] is False for f in feeds for item in f['items']) if all(f['comparison_status']=='compared_with_previous_feed' for f in feeds) else None}))
 if __name__=='__main__':main()
