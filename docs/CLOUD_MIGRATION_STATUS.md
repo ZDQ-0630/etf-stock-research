@@ -23,4 +23,6 @@ Additional partial modules calculate 126-session, 252-session and three-calendar
 
 Each new test run attempts to download and hash-check the immediately preceding run's temporary GitHub artifact. Comparison is blocked if the artifact is unavailable, the calculation code or scenario baseline differs, or timestamps are invalid. Unchanged inputs permit a partial price-only comparison; vendor differences remain unverified. These temporary artifacts expire and cannot be treated as durable point-in-time storage. No formal schedule has been created.
 
+The NVDA and META issuer RSS feeds are checked for candidate announcements only; metadata is compared to the previous available feed without treating a first observation as new. Five other companies, full press-release interpretation, financial statement updates and management guidance are not covered by this feed module. No candidate changes scenarios automatically.
+
 The research-only daily-history adapter requests data back to the frozen-history overlap, and its scheduled US calendar covers 2026–2027; extraordinary closures still require separate review. The stricter official-close gate remains limited to 2026 and requires additional source attestations. These date-level research results are not eligible as live entry signals.

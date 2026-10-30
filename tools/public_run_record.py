@@ -16,6 +16,9 @@ if fundamental.exists():
 comparison=src.parent/'comparison.json'
 if comparison.exists():
  cr=json.loads(comparison.read_text(encoding='utf8'));r['comparison_status']=cr['status'];r['comparison_reason']=cr['reason'];r['comparison_sha256']=hashlib.sha256(comparison.read_bytes()).hexdigest()
+issuer=src.parent/'issuer-feed.json'
+if issuer.exists():
+ ir=json.loads(issuer.read_text(encoding='utf8'));r['issuer_feed_status']={f['issuer']:f['status'] for f in ir['feeds']};r['unreviewed_candidate_count']=sum(i['previously_seen'] is False for f in ir['feeds'] for i in f['items']);r['issuer_feed_sha256']=hashlib.sha256(issuer.read_bytes()).hexdigest()
 dst.parent.mkdir(parents=True,exist_ok=True)
 with dst.open('x',encoding='utf8') as f:json.dump(r,f,ensure_ascii=False,indent=2,allow_nan=False)
 print(json.dumps({'record':dst.as_posix(),'failed_sources':r['failed_sources'],'snapshot_status':r['snapshot_status']}))
