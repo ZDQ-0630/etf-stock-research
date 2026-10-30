@@ -60,14 +60,17 @@ jobs:
         working-directory: validation-state
         run: |
           record="cloud-runs/ci-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}.json"
+          cp "$record" cloud-runs/latest.json
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add "$record"
+          git add "$record" cloud-runs/latest.json
           git commit -m "Record partial cloud validation ${GITHUB_RUN_ID}"
           git push origin HEAD:refs/heads/cloud-validation-state
           git fetch origin cloud-validation-state
           git show "origin/cloud-validation-state:$record" > readback-record.json
           test "$(sha256sum "$record" | cut -d' ' -f1)" = "$(sha256sum readback-record.json | cut -d' ' -f1)"
+          git show origin/cloud-validation-state:cloud-runs/latest.json > readback-latest.json
+          test "$(sha256sum cloud-runs/latest.json | cut -d' ' -f1)" = "$(sha256sum readback-latest.json | cut -d' ' -f1)"
           echo 'Public minimal validation record saved and read back with matching hash.'
       - name: Explain coverage
         run: echo 'Partial synthetic smoke and source accessibility only; no full model, site publishing, schedule, or investment validity verified.'
