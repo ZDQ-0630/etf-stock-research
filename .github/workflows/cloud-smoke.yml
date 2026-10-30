@@ -15,15 +15,36 @@ jobs:
         run: node --version
       - name: Test quote gate and immutable output using synthetic inputs
         run: node tools/cloud_calculate_test.mjs
+      - name: Test date and source parsers with synthetic inputs
+        run: python tools/cloud_snapshot_test.py
       - name: Check existing core math
         run: node tools/core_check.mjs
       - name: Probe public endpoints (availability only)
         run: python tools/source_probe.py source-probe.json
+      - name: Acquire dated partial research snapshot
+        run: python tools/cloud_snapshot.py partial-run
+      - name: Run quote-gated stock model (blocked inputs remain blocked)
+        run: node tools/cloud_calculate.mjs partial-run/model-input.json partial-run/partial-model-result.json
+      - name: Hash and verify generated files
+        run: cd partial-run && sha256sum snapshot.json model-input.json partial-model-result.json > SHA256.txt && sha256sum -c SHA256.txt
       - name: Preserve source-probe metadata
         uses: actions/upload-artifact@v4
         with:
           name: source-probe-metadata
           path: source-probe.json
           if-no-files-found: error
+      - name: Preserve partial research snapshot temporarily
+        uses: actions/upload-artifact@v4
+        with:
+          name: partial-research-snapshot
+          path: partial-run/
+          if-no-files-found: error
+      - name: Read back saved partial snapshot
+        uses: actions/download-artifact@v4
+        with:
+          name: partial-research-snapshot
+          path: readback/
+      - name: Check downloaded snapshot hash
+        run: cd readback && sha256sum -c SHA256.txt
       - name: Explain coverage
         run: echo 'Partial synthetic smoke and source accessibility only; no full model, site publishing, schedule, or investment validity verified.'
