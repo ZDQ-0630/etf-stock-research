@@ -1,10 +1,10 @@
 {
   "schema": "etf.cloud_validation.public_audit.v1",
-  "run_id": "41009392066",
+  "run_id": "41009537649",
   "run_attempt": "1",
-  "source_commit": "3ba67e4a999301c76ff1f4469d09b207cdab1472",
-  "recorded_at": "2026-10-30T05:37:28.043879+00:00",
-  "snapshot_sha256": "b949f06f0915cd41316c8a41faa2b84b358fc669a5acb54dab92482963ec69eb",
+  "source_commit": "055ad3841f38fa6c296c25e3f699e42e01d912ec",
+  "recorded_at": "2026-10-30T05:39:01.972147+00:00",
+  "snapshot_sha256": "93b4abd463da40104e6961d12797a4bdbf4aa7c7dd011054bd0dcc0e1995a579",
   "scope": "partial research snapshot, not a complete model review",
   "snapshot_status": "partial_no_entry_conclusion",
   "latest_scheduled_session": "2026-10-29",
@@ -43,20 +43,27 @@
   "entry_conclusion": "unavailable",
   "research_only_scenario_count": 7,
   "research_only_risk_count": 4,
-  "research_only_sha256": "0c80d398421f2e8646ea6ba8fa0dbafaca9289935e2e31c9274d76f9e2fbbfb4",
+  "research_only_sha256": "7cf7072456e54348c9973879337b78953c9da7e1dea304340c6207542c84b713",
   "research_only_scope": "USD gross price-return scenario, excludes fees, tax, dividends and FX; input scenarios are not consensus or forecasts.",
   "forecast_change_review_needed": [
     "META"
   ],
-  "fundamental_review_sha256": "b28a8c83cd3573b34f2d54b6c2171200be90f5fd388036fca823838dc54d5bc9",
+  "fundamental_review_sha256": "045c1c3bc195d418c8cf056ee8d6b1992dc1884a313aebffb8a8f582ad0fd5e5",
   "fundamental_review_status": "partial_review_no_entry_conclusion",
   "comparison_status": "partial_comparison_only",
   "comparison_reason": "Same calculation and scenarios; close-time, provider independence, company financial review and investment validity remain unverified",
-  "comparison_sha256": "a69450b3bb0fe416ff7fa85f24c5ebdcdff5db483c95f84f302ee8f9475261b4",
+  "comparison_sha256": "565b7e219eef0cc0746aa947dda4d376f6d0f945196bb3588f1fa68eed40191b",
   "issuer_feed_status": {
     "NVDA": "retrieved_candidates_unreviewed",
     "META": "retrieved_candidates_unreviewed"
   },
+  "issuer_comparison_status": {
+    "NVDA": "compared_with_previous_feed",
+    "META": "compared_with_previous_feed"
+  },
   "unreviewed_candidate_count": 0,
-  "issuer_feed_sha256": "263be603be58b4742b7d624e8e6593f8ae707ef5a49a090c6f83ad769c0cc54d"
+  "issuer_feed_sha256": "3f20b19d2b5f7df984a9786714101d838fb86d33ba217859fda08b53c7a5e4bb",
+  "etf_conditional_scenario_count": 0,
+  "etf_scenarios_blocked_count": 4,
+  "etf_scenarios_sha256": "f73372117b2d2bbeea5c72b492d3fd3c37f395cbb00a8d0ce7afb4b08c262098"
 }
