@@ -1,0 +1,56 @@
+{
+  "schema": "etf.cloud_validation.public_audit.v1",
+  "run_id": "41009249453",
+  "run_attempt": "1",
+  "source_commit": "b671ee25a4e3f1cefa8b38346b65d7739ce651ea",
+  "recorded_at": "2026-10-30T05:35:58.447215+00:00",
+  "snapshot_sha256": "4bb9872c66eb845fbe89915301d48140a189f7848b163253d56bab41451b22b9",
+  "scope": "partial research snapshot, not a complete model review",
+  "snapshot_status": "partial_no_entry_conclusion",
+  "latest_scheduled_session": "2026-10-29",
+  "prices_checked": 11,
+  "price_pair_agreements": 11,
+  "forecast_snapshots": 7,
+  "macro_status": {
+    "DGS10": "blocked",
+    "DFII10": "blocked",
+    "BAMLH0A0HYM2": "blocked",
+    "treasury_nominal": "retrieved_requires_review",
+    "treasury_real": "retrieved_requires_review"
+  },
+  "failed_sources": [
+    {
+      "name": "fred_DGS10",
+      "error": "TimeoutError: The read operation timed out"
+    },
+    {
+      "name": "fred_DFII10",
+      "error": "TimeoutError: The read operation timed out"
+    },
+    {
+      "name": "fred_BAMLH0A0HYM2",
+      "error": "TimeoutError: The read operation timed out"
+    }
+  ],
+  "blocked": [
+    "independent close timestamps and source rights",
+    "company results and management guidance content review",
+    "ETF absolute valuation and full model risk review",
+    "cost, FX and exposures",
+    "persisted previous run comparison",
+    "website sync and notifications"
+  ],
+  "entry_conclusion": "unavailable",
+  "research_only_scenario_count": 7,
+  "research_only_risk_count": 4,
+  "research_only_sha256": "9f8cdac9c0d559e326a6daab48a78c2cc1090deb803d8f9056e8caeab60e1496",
+  "research_only_scope": "USD gross price-return scenario, excludes fees, tax, dividends and FX; input scenarios are not consensus or forecasts.",
+  "forecast_change_review_needed": [
+    "META"
+  ],
+  "fundamental_review_sha256": "6444cb56a6ad9b4fb6bd2dcf752249180b280c5f160ac808e1a4a6035110ee96",
+  "fundamental_review_status": "partial_review_no_entry_conclusion",
+  "comparison_status": "partial_comparison_only",
+  "comparison_reason": "Same calculation and scenarios; close-time, provider independence, company financial review and investment validity remain unverified",
+  "comparison_sha256": "309791e3252b066f7616735989a754b9189bb245963b5769ab1ba1ae1164f6c7"
+}

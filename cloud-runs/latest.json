@@ -1,10 +1,10 @@
 {
   "schema": "etf.cloud_validation.public_audit.v1",
-  "run_id": "41009127818",
+  "run_id": "41009249453",
   "run_attempt": "1",
-  "source_commit": "4de0eb3ed855cb817dd3df67fc6e8452c27ec6aa",
-  "recorded_at": "2026-10-30T05:34:41.843298+00:00",
-  "snapshot_sha256": "fe5b622e0b666974a486e7bfe1747014fca51ee1122988ad0284d89175dcf3d3",
+  "source_commit": "b671ee25a4e3f1cefa8b38346b65d7739ce651ea",
+  "recorded_at": "2026-10-30T05:35:58.447215+00:00",
+  "snapshot_sha256": "4bb9872c66eb845fbe89915301d48140a189f7848b163253d56bab41451b22b9",
   "scope": "partial research snapshot, not a complete model review",
   "snapshot_status": "partial_no_entry_conclusion",
   "latest_scheduled_session": "2026-10-29",
@@ -43,14 +43,14 @@
   "entry_conclusion": "unavailable",
   "research_only_scenario_count": 7,
   "research_only_risk_count": 4,
-  "research_only_sha256": "10699c7e8861f77171fa92d23e4a4960584b6e0b3751648d843febece7d39dd8",
+  "research_only_sha256": "9f8cdac9c0d559e326a6daab48a78c2cc1090deb803d8f9056e8caeab60e1496",
   "research_only_scope": "USD gross price-return scenario, excludes fees, tax, dividends and FX; input scenarios are not consensus or forecasts.",
   "forecast_change_review_needed": [
     "META"
   ],
-  "fundamental_review_sha256": "525cea7e16372849de682780e748a4d0884be0149c099d6c38789577fc0e929e",
+  "fundamental_review_sha256": "6444cb56a6ad9b4fb6bd2dcf752249180b280c5f160ac808e1a4a6035110ee96",
   "fundamental_review_status": "partial_review_no_entry_conclusion",
-  "comparison_status": "blocked",
-  "comparison_reason": "ValueError: calculation code changed; replay a common input before comparison",
-  "comparison_sha256": "5783d6434cc0bb4cae453e6763b85f591d4b40268fba67ae854552178e9a03f0"
+  "comparison_status": "partial_comparison_only",
+  "comparison_reason": "Same calculation and scenarios; close-time, provider independence, company financial review and investment validity remain unverified",
+  "comparison_sha256": "309791e3252b066f7616735989a754b9189bb245963b5769ab1ba1ae1164f6c7"
 }
