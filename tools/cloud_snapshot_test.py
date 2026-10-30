@@ -6,7 +6,9 @@ class SnapshotTests(unittest.TestCase):
   self.assertEqual(c.latest_date(datetime.fromisoformat('2026-11-27T17:59:00+00:00')),'2026-11-25')
   self.assertEqual(c.latest_date(datetime.fromisoformat('2026-11-27T18:00:00+00:00')),'2026-11-25')
   self.assertEqual(c.latest_date(datetime.fromisoformat('2026-11-27T18:15:00+00:00')),'2026-11-27')
-  with self.assertRaises(ValueError):c.latest_date(datetime.fromisoformat('2027-01-05T12:00:00+00:00'))
+  self.assertEqual(c.latest_date(datetime.fromisoformat('2027-01-05T12:00:00+00:00')),'2027-01-04')
+  self.assertEqual(c.latest_date(datetime.fromisoformat('2027-01-01T20:00:00+00:00')),'2026-12-31')
+  with self.assertRaises(ValueError):c.latest_date(datetime.fromisoformat('2028-01-05T12:00:00+00:00'))
  def test_nasdaq_fiscal_data_and_missing(self):
   raw=json.dumps({'data':{'symbol':'AAA','tradesTable':{'rows':[{'date':'10/29/2026','close':'$1,234.56'}]}}}).encode()
   self.assertEqual(c.parse_nasdaq(raw,'AAA','2026-10-29'),1234.56)

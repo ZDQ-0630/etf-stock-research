@@ -10,6 +10,12 @@ r={'schema':'etf.cloud_validation.public_audit.v1','run_id':run,'run_attempt':at
 research=src.parent/'research-only.json'
 if research.exists():
  rr=json.loads(research.read_text(encoding='utf8'));r['research_only_scenario_count']=sum(x['status']=='computed_for_research_only' for x in rr['rows']);r['research_only_risk_count']=sum(x['status']=='computed_for_research_only' for x in rr.get('risk',[]));r['research_only_sha256']=hashlib.sha256(research.read_bytes()).hexdigest();r['research_only_scope']=rr['return_scope']
+fundamental=src.parent/'fundamental-review.json'
+if fundamental.exists():
+ fr=json.loads(fundamental.read_text(encoding='utf8'));r['forecast_change_review_needed']=[c['symbol'] for c in fr['companies'] if c['fiscal_changes']];r['fundamental_review_sha256']=hashlib.sha256(fundamental.read_bytes()).hexdigest();r['fundamental_review_status']=fr['status']
+comparison=src.parent/'comparison.json'
+if comparison.exists():
+ cr=json.loads(comparison.read_text(encoding='utf8'));r['comparison_status']=cr['status'];r['comparison_reason']=cr['reason'];r['comparison_sha256']=hashlib.sha256(comparison.read_bytes()).hexdigest()
 dst.parent.mkdir(parents=True,exist_ok=True)
 with dst.open('x',encoding='utf8') as f:json.dump(r,f,ensure_ascii=False,indent=2,allow_nan=False)
 print(json.dumps({'record':dst.as_posix(),'failed_sources':r['failed_sources'],'snapshot_status':r['snapshot_status']}))

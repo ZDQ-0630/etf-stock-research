@@ -11,15 +11,15 @@ from zoneinfo import ZoneInfo
 SYMS=['QQQM','SMH','SOXX','DRAM','NVDA','MSFT','GOOGL','AMZN','META','TSM','MU']
 STOCKS=SYMS[4:]
 FRED=['DGS10','DFII10','BAMLH0A0HYM2']
-HOLIDAYS=set('2026-01-01 2026-01-19 2026-02-16 2026-04-03 2026-05-25 2026-06-19 2026-07-03 2026-09-07 2026-11-26 2026-12-25'.split())
-EARLY={'2026-11-27','2026-12-24'}
+HOLIDAYS=set('2026-01-01 2026-01-19 2026-02-16 2026-04-03 2026-05-25 2026-06-19 2026-07-03 2026-09-07 2026-11-26 2026-12-25 2027-01-01 2027-01-18 2027-02-15 2027-03-26 2027-05-31 2027-06-18 2027-07-05 2027-09-06 2027-11-25 2027-12-24'.split())
+EARLY={'2026-11-27','2026-12-24','2027-11-26'}
 def utc():return datetime.now(timezone.utc)
 def latest_date(clock):
  d=clock.astimezone(ZoneInfo('America/New_York'))
- if d.year!=2026:raise ValueError('calendar not reviewed for this year')
+ if d.year not in (2026,2027):raise ValueError('calendar not reviewed for this year')
  day=d.date()
  while True:
-  if day.year!=2026:raise ValueError('calendar outside reviewed year')
+  if day.year not in (2026,2027):raise ValueError('calendar outside reviewed year')
   s=day.isoformat();close=13 if s in EARLY else 16
   if day.weekday()<5 and s not in HOLIDAYS and (day!=d.date() or d.hour*60+d.minute>=close*60+15):return s
   day-=timedelta(days=1)
@@ -85,11 +85,12 @@ def treasury(raw,field):
  return sorted(out,key=lambda x:x['date'])[-2:]
 def main():
  if len(sys.argv)!=2:raise SystemExit('usage: python tools/cloud_snapshot.py <new-output-dir>')
- dest=Path(sys.argv[1]);dest.mkdir(parents=True,exist_ok=False);started=utc();date=latest_date(started);end=started.date().isoformat();start=(started.date()-timedelta(days=16)).isoformat()
+ dest=Path(sys.argv[1]);dest.mkdir(parents=True,exist_ok=False);started=utc();date=latest_date(started);end=started.date().isoformat();frozen=json.loads(Path('web/data.json').read_text(encoding='utf8'))['price_cutoff'];start=min((started.date()-timedelta(days=16)).isoformat(),(datetime.fromisoformat(frozen).date()-timedelta(days=10)).isoformat())
+ period1=int(datetime.fromisoformat(start).replace(tzinfo=timezone.utc).timestamp());period2=int((started+timedelta(days=2)).timestamp())
  jobs=[]
  for s in SYMS:
   assetclass='etf' if s in SYMS[:4] else 'stocks'
-  jobs += [('nasdaq_'+s,'https://api.nasdaq.com/api/quote/'+s+'/historical?assetclass='+assetclass+'&fromdate='+start+'&todate='+end+'&limit=50'),('yahoo_'+s,'https://query1.finance.yahoo.com/v8/finance/chart/'+s+'?range=1mo&interval=1d')]
+  jobs += [('nasdaq_'+s,'https://api.nasdaq.com/api/quote/'+s+'/historical?assetclass='+assetclass+'&fromdate='+start+'&todate='+end+'&limit=5000'),('yahoo_'+s,'https://query1.finance.yahoo.com/v8/finance/chart/'+s+'?period1='+str(period1)+'&period2='+str(period2)+'&interval=1d')]
  jobs += [('forecast_'+s,'https://api.nasdaq.com/api/analyst/'+s+'/earnings-forecast') for s in STOCKS]
  fred_start=(started.date()-timedelta(days=45)).isoformat()
  jobs += [('fred_'+s,'https://fred.stlouisfed.org/graph/fredgraph.csv?id='+s+'&cosd='+fred_start) for s in FRED]
